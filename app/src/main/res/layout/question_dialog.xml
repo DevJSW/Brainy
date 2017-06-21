@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/button_bg">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_margin="10dp"
+        android:id="@+id/relly"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center_horizontal">
+
+            <EditText
+                android:id="@+id/questionTitleInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Question title"
+                android:inputType="textEmailAddress"
+                android:maxLength="60"
+                android:layout_marginBottom="7dp"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColorHint="#121111"
+                android:textColor="#121111" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center_horizontal">
+
+            <EditText
+                android:id="@+id/questionBodyInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Question body goes here..."
+                android:layout_marginBottom="7dp"
+                android:maxLines="5"
+                android:textColorHint="#121111"
+                android:textColor="#121111" />
+
+        </android.support.design.widget.TextInputLayout>
+
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#8b8787"
+        android:layout_above="@+id/liny" />
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/liny"
+        android:layout_below="@+id/relly"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+        <!-- Link to Login Screen -->
+
+
+        <Button
+            android:id="@+id/cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:text="Cancel"
+            android:textAllCaps="false"
+            android:textColor="#121111"
+            android:textSize="14dp"
+            android:layout_weight="1"
+            android:layout_gravity="left" />
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#8b8787"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"/>
+
+        <Button
+            android:id="@+id/create"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:text="Post!"
+            android:textSize="14dp"
+            android:textAllCaps="false"
+            android:textColor="@color/colorAccent"
+            android:layout_weight="1"
+            android:layout_gravity="right" />
+
+
+
+    </LinearLayout>
+
+
+
+
+
+
+</RelativeLayout>

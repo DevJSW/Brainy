@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginBottom="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/liny"
+            android:layout_margin="5dp"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal">
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                            android:layout_width="45dp"
+                            android:layout_height="45dp"
+                            android:layout_marginTop="7dp"
+                            android:layout_marginRight="5dp"
+                            android:id="@+id/post_image"
+                            android:layout_margin="10dp"
+                            app:civ_border_width="1dp"
+                            app:civ_border_color="#fff"
+                            android:src="@drawable/ic_profile_placeholder"/>
+
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/subscribeBtn"
+                    android:layout_toRightOf="@+id/post_image"
+                    android:layout_gravity="center_vertical"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/post_name"
+                        android:textSize="14dp"
+                        android:scaleType="fitXY"
+                        android:textStyle="bold"
+                        android:text="username"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12dp"
+                        android:layout_marginTop="1dp"
+                        android:singleLine="true"
+                        android:id="@+id/post_date"
+                        android:text="date"/>
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:textSize="15dp"
+                android:id="@+id/post_quiz_title"
+                android:textColor="@color/colorAccent"
+                android:layout_marginBottom="10dp"
+                android:text="Title"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/post_quiz_body"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:maxLines="3"
+                android:textSize="13dp"
+                android:lineSpacingExtra="2dp"
+                android:text="Body"
+                android:layout_marginBottom="20dp"/>
+
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#b9b6b6"/>
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/liny2"
+            android:layout_below="@+id/relly"
+            android:orientation="horizontal"
+            android:weightSum="3">
+
+            <!-- Link to Login Screen -->
+
+
+            <RelativeLayout
+                android:id="@+id/cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="55dp"
+                android:background="@null"
+                android:text="Cancel"
+                android:textAllCaps="false"
+                android:textSize="14dp"
+                android:layout_weight="1"
+                android:layout_gravity="left" >
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/approvalCounter"
+                        android:layout_toLeftOf="@+id/approval"
+                        android:textSize="25dp"
+                        android:layout_centerVertical="true"
+                        android:text="0"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/approval"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginLeft="5dp"
+                        android:text="approvals"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/create"
+                android:layout_width="wrap_content"
+                android:layout_height="55dp"
+                android:background="@null"
+                android:text="Post!"
+                android:textSize="14dp"
+                android:textAllCaps="false"
+                android:layout_weight="1"
+                android:layout_gravity="right" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/answersCounter"
+                    android:layout_toLeftOf="@+id/answers"
+                    android:textSize="25dp"
+                    android:layout_centerVertical="true"
+                    android:text="0"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/answers"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="5dp"
+                    android:text="answers"/>
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/creat"
+                android:layout_width="wrap_content"
+                android:layout_height="55dp"
+                android:background="@null"
+                android:text="Post!"
+                android:textSize="14dp"
+                android:textAllCaps="false"
+                android:layout_weight="1"
+                android:layout_gravity="right" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/viewsCounter"
+                    android:layout_toLeftOf="@+id/views"
+                    android:textSize="25dp"
+                    android:layout_centerVertical="true"
+                    android:text="0"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/views"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="5dp"
+                    android:text="views"/>
+            </RelativeLayout>
+
+
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+</android.support.v7.widget.CardView>
+
