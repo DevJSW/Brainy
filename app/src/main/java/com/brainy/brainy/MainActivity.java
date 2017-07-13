@@ -22,6 +22,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.brainy.brainy.tabs.tab1Questions;
+import com.brainy.brainy.tabs.tab2Inbox;
+import com.brainy.brainy.tabs.tab3Achievements;
+import com.brainy.brainy.tabs.tab4More;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;

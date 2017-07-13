@@ -52,7 +52,7 @@
                     android:layout_gravity="center_vertical"
                     android:orientation="vertical">
 
-                    <TextView
+                    <com.brainy.brainy.data.MyFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/post_name"
@@ -61,7 +61,7 @@
                         android:textStyle="bold"
                         android:text="username"/>
 
-                    <TextView
+                    <com.brainy.brainy.data.MyFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="12dp"
@@ -75,7 +75,7 @@
 
             </LinearLayout>
 
-            <TextView
+            <com.brainy.brainy.data.MyFont
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="15dp"
@@ -85,7 +85,7 @@
                 android:textColor="@color/colorAccent"
                 android:layout_marginBottom="10dp"
                 android:text="Title"/>
-            <TextView
+            <com.brainy.brainy.data.MyFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/post_quiz_body"
@@ -128,7 +128,7 @@
                 android:layout_gravity="left" >
 
 
-                    <TextView
+                    <com.brainy.brainy.data.MyFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/approvalCounter"
@@ -137,7 +137,7 @@
                         android:layout_centerVertical="true"
                         android:text="0"/>
 
-                    <TextView
+                    <com.brainy.brainy.data.MyFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/approval"
@@ -159,7 +159,7 @@
                 android:layout_weight="1"
                 android:layout_gravity="right" >
 
-                <TextView
+                <com.brainy.brainy.data.MyFont
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/answersCounter"
@@ -168,7 +168,7 @@
                     android:layout_centerVertical="true"
                     android:text="0"/>
 
-                <TextView
+                <com.brainy.brainy.data.MyFont
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/answers"
@@ -190,7 +190,7 @@
                 android:layout_weight="1"
                 android:layout_gravity="right" >
 
-                <TextView
+                <com.brainy.brainy.data.MyFont
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/viewsCounter"
@@ -199,7 +199,7 @@
                     android:layout_centerVertical="true"
                     android:text="0"/>
 
-                <TextView
+                <com.brainy.brainy.data.MyFont
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/views"
