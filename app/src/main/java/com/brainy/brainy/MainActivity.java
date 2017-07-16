@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -80,6 +81,12 @@ public class MainActivity extends AppCompatActivity {
         });
         
         initPageChanger();
+        checkUserLoggedIn();
+
+    }
+
+    private void checkUserLoggedIn() {
+
 
     }
 
@@ -89,8 +96,8 @@ public class MainActivity extends AppCompatActivity {
 
         // custom dialog
         final Dialog dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.question_dialog);
-        dialog.setTitle("Ask question");
         dialog.setCancelable(false);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         dialog.show();
@@ -129,9 +136,6 @@ public class MainActivity extends AppCompatActivity {
                 } else {
 
                     final DatabaseReference newPost = mDatabaseQuestions.push();
-
-                    // adding my user uid to hashtag chatroom
-                    final DatabaseReference newPost2 = mDatabaseQuestions.child("Questions").child(auth.getCurrentUser().getUid());
 
                     mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                         @Override
@@ -218,7 +222,10 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_logout) {
+
+            // sign out
+            auth.signOut();
             return true;
         }
 

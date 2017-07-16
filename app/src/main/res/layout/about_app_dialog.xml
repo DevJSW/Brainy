@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:layout_margin="8dp"
+    android:background="@drawable/button_bg">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_margin="10dp"
+            android:id="@+id/relly"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+
+            <com.brainy.brainy.data.MyFont
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorAccent"
+                android:layout_margin="15dp"
+                android:textSize="17dp"
+                android:text="About app."/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#8b8787"
+                android:layout_above="@+id/liny" />
+
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_margin="10dp"
+                android:layout_gravity="center_horizontal"
+                android:src="@drawable/ic_brainy"/>
+
+            <com.brainy.brainy.data.MyFont
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimary"
+                android:layout_gravity="center_horizontal"
+                android:textSize="18dp"
+                android:text="brainy"/>
+
+            <com.brainy.brainy.data.MyFont
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16dp"
+                android:layout_margin="15dp"
+                android:text="alsjdlalsdasdkhkahdsasldalsdjlaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafkfadssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssl"/>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#8b8787"
+                android:layout_above="@+id/liny" />
+
+            <com.brainy.brainy.data.MyFont
+                android:id="@+id/cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:layout_alignParentRight="true"
+                android:layout_margin="15dp"
+                android:text="Cancel"
+                android:textAllCaps="false"
+                android:textColor="@color/colorAccent"
+                android:textSize="17dp"
+                android:layout_weight="1"
+                android:layout_gravity="center_horizontal" />
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+
+</RelativeLayout>

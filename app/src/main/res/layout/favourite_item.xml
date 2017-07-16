@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginBottom="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/liny"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:orientation="vertical">
+
+            <com.brainy.brainy.data.MyFont
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginRight="5dp"
+                android:layout_gravity="right"
+                android:id="@+id/post_date"
+                android:text="date"/>
+
+            <com.brainy.brainy.data.MyFont
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:textSize="15dp"
+                android:id="@+id/post_quiz_title"
+                android:textColor="@color/colorAccent"
+                android:layout_marginBottom="3dp"
+                android:text="Title"/>
+            <com.brainy.brainy.data.MyFont
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/post_quiz_body"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="15dp"
+                android:maxLines="3"
+                android:textSize="13dp"
+                android:lineSpacingExtra="2dp"
+                android:text="Body"
+                android:layout_marginBottom="5dp"/>
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginRight="5dp"
+                android:layout_marginBottom="5dp"
+                android:orientation="horizontal">
+
+
+
+               <!-- <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                            android:layout_width="45dp"
+                            android:layout_height="45dp"
+                            android:layout_marginTop="7dp"
+                            android:layout_marginRight="5dp"
+                            android:id="@+id/post_image"
+                            android:layout_margin="10dp"
+                            app:civ_border_width="1dp"
+                            app:civ_border_color="#fff"
+                            android:src="@drawable/ic_profile_placeholder"/>
+
+
+                </RelativeLayout>
+-->
+                    <com.brainy.brainy.data.MyFont
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14dp"
+                        android:scaleType="fitXY"
+                        android:textStyle="bold"
+                        android:text=" - "/>
+
+                <com.brainy.brainy.data.MyFont
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/post_name"
+                    android:textColor="#59a7e7"
+                    android:textSize="14dp"
+                    android:scaleType="fitXY"
+                    android:textStyle="bold"
+                    android:text="username"/>
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#b9b6b6"/>
+
+    </LinearLayout>
+</LinearLayout>
+

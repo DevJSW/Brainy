@@ -111,6 +111,7 @@
             android:id="@+id/liny2"
             android:layout_below="@+id/relly"
             android:orientation="horizontal"
+            android:layout_margin="2dp"
             android:weightSum="3">
 
             <!-- Link to Login Screen -->
@@ -131,20 +132,20 @@
                     <com.brainy.brainy.data.MyFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/approvalCounter"
-                        android:layout_toLeftOf="@+id/approval"
+                        android:id="@+id/favouriteCounter"
+                        android:layout_above="@+id/favourites"
+                        android:layout_centerHorizontal="true"
                         android:textSize="25dp"
-                        android:layout_centerVertical="true"
                         android:text="0"/>
 
                     <com.brainy.brainy.data.MyFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/approval"
-                        android:layout_centerVertical="true"
+                        android:id="@+id/favourites"
+                        android:layout_alignParentBottom="true"
                         android:layout_centerHorizontal="true"
-                        android:layout_marginLeft="5dp"
-                        android:text="approvals"/>
+                        android:layout_margin="2dp"
+                        android:text="favourites"/>
 
             </RelativeLayout>
 
@@ -154,27 +155,26 @@
                 android:layout_height="55dp"
                 android:background="@null"
                 android:text="Post!"
-                android:textSize="14dp"
                 android:textAllCaps="false"
                 android:layout_weight="1"
-                android:layout_gravity="right" >
+                android:layout_gravity="center" >
 
                 <com.brainy.brainy.data.MyFont
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/answersCounter"
-                    android:layout_toLeftOf="@+id/answers"
+                    android:layout_above="@+id/answers"
                     android:textSize="25dp"
-                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
                     android:text="0"/>
 
                 <com.brainy.brainy.data.MyFont
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
                     android:id="@+id/answers"
-                    android:layout_centerVertical="true"
+                    android:layout_margin="2dp"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginLeft="5dp"
                     android:text="answers"/>
             </RelativeLayout>
 
@@ -194,19 +194,19 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/viewsCounter"
-                    android:layout_toLeftOf="@+id/views"
+                    android:layout_above="@+id/views"
                     android:textSize="25dp"
-                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
                     android:text="0"/>
 
                 <com.brainy.brainy.data.MyFont
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/views"
-                    android:layout_centerVertical="true"
+                    android:layout_alignParentBottom="true"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginLeft="5dp"
-                    android:text="views"/>
+                    android:layout_margin="2dp"
+                    android:text="  views   "/>
             </RelativeLayout>
 
 

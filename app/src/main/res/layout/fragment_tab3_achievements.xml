@@ -5,6 +5,45 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.brainy.brainy.MainActivity$PlaceholderFragment">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/favourite_layout"
+        android:orientation="vertical">
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginBottom="10dp"
+                android:id="@+id/favourite_list">
+
+            </android.support.v7.widget.RecyclerView>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <com.brainy.brainy.data.MyFont
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="You have no favourite questions."
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:textSize="14dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:visibility="gone"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            android:id="@+id/noFavourTxt"
+            android:textColor="@color/colorAccent"/>
+
+    </RelativeLayout>
 
     <ProgressBar
         style="?android:attr/progressBarStyleLarge"
@@ -15,12 +54,14 @@
         android:layout_centerHorizontal="true"
         android:visibility="gone" />
 
-    <TextView
-        android:layout_width="320dp"
+    <com.brainy.brainy.data.MyFont
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="The favourite tray is where all your favourite questions are stored for future reference."
         android:layout_above="@+id/signIn"
         android:layout_centerHorizontal="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginLeft="20dp"
         android:textSize="14dp"
         android:gravity="center"
         android:layout_marginTop="10dp"
