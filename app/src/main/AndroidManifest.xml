@@ -35,9 +35,10 @@
         <activity
             android:name=".activity.ProfileActiity"
             android:label="Profile" />
+
         <activity
             android:name=".activity.AnswersActivity"
-            android:label="@string/title_activity_answers"
+            android:label="Answers"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

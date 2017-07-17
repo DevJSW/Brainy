@@ -94,7 +94,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/post_name"
                     android:textColor="#59a7e7"
-                    android:textSize="14dp"
+                    android:textSize="13dp"
                     android:scaleType="fitXY"
                     android:textStyle="bold"
                     android:text="username"/>
