@@ -34,7 +34,11 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.ProfileActiity"
-            android:label="Profile"/>
+            android:label="Profile" />
+        <activity
+            android:name=".activity.AnswersActivity"
+            android:label="@string/title_activity_answers"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
