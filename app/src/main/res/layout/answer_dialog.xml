@@ -26,7 +26,7 @@
                 android:id="@+id/questionBodyInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Type answer..."
+                android:hint="Type your answer"
                 android:layout_marginBottom="7dp"
                 android:maxLines="5"
                 android:textColorHint="#121111"
