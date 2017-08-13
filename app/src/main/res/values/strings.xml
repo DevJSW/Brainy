@@ -6,4 +6,28 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_answers">AnswersActivity</string>
+
+    <string name="tags_prompt">Choose a Topic</string>
+
+    <string-array name="tags_arrays">
+        <item>Random</item>
+        <item>Math</item>
+        <item>Economics</item>
+        <item>Computer Science</item>
+        <item>Languages</item>
+        <item>Physics</item>
+        <item>Chemistry</item>
+        <item>Aviation</item>
+        <item>Health Science</item>
+    </string-array>
+
+    <string name="tag_prompt">Filter</string>
+
+    <string-array name="tag_arrays">
+        <item>Newest</item>
+        <item>Hot</item>
+        <item>Votes</item>
+        <item>Unanswered</item>
+        <item>Languages</item>
+    </string-array>
 </resources>

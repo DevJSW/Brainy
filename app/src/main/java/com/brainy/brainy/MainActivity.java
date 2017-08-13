@@ -102,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
         dialog.show();
 
-
         final EditText questionTitleInput = (EditText) dialog.findViewById(R.id.questionTitleInput);
         final EditText questionBodyInput = (EditText) dialog.findViewById(R.id.questionBodyInput);
         Button cancel = (Button) dialog.findViewById(R.id.cancel);
@@ -132,7 +131,6 @@ public class MainActivity extends AppCompatActivity {
                 final String questionBodyTag = questionBodyInput.getText().toString().trim();
                 if (TextUtils.isEmpty(questionTitlTag) || TextUtils.isEmpty(questionBodyTag)) {
 
-
                 } else {
 
                     final DatabaseReference newPost = mDatabaseQuestions.push();
@@ -150,7 +148,6 @@ public class MainActivity extends AppCompatActivity {
                             newPost.child("posted_date").setValue(stringDate2);
 
                             //newPost2.child(auth.getCurrentUser().getUid()).child("uid").setValue(dataSnapshot.getValue());
-
 
                         }
 

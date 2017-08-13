@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_margin="5dp"
     android:orientation="vertical">
 
     <LinearLayout
@@ -22,8 +21,8 @@
             android:layout_marginTop="5dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_margin="5dp"
                 android:id="@+id/sender_image"
                 android:src="@drawable/placeholder_image"/>
@@ -102,7 +101,7 @@
                             android:id="@+id/posted_reason"
                             android:textColor="#59a7e7"
                             android:layout_marginLeft="5dp"
-                            android:textSize="12dp"
+                            android:textSize="11dp"
                             android:text="reason"/>
                         <com.brainy.brainy.data.MyFont
                             android:layout_width="wrap_content"
@@ -151,7 +150,6 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-
                         android:layout_marginBottom="10dp"
                         android:id="@+id/chat_image"
                         android:visibility="gone"

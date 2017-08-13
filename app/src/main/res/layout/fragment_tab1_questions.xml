@@ -9,6 +9,42 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:visibility="gone"
+            android:orientation="horizontal">
+
+           <!-- <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:layout_margin="7dp"
+                android:layout_toLeftOf="@+id/rely"
+                android:gravity="right"
+                android:background="#b9b6b6"/>-->
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:id="@+id/rely"
+                android:layout_weight="1">
+
+                <Spinner
+                    android:id="@+id/spinner1"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_margin="8dp"
+                    android:entries="@array/tags_arrays"
+                    android:prompt="@string/tags_prompt"/>
+
+            </RelativeLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#eeee"/>
+        </RelativeLayout>
+
         <android.support.v4.widget.SwipeRefreshLayout
             android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"

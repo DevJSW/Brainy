@@ -2,6 +2,7 @@ package com.brainy.brainy.activity;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -17,6 +18,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -59,7 +61,7 @@ public class AnswersActivity extends AppCompatActivity {
         mDatabaseUsersInbox = FirebaseDatabase.getInstance().getReference().child("Users_inbox");
 
         LinearLayoutManager layoutManager
-                = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+                = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
 
         mAnsList = (RecyclerView) findViewById(R.id.mAnsList);
         mAnsList.setLayoutManager(layoutManager);
@@ -214,7 +216,7 @@ public class AnswersActivity extends AppCompatActivity {
         final FirebaseRecyclerAdapter<Answer, ReadQuestionActivity.AnswerViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Answer, ReadQuestionActivity.AnswerViewHolder>(
 
                 Answer.class,
-                R.layout.answer_item,
+                R.layout.answer2_item,
                 ReadQuestionActivity.AnswerViewHolder.class,
                 mDatabaseQuestions.child(QuizKey).child("Answers")
 
@@ -227,8 +229,144 @@ public class AnswersActivity extends AppCompatActivity {
 
                 viewHolder.setSender_name(model.getSender_name());
                 viewHolder.setPosted_date(model.getPosted_date());
-               /* viewHolder.setPosted_answer(model.getPosted_answer());
-                viewHolder.setSender_image(getApplicationContext(), model.getSender_image());*/
+                viewHolder.setPosted_answer(model.getPosted_answer());
+                /*viewHolder.setSender_image(getApplicationContext(), model.getSender_image());*/
+
+                viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        final Context context = AnswersActivity.this;
+
+                        // custom dialog
+                        final Dialog dialog = new Dialog(context);
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        dialog.setContentView(R.layout.answer_options_dialog);
+                        /*dialog.setCancelable(false);*/
+                        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                        dialog.show();
+
+                        LinearLayout llComment = (LinearLayout) dialog.findViewById(R.id.llComment);
+                        llComment.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                dialog.dismiss();
+
+                                showCommentDialog();
+
+                            }
+
+                            private void showCommentDialog() {
+
+                                // custom dialog
+                                final Dialog dialog = new Dialog(context);
+                                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                                dialog.setContentView(R.layout.comment_dialog);
+                                dialog.setCancelable(false);
+                                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                                dialog.show();
+
+                                final EditText questionBodyInput = (EditText) dialog.findViewById(R.id.questionBodyInput);
+                                Button cancel = (Button) dialog.findViewById(R.id.cancel);
+                                cancel.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        dialog.dismiss();
+                                    }
+                                });
+
+                                Button create = (Button) dialog.findViewById(R.id.create);
+                                create.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+                                        startPosting();
+                                        dialog.dismiss();
+                                    }
+
+                                    private void startPosting() {
+
+                                        Date date = new Date();
+                                        final String stringDate = DateFormat.getDateTimeInstance().format(date);
+                                        final String stringDate2 = DateFormat.getDateInstance().format(date);
+
+                                        final String questionBodyTag = questionBodyInput.getText().toString().trim();
+                                        if (TextUtils.isEmpty(questionBodyTag)) {
+
+
+                                        } else {
+
+                                            final DatabaseReference newPost = mDatabaseQuestions.child(QuizKey).child("Answers").child("comments").push();
+
+                                            mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                    final String name = dataSnapshot.child("name").getValue().toString();
+                                   /* final String image = dataSnapshot.child("image").getValue().toString();*/
+                                                    // getting user uid
+                                                    newPost.child("posted_answer").setValue(questionBodyTag);
+                                                    newPost.child("sender_uid").setValue(auth.getCurrentUser().getUid());
+                                                    newPost.child("sender_name").setValue(dataSnapshot.child("name").getValue());
+                                                    newPost.child("sender_image").setValue(dataSnapshot.child("user_image").getValue());
+                                                    newPost.child("posted_date").setValue(stringDate2);
+
+                                                    //SEND MESSAGE TO QUIZ OWNER'S INBOX
+                                                    mDatabaseQuestions.child(QuizKey).addValueEventListener(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                            final String sender_uid = dataSnapshot.child("sender_uid").getValue().toString();
+
+                                                            final DatabaseReference newPost2 = mDatabaseUsersInbox.child(sender_uid).push();
+                                                            newPost2.child("posted_answer").setValue(questionBodyTag);
+                                                            newPost2.child("sender_uid").setValue(auth.getCurrentUser().getUid());
+                                                            newPost2.child("sender_name").setValue(name);
+                                           /* newPost2.child("sender_image").setValue(image);*/
+                                                            newPost2.child("posted_date").setValue(stringDate2);
+
+                                                        }
+
+                                                        @Override
+                                                        public void onCancelled(DatabaseError databaseError) {
+
+                                                        }
+                                                    });
+
+                                                }
+
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+
+                                                }
+                                            });
+
+                                        }
+
+                                    }
+                                });
+
+                            }
+                        });
+
+                        LinearLayout llShare = (LinearLayout) dialog.findViewById(R.id.llShare);
+                        llShare.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                dialog.dismiss();
+
+                                Intent myIntent = new Intent(Intent.ACTION_SEND);
+                                myIntent.setType("text/plain");
+                               /* String shareBody =question_body;*/
+                                /*String shareSub = question_topic;*/
+                                /*myIntent.putExtra(Intent.EXTRA_SUBJECT,shareSub);*/
+                               /* myIntent.putExtra(Intent.EXTRA_TEXT,shareBody);*/
+                                startActivity(Intent.createChooser(myIntent,"Share this answer"));
+                            }
+                        });
+
+                    }
+                });
 
             }
         };

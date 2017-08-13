@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_margin="8dp"
-    android:background="@drawable/button_bg">
+    android:layout_margin="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,21 +15,41 @@
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="3dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center_horizontal">
+
+            <com.brainy.brainy.data.MyBoldFont
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#529fe2"
+                android:textSize="18dp"
+                android:text="Vote"/>
+
+        </android.support.design.widget.TextInputLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginBottom="5dp"
+            android:background="#eea3a1a1"/>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="10dp"
             android:layout_gravity="center_horizontal">
 
-            <EditText
-                android:id="@+id/questionBodyInput"
-                android:layout_width="match_parent"
+            <com.brainy.brainy.data.MyFont
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Type your answer"
-                android:layout_marginBottom="7dp"
-                android:maxLines="5"
-                android:textColorHint="#121111"
-                android:textColor="#121111" />
+                android:textSize="16dp"
+                android:text="Are you sure you want to vote for this answer?"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -78,7 +97,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@null"
-            android:text="Post!"
+            android:text="Vote"
             android:textSize="14dp"
             android:textAllCaps="false"
             android:textColor="@color/colorAccent"

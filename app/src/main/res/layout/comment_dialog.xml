@@ -16,7 +16,7 @@
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="3dp"
+            android:layout_marginBottom="10dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="10dp"
@@ -26,7 +26,7 @@
                 android:id="@+id/questionBodyInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Type your answer"
+                android:hint="Type your comment"
                 android:layout_marginBottom="7dp"
                 android:maxLines="5"
                 android:textColorHint="#121111"

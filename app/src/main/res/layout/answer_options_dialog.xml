@@ -1,43 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="fill_parent"
+    android:orientation="vertical"
     android:layout_margin="8dp"
     android:background="@drawable/button_bg">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_margin="10dp"
-        android:id="@+id/relly"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:id="@+id/llComment"
         android:orientation="vertical"
         android:layout_height="wrap_content">
 
-
-        <android.support.design.widget.TextInputLayout
+        <com.brainy.brainy.data.MyFont
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="3dp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="10dp"
-            android:layout_gravity="center_horizontal">
-
-            <EditText
-                android:id="@+id/questionBodyInput"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Type your answer"
-                android:layout_marginBottom="7dp"
-                android:maxLines="5"
-                android:textColorHint="#121111"
-                android:textColor="#121111" />
-
-        </android.support.design.widget.TextInputLayout>
+            android:id="@+id/tvComment"
+            android:textSize="15dp"
+            android:text="Comment on answer"/>
 
 
     </LinearLayout>
 
-    <View
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="20dp"
+        android:id="@+id/llShare"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+
+        <com.brainy.brainy.data.MyFont
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tvShare"
+            android:textSize="15dp"
+            android:text="Share this answer"/>
+
+
+    </LinearLayout>
+
+  <!--  <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#8b8787"
@@ -52,7 +60,7 @@
         android:orientation="horizontal"
         android:weightSum="2">
 
-        <!-- Link to Login Screen -->
+        &lt;!&ndash; Link to Login Screen &ndash;&gt;
 
 
         <Button
@@ -88,10 +96,10 @@
 
 
     </LinearLayout>
+-->
 
 
 
 
 
-
-</RelativeLayout>
+</LinearLayout>
