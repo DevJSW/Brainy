@@ -205,102 +205,6 @@ public class tab1Questions extends Fragment implements SearchView.OnQueryTextLis
 
        /* LoadMessage();*/
 
-       /* FirebaseRecyclerAdapter<Question, LetterViewHolder> firebaseRecyclerAdapter = new  FirebaseRecyclerAdapter<Question, LetterViewHolder>(
-
-                Question.class,
-                R.layout.question_row,
-                LetterViewHolder.class,
-                mDatabase
-
-
-        ) {
-            @Override
-            protected void populateViewHolder(final LetterViewHolder viewHolder, final Question model, int position) {
-
-                final String quiz_key = getRef(position).getKey();
-                final String PostKey = getRef(position).getKey();
-                viewHolder.setSender_name(model.getSender_name());
-                viewHolder.setPosted_date(model.getPosted_date());
-                viewHolder.setQuestion_body(model.getQuestion_body());
-                viewHolder.setQuestion_title(model.getQuestion_title());
-                viewHolder.setSender_image(getContext(), model.getSender_image());
-
-
-                viewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        if (mAuth.getCurrentUser() != null) {
-                            mDatabase.child(quiz_key).child("views").child(mAuth.getCurrentUser().getUid()).setValue("iView");
-                        }
-                        Intent openRead = new Intent(getActivity(), ReadQuestionActivity.class);
-                        openRead.putExtra("question_id", quiz_key );
-                        startActivity(openRead);
-                    }
-                });
-
-                viewHolder.answer_rely.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent openRead = new Intent(getActivity(), AnswersActivity.class);
-                        openRead.putExtra("question_id", quiz_key );
-                        startActivity(openRead);
-                    }
-                });
-
-                // count number of views in a hashtag
-                mDatabase.child(quiz_key).child("views").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-                        viewHolder.viewCounter.setText(dataSnapshot.getChildrenCount() + "");
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-                // count number of answers
-                mDatabase.child(quiz_key).child("Answers").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-                        viewHolder.answersCounter.setText(dataSnapshot.getChildrenCount() + "");
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-                // count number of favourites
-                mDatabase.child(quiz_key).child("favourite").addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-
-                        viewHolder.favouritesCounter.setText(dataSnapshot.getChildrenCount() + "");
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-            }
-
-            @Override
-            public void cleanup() {
-                super.cleanup();
-                notifyDataSetChanged();
-            }
-        };
-
-        mQuestionsList.setAdapter(firebaseRecyclerAdapter);*/
-
     }
 
     void refreshItems() {
@@ -420,7 +324,6 @@ public class tab1Questions extends Fragment implements SearchView.OnQueryTextLis
 
                             }
                         });
-
 
 
                     }

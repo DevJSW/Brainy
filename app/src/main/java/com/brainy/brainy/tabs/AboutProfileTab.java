@@ -23,6 +23,8 @@ public class AboutProfileTab extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_about_profile_tab, container, false);
+        View v = inflater.inflate(R.layout.fragment_about_profile_tab, container, false);
+
+        return v;
     }
 }
