@@ -3,7 +3,6 @@ package com.brainy.brainy.activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
@@ -26,10 +25,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.brainy.brainy.MainActivity;
 import com.brainy.brainy.R;
 import com.brainy.brainy.data.Answer;
-import com.brainy.brainy.data.Question;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -37,8 +34,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
@@ -49,7 +44,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ReadQuestionActivity extends AppCompatActivity {
 
     private RelativeLayout share, favourite, answer;
-    private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseUsersInbox;
+    private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseUsersInbox, mDatabaseUsersPoints;
     private RecyclerView mAnsList;
     Context mContext;
     private FirebaseAuth auth;
@@ -72,6 +67,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
         mDatabaseFavourite = FirebaseDatabase.getInstance().getReference().child("Questions").child(QuizKey).child("favourite");
         mDatabaseUsersFavourite = FirebaseDatabase.getInstance().getReference().child("Users_favourite");
         mDatabaseUsersInbox = FirebaseDatabase.getInstance().getReference().child("Users_inbox");
+        mDatabaseUsersPoints = FirebaseDatabase.getInstance().getReference().child("Users_points");
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseQuestions = FirebaseDatabase.getInstance().getReference().child("Questions");
 
@@ -231,7 +227,6 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                         final String questionBodyTag = questionBodyInput.getText().toString().trim();
                         if ( TextUtils.isEmpty(questionBodyTag)) {
-
 
                         } else {
 
@@ -456,6 +451,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                                 if (dataSnapshot.child(answer_key).child("votes").hasChild(auth.getCurrentUser().getUid())) {
 
                                                     mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").child(auth.getCurrentUser().getUid()).removeValue();
+                                                    //add user uid to points database
                                                     mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").addListenerForSingleValueEvent(new ValueEventListener() {
                                                         @Override
                                                         public void onDataChange(DataSnapshot dataSnapshot) {

@@ -43,6 +43,9 @@ dependencies {
     compile 'com.jaredrummler:material-spinner:1.1.0'
     compile 'de.hdodenhof:circleimageview:2.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.github.tosslife:pullloadview:1.1.0'
+
+    compile 'me.srodrigo:androidhintspinner:1.0.0'
     testCompile 'junit:junit:4.12'
 }
 apply plugin: 'com.google.gms.google-services'

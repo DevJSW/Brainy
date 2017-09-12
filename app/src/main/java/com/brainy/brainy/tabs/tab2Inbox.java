@@ -14,6 +14,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -83,6 +85,7 @@ public class tab2Inbox extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_tab2_inbox, container, false);
 
@@ -155,6 +158,17 @@ public class tab2Inbox extends Fragment {
         initSignIn();
 
         return view;
+    }
+
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.findItem(R.id.action_search).setVisible(false);
+        /*menu.clear();*/
     }
 
     private void initSignIn() {
@@ -243,8 +257,6 @@ public class tab2Inbox extends Fragment {
                 personId = account.getId();
                 personPhoto = account.getPhotoUrl();
 
-
-
             } else {
                 // Google Sign In failed, update UI appropriately
                 // ...
@@ -253,9 +265,7 @@ public class tab2Inbox extends Fragment {
             }
         }
 
-
     }
-
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
@@ -292,7 +302,6 @@ public class tab2Inbox extends Fragment {
         Date date = new Date();
         final String stringDate = DateFormat.getDateInstance().format(date);
 
-
         final DatabaseReference newPost = mDatabaseUsers;
 
         newPost.child(auth.getCurrentUser().getUid()).child("name").setValue(personName);
@@ -316,7 +325,6 @@ public class tab2Inbox extends Fragment {
                         R.layout.inbox_item,
                         AnswerViewHolder.class,
                         mDatabaseUserInbox.child(auth.getCurrentUser().getUid())
-
 
                 ) {
                     @Override

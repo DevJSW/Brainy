@@ -10,7 +10,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.brainy.brainy.MainActivity;
 import com.brainy.brainy.R;
 
 public class Splashscreen extends Activity {

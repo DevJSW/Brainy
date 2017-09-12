@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context="com.brainy.brainy.MainActivity">
+    tools:context="com.brainy.brainy.activity.MainActivity">
 
     <ScrollView
         android:layout_width="match_parent"

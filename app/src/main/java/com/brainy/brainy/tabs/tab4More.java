@@ -9,16 +9,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.brainy.brainy.MainActivity;
 import com.brainy.brainy.R;
-import com.brainy.brainy.activity.ProfileActiity;
+import com.brainy.brainy.activity.EditProfileActivity;
+import com.brainy.brainy.activity.ProfileActivity;
 
 
 /**
@@ -45,7 +46,7 @@ public class tab4More extends Fragment {
         openEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(new Intent(getActivity(), ProfileActiity.class)));
+                startActivity(new Intent(new Intent(getActivity(), EditProfileActivity.class)));
             }
         });
 
@@ -92,7 +93,7 @@ public class tab4More extends Fragment {
 
                 Intent myIntent = new Intent(Intent.ACTION_SEND);
                 myIntent.setType("text/plain");
-                String shareBody ="Download Churchblaze messenger on google play store today";
+                String shareBody ="Download Brainy on google play store today";
                 String shareSub = "Dear ";
                 myIntent.putExtra(Intent.EXTRA_SUBJECT,shareBody);
                 myIntent.putExtra(Intent.EXTRA_TEXT,shareBody);
@@ -102,4 +103,14 @@ public class tab4More extends Fragment {
 
         return v;  }
 
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        /*menu.findItem(R.id.action_search).setVisible(false);*/
+        menu.clear();
+    }
 }

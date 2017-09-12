@@ -10,6 +10,7 @@
     <string name="tags_prompt">Choose a Topic</string>
 
     <string-array name="tags_arrays">
+        <item>Select a topic</item>
         <item>Random</item>
         <item>Math</item>
         <item>Economics</item>
@@ -30,4 +31,8 @@
         <item>Unanswered</item>
         <item>Languages</item>
     </string-array>
+    <string name="title_activity_edit_profile">Profile</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+    <string name="tab_text_3">Tab 3</string>
 </resources>

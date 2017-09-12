@@ -1,14 +1,16 @@
-package com.brainy.brainy;
+package com.brainy.brainy.activity;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,10 +21,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.brainy.brainy.R;
 import com.brainy.brainy.tabs.tab1Questions;
 import com.brainy.brainy.tabs.tab2Inbox;
 import com.brainy.brainy.tabs.tab3Achievements;
@@ -52,13 +56,26 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Window window = MainActivity.this.getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(ContextCompat.getColor( MainActivity.this,R.color.colorPrimaryDark));
+
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        }
+
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
+
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mContext=this;
+
         // Set up the ViewPager with the sections adapter.
+
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         auth = FirebaseAuth.getInstance();
@@ -66,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
         mDatabaseQuestions = FirebaseDatabase.getInstance().getReference().child("Questions");
         mDatabaseQuestions.keepSynced(true);
         mDatabaseUsers.keepSynced(true);
-
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
@@ -86,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void checkUserLoggedIn() {
-
 
     }
 
@@ -298,7 +313,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
+            // Show 4 total pages.
             return 4;
         }
 

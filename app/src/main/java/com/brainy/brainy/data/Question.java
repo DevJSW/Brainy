@@ -27,6 +27,9 @@ public class Question {
         this.sender_uid = sender_uid;
     }
 
+    public Question(String s) {
+    }
+
 
     public String getPosted_date() {
         return posted_date;
