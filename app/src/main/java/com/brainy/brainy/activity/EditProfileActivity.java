@@ -95,7 +95,7 @@ public class EditProfileActivity extends AppCompatActivity {
         mStorage = FirebaseStorage.getInstance().getReference();
         mDatabaseUsers.keepSynced(true);
 
-        username = (ImageView) findViewById(R.id.username);
+        username = (TextView) findViewById(R.id.username);
 
         mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
             @Override
