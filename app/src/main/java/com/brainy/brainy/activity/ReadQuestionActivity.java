@@ -44,7 +44,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ReadQuestionActivity extends AppCompatActivity {
 
     private RelativeLayout share, favourite, answer;
-    private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseUsersInbox, mDatabaseUsersPoints;
+    private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseUsersInbox, mDatabaseUsersPoints, mDatabaseUsersAns;
     private RecyclerView mAnsList;
     Context mContext;
     private FirebaseAuth auth;
@@ -68,6 +68,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
         mDatabaseUsersFavourite = FirebaseDatabase.getInstance().getReference().child("Users_favourite");
         mDatabaseUsersInbox = FirebaseDatabase.getInstance().getReference().child("Users_inbox");
         mDatabaseUsersPoints = FirebaseDatabase.getInstance().getReference().child("Users_points");
+        mDatabaseUsersAns = FirebaseDatabase.getInstance().getReference().child("Users_answers");
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseQuestions = FirebaseDatabase.getInstance().getReference().child("Questions");
 
@@ -231,6 +232,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                         } else {
 
                             final DatabaseReference newPost = mDatabaseQuestions.child(QuizKey).child("Answers").push();
+                            final DatabaseReference newPost2 = mDatabaseUsersAns.child(auth.getCurrentUser().getUid()).push();
 
                             mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                                 @Override
@@ -238,13 +240,36 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                                     final String name = dataSnapshot.child("name").getValue().toString();
                                     final String image = dataSnapshot.child("user_image").getValue().toString();
-                                    // getting user uid
-                                    newPost.child("posted_answer").setValue(questionBodyTag);
-                                    newPost.child("sender_uid").setValue(auth.getCurrentUser().getUid());
-                                    newPost.child("sender_name").setValue(dataSnapshot.child("name").getValue());
-                                    newPost.child("sender_image").setValue(dataSnapshot.child("user_image").getValue());
-                                    newPost.child("posted_date").setValue(stringDate2);
-                                    newPost.child("question_key").setValue(QuizKey);
+
+                                    mDatabaseQuestions.child(QuizKey).addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                            String question_title = dataSnapshot.child("question_title").getValue().toString();
+
+                                            // getting user uid
+                                            newPost.child("posted_answer").setValue(questionBodyTag);
+                                            newPost.child("question_title").setValue(question_title);
+                                            newPost.child("sender_uid").setValue(auth.getCurrentUser().getUid());
+                                            newPost.child("sender_name").setValue(dataSnapshot.child("name").getValue());
+                                            newPost.child("sender_image").setValue(dataSnapshot.child("user_image").getValue());
+                                            newPost.child("posted_date").setValue(stringDate2);
+                                            newPost.child("question_key").setValue(QuizKey);
+
+                                            //SEND ANSWER TO USEERS ANSWERS IN DATABASE
+                                            newPost2.child("posted_answer").setValue(questionBodyTag);
+                                            newPost2.child("sender_image").setValue(dataSnapshot.child("user_image").getValue());
+                                            newPost2.child("posted_date").setValue(stringDate2);
+                                            newPost2.child("question_key").setValue(QuizKey);
+
+
+                                        }
+
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
+
+                                        }
+                                    });
 
                                         //SEND MESSAGE TO QUIZ OWNER'S INBOX
                                     mDatabaseQuestions.child(QuizKey).addValueEventListener(new ValueEventListener() {

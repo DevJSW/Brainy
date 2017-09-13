@@ -312,6 +312,9 @@ public class tab2Inbox extends Fragment {
         newPost.child(auth.getCurrentUser().getUid()).child("uid").setValue(auth.getCurrentUser().getUid());
         newPost.child(auth.getCurrentUser().getUid()).child("user_gmail").setValue(personEmail);
         newPost.child(auth.getCurrentUser().getUid()).child("sign_in_type").setValue("google_signIn");
+        newPost.child(auth.getCurrentUser().getUid()).child("bio").setValue("");
+        newPost.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Beginner");
+        newPost.child(auth.getCurrentUser().getUid()).child("points_earned").setValue("0");
 
     }
 
@@ -488,7 +491,6 @@ public class tab2Inbox extends Fragment {
 
                     @Override
                     public void onError() {
-
 
                         Picasso.with(ctx).load(sender_image).into(civ);
                     }

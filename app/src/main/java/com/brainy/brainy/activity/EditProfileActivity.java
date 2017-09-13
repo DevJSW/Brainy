@@ -43,6 +43,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 public class EditProfileActivity extends AppCompatActivity {
@@ -102,12 +103,15 @@ public class EditProfileActivity extends AppCompatActivity {
 
                /* if (dataSnapshot.hasChild("status") || dataSnapshot.hasChild("city") || dataSnapshot.hasChild("address")) {*/
 
-                String user_status = dataSnapshot.child("status").getValue().toString();
+                String user_location = dataSnapshot.child("location").getValue().toString();
                 String name = dataSnapshot.child("name").getValue().toString();
                 String image = dataSnapshot.child("user_image").getValue().toString();
 
-
-                Picasso.with(EditProfileActivity.this).load(image).into(mGroupIcon);
+                Picasso.with(EditProfileActivity.this)
+                        .load(image)
+                        .placeholder(R.drawable.placeholder_image)
+                        .networkPolicy(NetworkPolicy.OFFLINE)
+                        .into(mGroupIcon);
 
                 username.setText(name);
 

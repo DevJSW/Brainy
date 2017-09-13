@@ -26,9 +26,10 @@
 
                 <ImageView
                     android:id="@+id/profile_image"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:layout_width="23dp"
+                    android:layout_height="23dp"
                     android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_account"
                     android:layout_margin="20dp"
                     android:layout_marginRight="5dp" />
 
@@ -45,8 +46,8 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:scaleType="fitXY"
-                        android:text="Edit profile"
-                        android:textSize="16dp"
+                        android:text="Profile"
+                        android:textSize="17dp"
                         android:textStyle="bold" />
 
 
@@ -76,9 +77,10 @@
 
                 <ImageView
                     android:id="@+id/settings_image"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:layout_width="23dp"
+                    android:layout_height="23dp"
                     android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_settings"
                     android:layout_margin="20dp"
                     android:layout_marginRight="5dp" />
 
@@ -96,7 +98,7 @@
                         android:layout_gravity="center_vertical"
                         android:scaleType="fitXY"
                         android:text="Settings"
-                        android:textSize="16dp"
+                        android:textSize="17dp"
                         android:textStyle="bold" />
 
 
@@ -125,9 +127,10 @@
 
                 <ImageView
                     android:id="@+id/notification_image"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:layout_width="23dp"
+                    android:layout_height="23dp"
                     android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_rate"
                     android:layout_margin="20dp"
                     android:layout_marginRight="5dp" />
 
@@ -145,7 +148,7 @@
                         android:layout_gravity="center_vertical"
                         android:scaleType="fitXY"
                         android:text="Rate this app"
-                        android:textSize="16dp"
+                        android:textSize="17dp"
                         android:textStyle="bold" />
 
 
@@ -164,8 +167,9 @@
 
                 <ImageView
                     android:id="@+id/shareapp_image"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:layout_width="23dp"
+                    android:layout_height="23dp"
+                    android:src="@drawable/ic_info"
                     android:layout_gravity="center_vertical"
                     android:layout_margin="20dp"
                     android:layout_marginRight="5dp" />
@@ -185,7 +189,7 @@
                         android:layout_marginLeft="4dp"
                         android:scaleType="fitXY"
                         android:text="About App"
-                        android:textSize="16dp"
+                        android:textSize="17dp"
                         android:textStyle="bold" />
 
 
@@ -215,10 +219,11 @@
 
                 <ImageView
                     android:id="@+id/post_image2"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
+                    android:layout_width="23dp"
+                    android:layout_height="23dp"
                     android:layout_gravity="center_vertical"
                     android:layout_margin="20dp"
+                    android:src="@drawable/ic_share"
                     android:layout_marginRight="5dp"
                     android:scaleType="fitXY" />
 
@@ -236,12 +241,11 @@
                         android:layout_gravity="center_vertical"
                         android:scaleType="fitXY"
                         android:text="Invite a friend"
-                        android:textSize="16dp"
+                        android:textSize="17dp"
                         android:textStyle="bold" />
 
 
                 </LinearLayout>
-
 
                 <RelativeLayout
                     android:layout_width="wrap_content"

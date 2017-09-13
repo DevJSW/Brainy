@@ -3,6 +3,8 @@ package com.brainy.brainy.activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -27,6 +29,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.brainy.brainy.R;
+import com.brainy.brainy.Services.GPSTracker;
 import com.brainy.brainy.tabs.tab1Questions;
 import com.brainy.brainy.tabs.tab2Inbox;
 import com.brainy.brainy.tabs.tab3Achievements;
@@ -38,8 +41,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,6 +56,10 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference mDatabaseUsers, mDatabaseQuestions;
     Context mContext;
     private FirebaseAuth auth;
+
+    GPSTracker gps;
+    Geocoder geocoder;
+    List<Address> addresses;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,11 +105,66 @@ public class MainActivity extends AppCompatActivity {
                 sendQuestion();
             }
         });
+
+
         
         initPageChanger();
         checkUserLoggedIn();
+      /*  getUserLocation();*/
 
     }
+
+    private void getUserLocation() {
+        geocoder = new Geocoder(this, Locale.getDefault());
+
+        // create class object
+        gps = new GPSTracker(MainActivity.this);
+        // check if GPS enabled
+        if(gps.canGetLocation()){
+            double latitude = gps.getLatitude();
+            double longitude = gps.getLongitude();
+            // \n is for new line
+            // Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+
+            mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("latitude").setValue(latitude);
+            mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("longitude").setValue(longitude);
+
+            try {
+                addresses = geocoder.getFromLocation(latitude, longitude, 1);
+
+                String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                String city = addresses.get(0).getLocality();
+                String state = addresses.get(0).getAdminArea();
+                String country = addresses.get(0).getCountryName();
+                String postalCode = addresses.get(0).getPostalCode();
+                String knownName = addresses.get(0).getFeatureName();
+
+                mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("city").setValue(city);
+                mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("country").setValue(country);
+                mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("address").setValue(address);
+
+                mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("address").setValue(address);
+                mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("city").setValue(city);
+                mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("state").setValue(state);
+                mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("country").setValue(country);
+                mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("postalCode").setValue(postalCode);
+                mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("knownName").setValue(knownName);
+                mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("city").setValue(city);
+                mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("country").setValue(country);
+                mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("address").setValue(address);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }else{
+            // can't get location
+            // GPS or Network is not enabled
+            // Ask user to enable GPS/network in settings
+            gps.showSettingsAlert();
+        }
+    }
+
 
     private void checkUserLoggedIn() {
 
@@ -218,7 +283,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -244,23 +308,13 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
     public static class PlaceholderFragment extends Fragment {
-        /**
-         * The fragment argument representing the section number for this
-         * fragment.
-         */
+
         private static final String ARG_SECTION_NUMBER = "section_number";
 
         public PlaceholderFragment() {
         }
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
         public static PlaceholderFragment newInstance(int sectionNumber) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();

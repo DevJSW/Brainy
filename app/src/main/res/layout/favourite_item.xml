@@ -34,11 +34,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:textSize="15dp"
+                android:textSize="16dp"
                 android:id="@+id/post_quiz_title"
                 android:textColor="@color/colorAccent"
                 android:layout_marginBottom="3dp"
                 android:text="Title"/>
+
             <com.brainy.brainy.data.MyFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -46,7 +47,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="15dp"
                 android:maxLines="3"
-                android:textSize="13dp"
+                android:textSize="14dp"
                 android:lineSpacingExtra="2dp"
                 android:text="Body"
                 android:layout_marginBottom="5dp"/>
