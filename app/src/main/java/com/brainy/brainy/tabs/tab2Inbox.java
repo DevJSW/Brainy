@@ -483,7 +483,10 @@ public class tab2Inbox extends Fragment {
 
                 final CircleImageView civ = (CircleImageView) mView.findViewById(R.id.sender_image);
 
-                Picasso.with(ctx).load(sender_image).networkPolicy(NetworkPolicy.OFFLINE).into(civ, new Callback() {
+                Picasso.with(ctx).load(sender_image)
+                        .networkPolicy(NetworkPolicy.OFFLINE)
+                        .placeholder(R.drawable.placeholder_image)
+                        .into(civ, new Callback() {
                     @Override
                     public void onSuccess() {
 
@@ -492,7 +495,10 @@ public class tab2Inbox extends Fragment {
                     @Override
                     public void onError() {
 
-                        Picasso.with(ctx).load(sender_image).into(civ);
+                        Picasso.with(ctx).load(sender_image)
+                                .networkPolicy(NetworkPolicy.OFFLINE)
+                                .placeholder(R.drawable.placeholder_image)
+                                .into(civ);
                     }
                 });
             }

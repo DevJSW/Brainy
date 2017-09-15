@@ -49,8 +49,14 @@ public class ReadQuestionActivity extends AppCompatActivity {
     Context mContext;
     private FirebaseAuth auth;
     String QuizKey = null;
+
+    private ImageView quizVoteUp;
+    private ImageView quizVoteDown;
+
     private Boolean mProcessApproval = false;
     private Boolean mProcessFavourite = false;
+
+    private Boolean mProcessPoints = false;
     private DatabaseReference mDatabaseFavourite, mDatabaseUsersFavourite;
 
     @Override
@@ -72,6 +78,8 @@ public class ReadQuestionActivity extends AppCompatActivity {
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseQuestions = FirebaseDatabase.getInstance().getReference().child("Questions");
 
+        quizVoteDown = (ImageView) findViewById(R.id.quiz_vote_down);
+        quizVoteUp = (ImageView) findViewById(R.id.quiz_vote_up);
 
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -249,8 +257,8 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                                             // getting user uid
                                             newPost.child("posted_answer").setValue(questionBodyTag);
-                                            newPost.child("question_title").setValue(question_title);
                                             newPost.child("sender_uid").setValue(auth.getCurrentUser().getUid());
+                                            newPost.child("question_title").setValue(question_title);
                                             newPost.child("sender_name").setValue(dataSnapshot.child("name").getValue());
                                             newPost.child("sender_image").setValue(dataSnapshot.child("user_image").getValue());
                                             newPost.child("posted_date").setValue(stringDate2);
@@ -261,7 +269,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                             newPost2.child("sender_image").setValue(dataSnapshot.child("user_image").getValue());
                                             newPost2.child("posted_date").setValue(stringDate2);
                                             newPost2.child("question_key").setValue(QuizKey);
-
+                                            newPost2.child("posted_quiz_title").setValue(question_title);
 
                                         }
 
@@ -278,15 +286,15 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                                             final String sender_uid = dataSnapshot.child("sender_uid").getValue().toString();
 
-                                            final DatabaseReference newPost2 = mDatabaseUsersInbox.child(sender_uid).push();
-                                            newPost2.child("posted_answer").setValue(questionBodyTag);
-                                            newPost2.child("sender_uid").setValue(auth.getCurrentUser().getUid());
-                                            newPost2.child("sender_name").setValue(name);
-                                            newPost2.child("sender_image").setValue(image);
-                                            newPost2.child("quiz_key").setValue(QuizKey);
-                                            newPost2.child("posted_date").setValue(stringDate2);
-                                            newPost2.child("question_key").setValue(QuizKey);
-                                            newPost2.child("posted_reason").setValue("answered your question");
+                                            final DatabaseReference newPost3 = mDatabaseUsersInbox.child(sender_uid).push();
+                                            newPost3.child("posted_answer").setValue(questionBodyTag);
+                                            newPost3.child("sender_uid").setValue(auth.getCurrentUser().getUid());
+                                            newPost3.child("sender_name").setValue(name);
+                                            newPost3.child("sender_image").setValue(image);
+                                            newPost3.child("quiz_key").setValue(QuizKey);
+                                            newPost3.child("posted_date").setValue(stringDate2);
+                                            newPost3.child("question_key").setValue(QuizKey);
+                                            newPost3.child("posted_reason").setValue("answered your question");
                                         }
 
                                         @Override
@@ -324,7 +332,10 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                 // load image on toolbar
                 CircleImageView userImgToolbar = (CircleImageView) findViewById(R.id.toolbarImg);
-                Picasso.with(ReadQuestionActivity.this).load(userimg).into(userImgToolbar);
+                Picasso.with(ReadQuestionActivity.this)
+                        .load(userimg)
+                        .placeholder(R.drawable.placeholder_image)
+                        .into(userImgToolbar);
 
                 // set username on toolbar
                 TextView toolbar_username = (TextView) findViewById(R.id.toolbar_username);
@@ -393,6 +404,285 @@ public class ReadQuestionActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
 
             }
+        });
+
+        intQuizVoting();
+
+    }
+
+    private void intQuizVoting() {
+
+        quizVoteUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if ((auth.getCurrentUser() != null))
+                {
+
+                    final Context context = ReadQuestionActivity.this;
+
+                    // custom dialog
+                    final Dialog dialog = new Dialog(context);
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.vote_dialog);
+                    dialog.setCancelable(false);
+                            /*dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));*/
+                    dialog.show();
+
+                    Button cancel = (Button) dialog.findViewById(R.id.cancel);
+                    cancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    Button create = (Button) dialog.findViewById(R.id.create);
+                    create.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            dialog.dismiss();
+                            mProcessApproval = true;
+
+                            mDatabaseQuestions.child(QuizKey).child("Quiz_votes").addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                    if (mProcessApproval) {
+
+                                        if (dataSnapshot.child("up_votes").hasChild(auth.getCurrentUser().getUid())) {
+
+                                                   /* mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").child(auth.getCurrentUser().getUid()).removeValue();*/
+                                            Toast.makeText(ReadQuestionActivity.this, "You have already voted",Toast.LENGTH_LONG).show();
+
+                                            //add user uid to points database
+                                            mDatabaseQuestions.child(QuizKey).child("Quiz_votes").child("up_votes").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                    TextView voteUpCount = (TextView) findViewById(R.id.vote_up_counter);
+                                                    voteUpCount.setText(dataSnapshot.getChildrenCount() + "");
+
+                                                }
+
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+
+                                                }
+                                            });
+                                            mProcessApproval = false;
+
+                                        } else{
+
+                                            mDatabaseQuestions.child(QuizKey).child("Quiz_votes").child("up_votes").child(auth.getCurrentUser().getUid()).setValue("iVote");
+
+                                            // CHECK IF USER HAS VOTED AND ADD 5 POINTS TO THE USER WHO POSTED THE QUESTION.....................
+
+                                            mDatabaseQuestions.child(QuizKey).addValueEventListener(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                    final String sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
+
+                                                    mDatabaseUsers.child(sender_uid).child("points_earned").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                            Long user_points = (Long) dataSnapshot.getValue();
+                                                            user_points = user_points + 5;
+
+                                                            mDatabaseUsers.child(sender_uid).child("points_earned").setValue(user_points);
+
+                                                        }
+
+                                                        @Override
+                                                        public void onCancelled(DatabaseError databaseError) {
+
+                                                        }
+                                                    });
+
+                                                }
+
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+
+                                                }
+
+                                            });
+
+                                            mDatabaseQuestions.child(QuizKey).child("Quiz_votes").child("up_votes").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                    TextView voteUpCount = (TextView) findViewById(R.id.vote_up_counter);
+                                                    voteUpCount.setText(dataSnapshot.getChildrenCount() + "");
+                                                }
+
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+
+                                                }
+                                            });
+                                            mProcessApproval = false;
+                                            Toast.makeText(ReadQuestionActivity.this, "Vote was successful",Toast.LENGTH_LONG).show();
+
+                                        }
+
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+
+                        }
+
+                    });
+
+                } else
+                {
+                    Toast.makeText(ReadQuestionActivity.this, "You need to have an account for you to vote",Toast.LENGTH_LONG).show();
+                }
+            }
+
+        });
+
+        quizVoteDown.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if ((auth.getCurrentUser() != null))
+                {
+
+                    final Context context = ReadQuestionActivity.this;
+
+                    // custom dialog
+                    final Dialog dialog = new Dialog(context);
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.vote_dialog);
+                    dialog.setCancelable(false);
+                            /*dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));*/
+                    dialog.show();
+
+                    Button cancel = (Button) dialog.findViewById(R.id.cancel);
+                    cancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+
+                    Button create = (Button) dialog.findViewById(R.id.create);
+                    create.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            dialog.dismiss();
+                            mProcessApproval = true;
+
+                            mDatabaseQuestions.child(QuizKey).child("Quiz_votes").addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                    if (mProcessApproval) {
+
+                                        if (dataSnapshot.child("down_votes").hasChild(auth.getCurrentUser().getUid())) {
+
+                                                   /* mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").child(auth.getCurrentUser().getUid()).removeValue();*/
+                                            Toast.makeText(ReadQuestionActivity.this, "You have already voted",Toast.LENGTH_LONG).show();
+
+                                            //add user uid to points database
+                                            mDatabaseQuestions.child(QuizKey).child("Quiz_votes").child("down_votes").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                    /*TextView voteUpCount = (TextView) findViewById(R.id.vote_up_counter);
+                                                    voteUpCount.setText(dataSnapshot.getChildrenCount() + "");*/
+                                                }
+
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+
+                                                }
+                                            });
+                                            mProcessApproval = false;
+
+                                        } else{
+
+                                            mDatabaseQuestions.child(QuizKey).child("Quiz_votes").child("down_votes").child(auth.getCurrentUser().getUid()).setValue("iVote");
+
+                                            // CHECK IF USER HAS VOTED AND ADD 5 POINTS TO THE USER WHO POSTED THE QUESTION.....................
+
+                                            mDatabaseQuestions.child(QuizKey).addValueEventListener(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                    final String sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
+
+                                                    mDatabaseUsers.child(sender_uid).child("points_earned").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                            Long user_points = (Long) dataSnapshot.getValue();
+                                                            user_points = user_points - 2;
+
+                                                            mDatabaseUsers.child(sender_uid).child("points_earned").setValue(user_points);
+
+                                                        }
+
+                                                        @Override
+                                                        public void onCancelled(DatabaseError databaseError) {
+
+                                                        }
+                                                    });
+
+                                                }
+
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+
+                                                }
+
+                                            });
+
+                                            mDatabaseQuestions.child(QuizKey).child("Quiz_votes").child("down_votes").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                    /*TextView voteUpCount = (TextView) findViewById(R.id.vote_up_counter);
+                                                    voteUpCount.setText(dataSnapshot.getChildrenCount() + "");*/
+                                                }
+
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+
+                                                }
+                                            });
+                                            mProcessApproval = false;
+                                            Toast.makeText(ReadQuestionActivity.this, "Vote was successful",Toast.LENGTH_LONG).show();
+
+                                        }
+
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+
+                        }
+
+                    });
+
+                } else
+                {
+                    Toast.makeText(ReadQuestionActivity.this, "You need to have an account for you to vote",Toast.LENGTH_LONG).show();
+                }
+            }
+
         });
 
 
@@ -475,12 +765,15 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                                                 if (dataSnapshot.child(answer_key).child("votes").hasChild(auth.getCurrentUser().getUid())) {
 
-                                                    mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").child(auth.getCurrentUser().getUid()).removeValue();
+                                                   /* mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").child(auth.getCurrentUser().getUid()).removeValue();*/
+                                                    Toast.makeText(ReadQuestionActivity.this, "You cannot vote more than once",Toast.LENGTH_LONG).show();
+
                                                     //add user uid to points database
                                                     mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").addListenerForSingleValueEvent(new ValueEventListener() {
                                                         @Override
                                                         public void onDataChange(DataSnapshot dataSnapshot) {
                                                             viewHolder.voteCount.setText(dataSnapshot.getChildrenCount() + "");
+
                                                         }
 
                                                         @Override
@@ -489,11 +782,47 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                                         }
                                                     });
                                                     mProcessApproval = false;
-                                                    Toast.makeText(ReadQuestionActivity.this, "You have removed your vote",Toast.LENGTH_LONG).show();
 
-                                                } else {
+                                                } else{
 
                                                     mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").child(auth.getCurrentUser().getUid()).setValue("iVote");
+
+                                                    // CHECK IF USER HAS VOTED AND ADD 10 POINTS TO THE USER WHO POSTED THE ANSWER.....................
+
+                                                    mDatabaseQuestions.child(QuizKey).addValueEventListener(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                            final String sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
+
+                                                            mDatabaseUsers.child(sender_uid).child("points_earned").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                @Override
+                                                                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                                    Long user_points = (Long) dataSnapshot.getValue();
+                                                                    user_points = user_points + 10;
+
+                                                                    mDatabaseUsers.child(sender_uid).child("points_earned").setValue(user_points);
+
+                                                                }
+
+                                                                @Override
+                                                                public void onCancelled(DatabaseError databaseError) {
+
+                                                                }
+                                                            });
+
+                                                        }
+
+                                                        @Override
+                                                        public void onCancelled(DatabaseError databaseError) {
+
+                                                        }
+
+                                                    });
+
+
+
                                                     mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").addListenerForSingleValueEvent(new ValueEventListener() {
                                                         @Override
                                                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -531,6 +860,109 @@ public class ReadQuestionActivity extends AppCompatActivity {
                 });
 
 
+                // DOWN VOTING AN ANSWER
+
+                viewHolder.downVote.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        mProcessApproval = true;
+
+                        mDatabaseQuestions.child(QuizKey).child("Answers").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                if (mProcessApproval) {
+
+                                    if (dataSnapshot.child(answer_key).child("down_votes").hasChild(auth.getCurrentUser().getUid())) {
+
+                                                   /* mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").child(auth.getCurrentUser().getUid()).removeValue();*/
+                                        Toast.makeText(ReadQuestionActivity.this, "You have already down voted",Toast.LENGTH_LONG).show();
+
+                                        //add user uid to points database
+                                        mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("down_votes").addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                viewHolder.voteCount.setText(dataSnapshot.getChildrenCount() + "");
+
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+                                        mProcessApproval = false;
+
+                                    } else{
+
+                                        mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("down_votes").child(auth.getCurrentUser().getUid()).setValue("iVote");
+
+                                        // CHECK IF USER HAS DOWN VOTED AND DEDUCT 2 POINTS TO THE USER WHO POSTED THE ANSWER.....................
+
+                                        mDatabaseQuestions.child(QuizKey).addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                final String sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
+
+                                                mDatabaseUsers.child(sender_uid).child("points_earned").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                        Long user_points = (Long) dataSnapshot.getValue();
+                                                        user_points = user_points - 2;
+
+                                                        mDatabaseUsers.child(sender_uid).child("points_earned").setValue(user_points);
+
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(DatabaseError databaseError) {
+
+                                                    }
+                                                });
+
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+
+                                        });
+
+
+
+                                        mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("down_votes").addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                viewHolder.voteCount.setText(dataSnapshot.getChildrenCount() + "");
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+                                        mProcessApproval = false;
+                                        Toast.makeText(ReadQuestionActivity.this, "Down vote was successful",Toast.LENGTH_LONG).show();
+
+                                    }
+
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
+                    }
+                });
+
+
             }
         };
 
@@ -543,7 +975,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
         DatabaseReference mDatabaseApproval;
         TextView  voteCount;
-        ImageView upVote;
+        ImageView upVote, downVote;
         FirebaseAuth mAuth;
         ProgressBar mProgressBar;
 
@@ -554,6 +986,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
             mAuth = FirebaseAuth.getInstance();
             voteCount = (TextView) mView.findViewById(R.id.voteCount);
             upVote = (ImageView) mView.findViewById(R.id.approve);
+            downVote = (ImageView) mView.findViewById(R.id.downvote);
         }
 
 

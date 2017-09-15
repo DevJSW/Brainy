@@ -94,6 +94,7 @@ public class EditProfileActivity extends AppCompatActivity {
         mProgress = new ProgressDialog(this);
         mStorage = FirebaseStorage.getInstance().getReference();
         mDatabaseUsers.keepSynced(true);
+        mDatabaseUsers2.keepSynced(true);
 
         username = (TextView) findViewById(R.id.username);
 

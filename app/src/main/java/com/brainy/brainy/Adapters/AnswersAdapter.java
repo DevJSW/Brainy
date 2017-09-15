@@ -103,6 +103,12 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
             post_title.setText(question_title);
         }
 
+        public void setPost_quiz_title(String post_quiz_title) {
+
+            TextView post_title = (TextView) mView.findViewById(R.id.post_quiz_title);
+            post_title.setText(post_quiz_title);
+        }
+
         public void setSender_image(final Context ctx, final String sender_image) {
 
             final CircleImageView civ = (CircleImageView) mView.findViewById(R.id.post_image);

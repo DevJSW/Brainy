@@ -35,9 +35,11 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:textSize="16dp"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:id="@+id/post_quiz_title"
                 android:textColor="@color/colorAccent"
-                android:layout_marginBottom="3dp"
+                android:layout_marginBottom="5dp"
                 android:text="Title"/>
 
             <com.brainy.brainy.data.MyFont
@@ -47,6 +49,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="15dp"
                 android:maxLines="3"
+                android:ellipsize="end"
                 android:textSize="14dp"
                 android:lineSpacingExtra="2dp"
                 android:text="Body"

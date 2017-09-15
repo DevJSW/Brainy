@@ -82,6 +82,7 @@
                     android:layout_marginTop="2dp"
                     android:id="@+id/post_quiz_title"
                     android:ellipsize="end"
+                    android:maxLines="1"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
                     android:textColor="@color/colorAccent"/>

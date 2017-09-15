@@ -29,6 +29,7 @@
                 <com.brainy.brainy.data.MyFont
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:lineSpacingExtra="2sp"
                     android:layout_margin="16dp"
                     android:id="@+id/user_bio"
                     />
