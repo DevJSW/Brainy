@@ -105,8 +105,6 @@ public class MainActivity extends AppCompatActivity {
                 sendQuestion();
             }
         });
-
-
         
         initPageChanger();
         checkUserLoggedIn();
@@ -224,6 +222,7 @@ public class MainActivity extends AppCompatActivity {
                             newPost.child("question_body").setValue(questionBodyTag);
                             newPost.child("sender_uid").setValue(auth.getCurrentUser().getUid());
                             newPost.child("sender_name").setValue(dataSnapshot.child("name").getValue());
+                            newPost.child("Unanswered").setValue(true);
                             newPost.child("sender_image").setValue(dataSnapshot.child("user_image").getValue());
                             newPost.child("posted_date").setValue(stringDate2);
 

@@ -12,8 +12,11 @@ import android.widget.TextView;
 import com.brainy.brainy.R;
 import com.brainy.brainy.data.Question;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -61,6 +64,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
         public TextView post_date;
         public ImageView civ;
         public TextView viewCounter, answersCounter, favouritesCounter;
+        private DatabaseReference  mDatabase;
 
         RelativeLayout answer_rely;
 
@@ -136,11 +140,14 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
 
         final Question c = mQuestionList.get(position);
       /*  String quiz_key = getRef(position).getKey();*/
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
+        mDatabase.keepSynced(true);
 
         holder.post_title.setText(c.getQuestion_title());
         holder.post_body .setText(c.getQuestion_body());
         holder.post_name.setText(c.getSender_name());
         holder.post_date.setText(c.getPosted_date());
+
 
       /*  holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -255,6 +255,11 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                                             String question_title = dataSnapshot.child("question_title").getValue().toString();
 
+                                            //DELETE UNANSERED CHILD FROM DATABASE
+                                            if (dataSnapshot.hasChild("Unanswered")) {
+                                                mDatabaseQuestions.child(QuizKey).child("Unanswered").removeValue();
+                                            }
+
                                             // getting user uid
                                             newPost.child("posted_answer").setValue(questionBodyTag);
                                             newPost.child("sender_uid").setValue(auth.getCurrentUser().getUid());
@@ -915,6 +920,11 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                                                         mDatabaseUsers.child(sender_uid).child("points_earned").setValue(user_points);
 
+                                                        //ALSO DEDUCT 1 POINT FROM THIS USER.....
+
+                                                        Long current_user_points = (Long) dataSnapshot.getValue();
+                                                        current_user_points = current_user_points - 1;
+
                                                     }
 
                                                     @Override
@@ -931,8 +941,6 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                             }
 
                                         });
-
-
 
                                         mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("down_votes").addListenerForSingleValueEvent(new ValueEventListener() {
                                             @Override
