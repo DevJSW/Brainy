@@ -5,28 +5,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.brainy.brainy.activity.AnswersActivity"
+    tools:context="com.brainy.brainy.activity.DiscussForumActivity"
     tools:showIn="@layout/activity_answers">
 
     <com.brainy.brainy.data.MyFont
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No Answers"
-        android:textSize="15dp"
+        android:text="No comments"
+        android:textSize="17dp"
         android:layout_gravity="center_horizontal"
         android:visibility="gone"
+        android:layout_centerInParent="true"
         android:layout_marginTop="15dp"
         android:id="@+id/noAnsTxt"
         android:textColor="@color/colorPrimary"/>
 
-    <android.support.v7.widget.RecyclerView
+    <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/mAnsList"
-        tools:layout_editor_absoluteY="0dp"
-        tools:layout_editor_absoluteX="8dp">
+        android:id="@+id/refresh">
+        <android.support.v7.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Chat_list"
+            >
 
+        </android.support.v7.widget.RecyclerView>
 
-    </android.support.v7.widget.RecyclerView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
 
 </RelativeLayout>

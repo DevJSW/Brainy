@@ -85,9 +85,11 @@ public class QuizProfileTab extends Fragment {
 
         mQuestionsList = (RecyclerView) v.findViewById(R.id.Questions_list);
         mLinearlayout = new LinearLayoutManager(getActivity());
+        mLinearlayout.setReverseLayout(true);
+        mLinearlayout.setStackFromEnd(true);
 
         mQuestionsList.setHasFixedSize(true);
-        mQuestionsList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mQuestionsList.setLayoutManager(mLinearlayout);
         mQuestionsList.setAdapter(questionAdapter);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.refresh);

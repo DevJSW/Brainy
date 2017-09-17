@@ -95,7 +95,7 @@
                 android:layout_marginRight="15dp"
                 android:ellipsize="end"
                 android:maxLines="3"
-                android:textSize="15dp"
+                android:textSize="16dp"
                 android:lineSpacingExtra="2dp"
                 android:text="Body"
                 android:layout_marginBottom="20dp"/>

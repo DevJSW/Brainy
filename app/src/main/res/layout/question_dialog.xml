@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Question title"
                 android:inputType="textEmailAddress"
-                android:maxLength="60"
+                android:maxLength="80"
                 android:layout_marginBottom="7dp"
                 android:maxLines="1"
                 android:singleLine="true"
@@ -39,7 +39,6 @@
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="10dp"
@@ -60,6 +59,41 @@
 
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/rl"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@+id/relly"
+        android:layout_marginBottom="10dp"
+        android:weightSum="2"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="#2ebbbebf"
+        >
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            />
+
+        <!--<View
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="#ee838080"/>
+
+        <Spinner
+            android:id="@+id/spinner2"
+            android:layout_width="match_parent"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            />-->
+
+    </LinearLayout>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -71,7 +105,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/liny"
-        android:layout_below="@+id/relly"
+        android:layout_below="@+id/rl"
         android:orientation="horizontal"
         android:weightSum="2">
 

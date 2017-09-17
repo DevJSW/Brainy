@@ -64,16 +64,7 @@
                 android:layout_marginRight="5dp"
                 android:orientation="vertical">
 
-                <com.brainy.brainy.data.MyFont
-                    android:id="@+id/post_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginTop="5dp"
-                    android:text="date"
-                    android:textColor="@color/colorAccent"
-                    android:textSize="9dp" />
+
 
 
                 <com.brainy.brainy.data.MyFont
@@ -86,55 +77,63 @@
                     android:lineSpacingExtra="2sp"
                     android:layout_marginRight="15dp"
                     android:text="Body"
-                    android:textSize="14dp" />
+                    android:textSize="16dp" />
 
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="right"
-                    android:layout_marginBottom="3dp"
+                    android:layout_marginBottom="5dp"
                     android:layout_marginRight="5dp"
                     android:orientation="horizontal">
 
 
-                    <!-- <RelativeLayout
+                     <RelativeLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
-                        <de.hdodenhof.circleimageview.CircleImageView
-                                android:layout_width="45dp"
-                                android:layout_height="45dp"
+                         <de.hdodenhof.circleimageview.CircleImageView
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
                                 android:layout_marginTop="7dp"
                                 android:layout_marginRight="5dp"
                                 android:id="@+id/post_image"
-                                android:layout_margin="10dp"
-                                app:civ_border_width="1dp"
-                                app:civ_border_color="#fff"
-                                android:src="@drawable/ic_profile_placeholder"/>
+                                android:layout_margin="1dp"
+                                android:src="@drawable/placeholder_image"/>
 
 
                     </RelativeLayout>
-    -->
-                    <com.brainy.brainy.data.MyFont
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:scaleType="fitXY"
-                        android:text=" - "
-                        android:textSize="14dp"
-                        android:textStyle="bold" />
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginRight="5dp"
+                        android:orientation="vertical">
 
-                    <com.brainy.brainy.data.MyFont
-                        android:id="@+id/post_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:scaleType="fitXY"
-                        android:text="username"
-                        android:textColor="#59a7e7"
-                        android:textSize="11dp"
-                        android:textStyle="bold" />
+                        <com.brainy.brainy.data.MyFont
+                            android:id="@+id/post_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="username"
+                            android:textColor="#59a7e7"
+                            android:layout_marginTop="3dp"
+                            android:textSize="11dp"
+                            android:textStyle="bold" />
 
+                        <com.brainy.brainy.data.MyFont
+                            android:id="@+id/post_date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="1dp"
+                            android:text="date"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="9dp" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 

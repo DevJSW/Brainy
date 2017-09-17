@@ -1,6 +1,7 @@
 package com.brainy.brainy.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.brainy.brainy.R;
+import com.brainy.brainy.activity.DiscussForumActivity;
+import com.brainy.brainy.activity.ReadQuestionActivity;
 import com.brainy.brainy.data.Question;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -40,9 +43,10 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
 
     FirebaseAuth mAuth;
 
-    public QuestionAdapter(Context c, List<Question> mQuestionList)
+    public QuestionAdapter(Context ctx, List<Question> mQuestionList)
     {
         this.mQuestionList = mQuestionList;
+        this.ctx = ctx;
     }
 
     @Override
@@ -64,7 +68,8 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
         public TextView post_date;
         public ImageView civ;
         public TextView viewCounter, answersCounter, favouritesCounter;
-        private DatabaseReference  mDatabase;
+        public DatabaseReference  mDatabase;
+        public  FirebaseAuth mAuth;
 
         RelativeLayout answer_rely;
 
@@ -72,17 +77,21 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
         public QuestionViewHolder(View itemView) {
             super(itemView);
 
+            mView = itemView;
+
             post_title = (TextView) itemView.findViewById(R.id.post_quiz_title);
             civ = (CircleImageView) itemView.findViewById(R.id.post_image);
             post_body = (TextView) itemView.findViewById(R.id.post_quiz_body);
             post_name = (TextView) itemView.findViewById(R.id.post_name);
             post_date = (TextView) itemView.findViewById(R.id.post_date);
 
+            mAuth= FirebaseAuth.getInstance();
+
             mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
-           /* viewCounter = (TextView) mView.findViewById(R.id.viewsCounter);
+            viewCounter = (TextView) mView.findViewById(R.id.viewsCounter);
             answersCounter = (TextView) mView.findViewById(R.id.answersCounter);
             favouritesCounter = (TextView) mView.findViewById(R.id.favouriteCounter);
-            answer_rely = (RelativeLayout) mView.findViewById(R.id.anser_rely);*/
+            answer_rely = (RelativeLayout) mView.findViewById(R.id.anser_rely);
 
         }
 
@@ -130,6 +139,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
         }
     }
 
+
     @Override
     public int getItemCount() {
         return mQuestionList.size();
@@ -139,9 +149,11 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
     public void onBindViewHolder(final QuestionViewHolder holder, int position) {
 
         final Question c = mQuestionList.get(position);
-      /*  String quiz_key = getRef(position).getKey();*/
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
+        mAuth= FirebaseAuth.getInstance();
         mDatabase.keepSynced(true);
+
+        final String quiz_key = c.getPost_id();
 
         holder.post_title.setText(c.getQuestion_title());
         holder.post_body .setText(c.getQuestion_body());
@@ -149,7 +161,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
         holder.post_date.setText(c.getPosted_date());
 
 
-      /*  holder.mView.setOnClickListener(new View.OnClickListener() {
+        holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -158,6 +170,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
                 }
                 Intent openRead = new Intent(ctx, ReadQuestionActivity.class);
                 openRead.putExtra("question_id", quiz_key );
+                ctx.startActivity(openRead);
 
             }
         });
@@ -165,7 +178,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
         holder.answer_rely.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent openRead = new Intent(ctx, AnswersActivity.class);
+                Intent openRead = new Intent(ctx, DiscussForumActivity.class);
                 openRead.putExtra("question_id", quiz_key );
 
             }
@@ -211,8 +224,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });*/
-
+        });
 
         Picasso.with(ctx)
                 .load(c.getSender_image())

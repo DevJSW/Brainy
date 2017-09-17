@@ -42,8 +42,8 @@
             android:label=""
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".activity.AnswersActivity"
-            android:label="Answers"
+            android:name=".activity.DiscussForumActivity"
+            android:label="Discuss forum"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.EditProfileActivity"

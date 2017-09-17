@@ -34,10 +34,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -67,7 +71,8 @@ public class ReadQuestionActivity extends AppCompatActivity {
         setSupportActionBar(my_toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        QuizKey = getIntent().getExtras().getString("question_id");
+        //QuizKey = getIntent().getExtras().getString("question_id");
+        QuizKey = getIntent().getStringExtra("question_id");
 
         // Database channels
         mDatabaseFavourite = FirebaseDatabase.getInstance().getReference().child("Questions").child(QuizKey).child("favourite");
@@ -144,12 +149,15 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                                             final DatabaseReference newPost = mDatabaseUsersFavourite.child(auth.getCurrentUser().getUid()).child(QuizKey);
 
-                                            newPost.child("question_title").setValue(question_title);
-                                            newPost.child("question_body").setValue(question_body);
-                                            newPost.child("sender_uid").setValue(auth.getCurrentUser().getUid());
-                                            newPost.child("sender_name").setValue(sender_name);
-                                            newPost.child("sender_image").setValue(sender_image);
-                                            newPost.child("posted_date").setValue(posted_date);
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("question_title", question_title);
+                                            map.put("question_body", question_body);
+                                            map.put("sender_uid", auth.getCurrentUser().getUid());
+                                            map.put("sender_name", sender_name);
+                                            map.put("sender_image", sender_image);
+                                            map.put("posted_date", posted_date);
+                                            map.put("post_id", newPost.getKey());
+                                            newPost.setValue(map);
 
                                         }
 
@@ -264,10 +272,12 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                             newPost.child("posted_answer").setValue(questionBodyTag);
                                             newPost.child("sender_uid").setValue(auth.getCurrentUser().getUid());
                                             newPost.child("question_title").setValue(question_title);
-                                            newPost.child("sender_name").setValue(dataSnapshot.child("name").getValue());
-                                            newPost.child("sender_image").setValue(dataSnapshot.child("user_image").getValue());
+                                            newPost.child("sender_name").setValue(name);
+                                            newPost.child("sender_image").setValue(image);
+                                            newPost.child("post_id").setValue(newPost.getKey());
                                             newPost.child("posted_date").setValue(stringDate2);
                                             newPost.child("question_key").setValue(QuizKey);
+
 
                                             //SEND ANSWER TO USEERS ANSWERS IN DATABASE
                                             newPost2.child("posted_answer").setValue(questionBodyTag);
@@ -412,7 +422,21 @@ public class ReadQuestionActivity extends AppCompatActivity {
         });
 
         intQuizVoting();
+        initDiscussForum();
 
+    }
+
+    private void initDiscussForum() {
+
+        RelativeLayout discuss_forum = (RelativeLayout) findViewById(R.id.forum);
+        discuss_forum.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent openRead = new Intent(ReadQuestionActivity.this, DiscussForumActivity.class);
+                openRead.putExtra("question_id", QuizKey );
+                startActivity(openRead);
+            }
+        });
     }
 
     private void intQuizVoting() {
@@ -714,7 +738,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                 viewHolder.setSender_name(model.getSender_name());
                 viewHolder.setPosted_date(model.getPosted_date());
                 viewHolder.setPosted_answer(model.getPosted_answer());
-              /*  viewHolder.setSender_image(getApplicationContext(), model.getSender_image());*/
+                viewHolder.setSender_image(getApplicationContext(), model.getSender_image());
 
                 mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -843,7 +867,6 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                                     Toast.makeText(ReadQuestionActivity.this, "Vote was successful",Toast.LENGTH_LONG).show();
 
                                                 }
-
                                             }
                                         }
 
@@ -1017,11 +1040,14 @@ public class ReadQuestionActivity extends AppCompatActivity {
         }
 
 
-      /*  public void setSender_image(final Context ctx, final String sender_image) {
+        public void setSender_image(final Context ctx, final String sender_image) {
 
             final ImageView civ = (ImageView) mView.findViewById(R.id.post_image);
 
-            Picasso.with(ctx).load(sender_image).networkPolicy(NetworkPolicy.OFFLINE).into(civ, new Callback() {
+            Picasso.with(ctx).load(sender_image)
+                    .networkPolicy(NetworkPolicy.OFFLINE)
+                    .placeholder(R.drawable.placeholder_image)
+                    .into(civ, new Callback() {
                 @Override
                 public void onSuccess() {
 
@@ -1031,10 +1057,13 @@ public class ReadQuestionActivity extends AppCompatActivity {
                 public void onError() {
 
 
-                    Picasso.with(ctx).load(sender_image).into(civ);
+                    Picasso.with(ctx)
+                            .load(sender_image)
+                            .placeholder(R.drawable.placeholder_image)
+                            .into(civ);
                 }
             });
-        }*/
+        }
 
     }
 

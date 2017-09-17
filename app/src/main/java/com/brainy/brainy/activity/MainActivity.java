@@ -2,19 +2,26 @@ package com.brainy.brainy.activity;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -24,8 +31,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.brainy.brainy.R;
@@ -43,14 +53,20 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
+import static com.brainy.brainy.R.layout.spinner_item;
 
 public class MainActivity extends AppCompatActivity {
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
+    String selectedTopic = null;
     private ViewPager mViewPager;
     private FloatingActionButton fab;
     private DatabaseReference mDatabaseUsers, mDatabaseQuestions;
@@ -60,6 +76,26 @@ public class MainActivity extends AppCompatActivity {
     GPSTracker gps;
     Geocoder geocoder;
     List<Address> addresses;
+
+    // Get reference of widgets from XML layout
+
+    // Initializing a String Array
+    String[] topics = new String[]{
+            "Tag your question...",
+            "Math",
+            "Computer science",
+            "Economics",
+            "Languages",
+            "Law",
+            "Physics",
+            "Chemistry",
+            "Aviation",
+            "Health Science"
+    };
+
+
+    final List<String> topicList = new ArrayList<>(Arrays.asList(topics));
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -182,12 +218,64 @@ public class MainActivity extends AppCompatActivity {
 
         final EditText questionTitleInput = (EditText) dialog.findViewById(R.id.questionTitleInput);
         final EditText questionBodyInput = (EditText) dialog.findViewById(R.id.questionBodyInput);
-        Button cancel = (Button) dialog.findViewById(R.id.cancel);
+        final Button cancel = (Button) dialog.findViewById(R.id.cancel);
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
             }
+        });
+        final Spinner spinner = (Spinner) dialog.findViewById(R.id.spinner);
+        // Initializing an ArrayAdapter
+        final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
+                MainActivity.this, R.layout.spinner_dialog_item,topicList){
+            @Override
+            public boolean isEnabled(int position){
+                if(position == 0)
+                {
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            @Override
+            public View getDropDownView(int position, View convertView,
+                                        ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+                if(position == 0){
+                    // Set the hint text color gray
+                    tv.setTextColor(Color.GRAY);
+                }
+                else {
+                    tv.setTextColor(Color.BLACK);
+                }
+                return view;
+            }
+        };
+        spinnerArrayAdapter.setDropDownViewResource(spinner_item);
+        spinner.setAdapter(spinnerArrayAdapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                // If user change the default selection
+                // First item is disable and it is used for hint
+                if(position > 0){
+                    selectedTopic = (String) parent.getItemAtPosition(position);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+
         });
 
         Button create = (Button) dialog.findViewById(R.id.create);
@@ -196,7 +284,6 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 startPosting();
-                dialog.dismiss();
             }
 
             private void startPosting() {
@@ -209,7 +296,11 @@ public class MainActivity extends AppCompatActivity {
                 final String questionBodyTag = questionBodyInput.getText().toString().trim();
                 if (TextUtils.isEmpty(questionTitlTag) || TextUtils.isEmpty(questionBodyTag)) {
 
+                } else if (selectedTopic == null) {
+
                 } else {
+
+                    dialog.dismiss();
 
                     final DatabaseReference newPost = mDatabaseQuestions.push();
 
@@ -217,14 +308,17 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
 
-                            // getting user uid
-                            newPost.child("question_title").setValue(questionTitlTag);
-                            newPost.child("question_body").setValue(questionBodyTag);
-                            newPost.child("sender_uid").setValue(auth.getCurrentUser().getUid());
-                            newPost.child("sender_name").setValue(dataSnapshot.child("name").getValue());
-                            newPost.child("Unanswered").setValue(true);
-                            newPost.child("sender_image").setValue(dataSnapshot.child("user_image").getValue());
-                            newPost.child("posted_date").setValue(stringDate2);
+                            Map<String, Object> map = new HashMap<>();
+                            map.put("question_title", questionTitlTag);
+                            map.put("question_body", questionBodyTag);
+                            map.put("sender_uid", auth.getCurrentUser().getUid());
+                            map.put("sender_name", dataSnapshot.child("name").getValue());
+                            map.put("Unanswered", true);
+                            map.put("sender_image", dataSnapshot.child("user_image").getValue());
+                            map.put("posted_date", stringDate2);
+                            map.put("tag", selectedTopic);
+                            map.put("post_id", newPost.getKey());
+                            newPost.setValue(map);
 
                             //newPost2.child(auth.getCurrentUser().getUid()).child("uid").setValue(dataSnapshot.getValue());
 
@@ -385,4 +479,6 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
     }
+
+
 }

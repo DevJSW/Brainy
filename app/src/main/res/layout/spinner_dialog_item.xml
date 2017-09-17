@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.brainy.brainy.data.MyFont
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:textStyle="italic"
+    android:fontFamily="sans-serif-medium"
+    android:text="topic"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:maxLines="1"
+    android:ellipsize="end"
+    android:textSize="15dp"
+    android:padding="10dp"
+    />

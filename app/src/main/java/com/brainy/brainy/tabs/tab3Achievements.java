@@ -313,7 +313,7 @@ public class tab3Achievements extends Fragment {
         newPost.child(auth.getCurrentUser().getUid()).child("sign_in_type").setValue("google_signIn");
         newPost.child(auth.getCurrentUser().getUid()).child("bio").setValue("");
         newPost.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Beginner");
-        newPost.child(auth.getCurrentUser().getUid()).child("points_earned").setValue(10);
+        newPost.child(auth.getCurrentUser().getUid()).child("points_earned").setValue("0");
 
     }
 
@@ -328,17 +328,17 @@ public class tab3Achievements extends Fragment {
         super.onStart();
 
         if (auth.getCurrentUser() != null) {
-            FirebaseRecyclerAdapter<Question, tab1Questions.LetterViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Question, tab1Questions.LetterViewHolder>(
+            FirebaseRecyclerAdapter<Question, tab3Achievements.LetterViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Question, tab3Achievements.LetterViewHolder>(
 
                     Question.class,
                     R.layout.favourite_item,
-                    tab1Questions.LetterViewHolder.class,
+                    tab3Achievements.LetterViewHolder.class,
                     mDatabaseUserFavourites.child(auth.getCurrentUser().getUid())
 
 
             ) {
                 @Override
-                protected void populateViewHolder(final tab1Questions.LetterViewHolder viewHolder, final Question model, int position) {
+                protected void populateViewHolder(final tab3Achievements.LetterViewHolder viewHolder, final Question model, int position) {
 
                     final String quiz_key = getRef(position).getKey();
                     final String PostKey = getRef(position).getKey();
