@@ -154,7 +154,7 @@ public class tab3Achievements extends Fragment {
         return view;
     }
 
-    public void onCreate(Bundle savedInstanceState) {
+   /* public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -162,8 +162,8 @@ public class tab3Achievements extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.findItem(R.id.action_search).setVisible(false);
-        /*menu.clear();*/
-    }
+        *//*menu.clear();*//*
+    }*/
 
     private void initSignIn() {
 
@@ -347,6 +347,7 @@ public class tab3Achievements extends Fragment {
                     viewHolder.setPosted_date(model.getPosted_date());
                     viewHolder.setQuestion_body(model.getQuestion_body());
                     viewHolder.setQuestion_title(model.getQuestion_title());
+                    viewHolder.setSender_image(getContext(),model.getSender_image());
 
                         viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -426,7 +427,7 @@ public class tab3Achievements extends Fragment {
             post_title.setText(question_title);
         }
 
-      /*  public void setSender_image(final Context ctx, final String sender_image) {
+        public void setSender_image(final Context ctx, final String sender_image) {
 
             final CircleImageView civ = (CircleImageView) mView.findViewById(R.id.post_image);
 
@@ -443,7 +444,7 @@ public class tab3Achievements extends Fragment {
                     Picasso.with(ctx).load(sender_image).into(civ);
                 }
             });
-        }*/
+        }
 
     }
 

@@ -718,8 +718,8 @@ public class ReadQuestionActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        super.onResume();
 
         final FirebaseRecyclerAdapter<Answer, AnswerViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Answer, AnswerViewHolder>(
 

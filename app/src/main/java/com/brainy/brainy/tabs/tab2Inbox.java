@@ -160,7 +160,7 @@ public class tab2Inbox extends Fragment {
         return view;
     }
 
-    public void onCreate(Bundle savedInstanceState) {
+  /*  public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -168,8 +168,8 @@ public class tab2Inbox extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.findItem(R.id.action_search).setVisible(false);
-        /*menu.clear();*/
-    }
+        *//*menu.clear();*//*
+    }*/
 
     private void initSignIn() {
 

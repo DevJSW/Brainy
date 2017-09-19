@@ -184,49 +184,65 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
             }
         });
 
-        // count number of views in a hashtag
-        mDatabase.child(quiz_key).child("views").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+        // count number of views in a views
 
-                holder.viewCounter.setText(dataSnapshot.getChildrenCount() + "");
-            }
+        if (quiz_key != null) {
+            mDatabase
+                    .child(quiz_key)
+                    .child("views")
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                            holder.viewCounter.setText(dataSnapshot.getChildrenCount() + "");
+                        }
 
-            }
-        });
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
+                        }
+                    });
+        }
         // count number of answers
-        mDatabase.child(quiz_key).child("Answers").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+        if (quiz_key != null) {
+            mDatabase
+                    .child(quiz_key)
+                    .child("Answers")
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
 
-                holder.answersCounter.setText(dataSnapshot.getChildrenCount() + "");
-            }
+                    holder.answersCounter.setText(dataSnapshot.getChildrenCount() + "");
+                }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        }
 
         // count number of favourites
-        mDatabase.child(quiz_key).child("favourite").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+        if (quiz_key != null) {
+            mDatabase
+                    .child(quiz_key)
+                    .child("favourite")
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
 
-                holder.favouritesCounter.setText(dataSnapshot.getChildrenCount() + "");
-            }
+                    holder.favouritesCounter.setText(dataSnapshot.getChildrenCount() + "");
+                }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        }
 
-        Picasso.with(ctx)
+        Picasso
+                .with(ctx)
                 .load(c.getSender_image())
                 .placeholder(R.drawable.placeholder_image)
                 .networkPolicy(NetworkPolicy.OFFLINE)
