@@ -8,8 +8,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -25,9 +27,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.brainy.brainy.Adapters.InboxAdapter;
+import com.brainy.brainy.Adapters.QuestionAdapter;
 import com.brainy.brainy.R;
 import com.brainy.brainy.activity.ReadQuestionActivity;
 import com.brainy.brainy.data.Answer;
+import com.brainy.brainy.data.Question;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -42,17 +47,22 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+import com.srx.widget.PullToLoadView;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -76,6 +86,16 @@ public class tab2Inbox extends Fragment {
     private FirebaseAuth auth;
     private TextView mNoInbox;
     private RecyclerView mInboxList;
+
+    SwipeRefreshLayout mSwipeRefreshLayout;
+
+    InboxAdapter inboxAdapter;
+    private final List<Answer> questionList = new ArrayList<>();
+    LinearLayoutManager mLinearlayout;
+
+    private static final int TOTAL_ITEMS_TO_LOAD = 10;
+    private int currentPage = 1;
+
 
     public tab2Inbox() {
         // Required empty public constructor
@@ -102,9 +122,9 @@ public class tab2Inbox extends Fragment {
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
 */
-        mInboxList = (RecyclerView) view.findViewById(R.id.Inbox_list);
+       /* mInboxList = (RecyclerView) view.findViewById(R.id.Inbox_list);
         mInboxList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mInboxList.setHasFixedSize(true);
+        mInboxList.setHasFixedSize(true);*/
 
         //auth
         auth = FirebaseAuth.getInstance();
@@ -129,7 +149,42 @@ public class tab2Inbox extends Fragment {
         }
 
         mNoInbox = (TextView) view.findViewById(R.id.noInboxTxt);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
+        inboxAdapter = new InboxAdapter(getActivity(), questionList);
 
+        mInboxList = (RecyclerView) view.findViewById(R.id.Inbox_list);
+        mLinearlayout = new LinearLayoutManager(getActivity());
+        mLinearlayout.setReverseLayout(true);
+        mLinearlayout.setStackFromEnd(true);
+
+        mInboxList.setHasFixedSize(true);
+        mInboxList.setLayoutManager(mLinearlayout);
+        mInboxList.setAdapter(inboxAdapter);
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        currentPage++;
+                        questionList.clear();
+                        LoadMessage();
+
+
+                    }
+                }, 3000);
+
+            }
+        });
+
+      /*  questionList.clear();
+        if (auth.getCurrentUser() != null) {
+            LoadMessage();
+        } else {}
+*/
 
         if (auth.getCurrentUser() != null) {
             mDatabaseUserInbox.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
@@ -160,16 +215,58 @@ public class tab2Inbox extends Fragment {
         return view;
     }
 
-  /*  public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
+    @Override
+    public void onResume() {
+        super.onResume();
+        questionList.clear();
+        if (auth.getCurrentUser() != null) {
+            LoadMessage();
+        } else {}
     }
 
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        menu.findItem(R.id.action_search).setVisible(false);
-        *//*menu.clear();*//*
-    }*/
+    private void LoadMessage() {
+
+        Query quizQuery = mDatabaseUserInbox.child(auth.getCurrentUser().getUid()).limitToLast(currentPage * TOTAL_ITEMS_TO_LOAD);
+
+        quizQuery.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                Answer message = dataSnapshot.getValue(Answer.class);
+
+                questionList.add(message);
+                inboxAdapter.notifyDataSetChanged();
+                inboxAdapter.notifyItemInserted(0);
+
+                mSwipeRefreshLayout.setRefreshing(false);
+
+              /*  mQuestionsList.scrollToPosition(questionList.size()-1);*/
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
 
     private void initSignIn() {
 
@@ -318,7 +415,7 @@ public class tab2Inbox extends Fragment {
 
     }
 
-        @Override
+       /* @Override
         public void onStart() {
             super.onStart();
             if (auth.getCurrentUser() != null) {
@@ -505,6 +602,6 @@ public class tab2Inbox extends Fragment {
 
         }
 
-
+*/
 
 }

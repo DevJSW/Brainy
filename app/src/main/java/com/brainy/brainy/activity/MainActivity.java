@@ -321,8 +321,6 @@ public class MainActivity extends AppCompatActivity {
                             map.put("post_id", newPost.getKey());
                             newPost.setValue(map);
 
-                            //newPost2.child(auth.getCurrentUser().getUid()).child("uid").setValue(dataSnapshot.getValue());
-
                         }
 
                         @Override

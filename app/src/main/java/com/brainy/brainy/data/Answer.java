@@ -13,12 +13,14 @@ public class Answer {
     private String sender_image;
     private String sender_name;
     private String sender_uid;
+    private String post_id;
+    private String question_key;
 
     public Answer() {
 
     }
 
-    public Answer(String posted_date, String post_answered, String posted_quiz_title, String posted_reason, String sender_image, String sender_name, String sender_uid) {
+    public Answer(String posted_date, String post_answered, String posted_quiz_title, String posted_reason, String sender_image, String sender_name, String sender_uid, String post_id, String question_key) {
         this.posted_date = posted_date;
         this.posted_answer = post_answered;
         this.posted_quiz_title = posted_quiz_title;
@@ -26,6 +28,8 @@ public class Answer {
         this.sender_image = sender_image;
         this.sender_name = sender_name;
         this.sender_uid = sender_uid;
+        this.post_id = post_id;
+        this.question_key = question_key;
     }
 
     public String getSender_uid() {
@@ -86,4 +90,21 @@ public class Answer {
     public void setPosted_quiz_title(String posted_quiz_title) {
         this.posted_quiz_title = posted_quiz_title;
     }
+
+    public String getPost_id() {
+        return post_id;
+    }
+
+    public void setPost_id(String post_id) {
+        this.post_id = post_id;
+    }
+
+    public String getQuestion_key() {
+        return question_key;
+    }
+
+    public void setQuestion_key(String question_key) {
+        this.question_key = question_key;
+    }
+
 }

@@ -59,7 +59,7 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_weight="1"
                         android:id="@+id/quiz_vote_up"
-                        android:src="@drawable/vote_up"/>
+                        android:src="@drawable/up_vote_line"/>
 
                     <com.brainy.brainy.data.MyFont
                         android:layout_width="wrap_content"
@@ -76,7 +76,7 @@
                         android:layout_gravity="center_horizontal"
                         android:layout_weight="1"
                         android:id="@+id/quiz_vote_down"
-                        android:src="@drawable/down_vote"/>
+                        android:src="@drawable/down_vote_line"/>
 
 
                 </LinearLayout>
@@ -294,6 +294,12 @@
 
             </android.support.v7.widget.RecyclerView>
 
+            <android.support.v4.widget.SwipeRefreshLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/refresh">
+
+            </android.support.v4.widget.SwipeRefreshLayout>
         </LinearLayout>
     </ScrollView>
 

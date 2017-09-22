@@ -25,7 +25,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="1"
                 android:id="@+id/approve"
-                android:src="@drawable/vote_up"/>
+                android:src="@drawable/up_vote_line"/>
 
             <com.brainy.brainy.data.MyFont
                 android:layout_width="wrap_content"
@@ -42,7 +42,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="1"
                 android:id="@+id/downvote"
-                android:src="@drawable/down_vote"/>
+                android:src="@drawable/down_vote_line"/>
 
 
 

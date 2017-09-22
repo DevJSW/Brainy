@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,22 +27,28 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.brainy.brainy.Adapters.AnswersAdapter;
+import com.brainy.brainy.Adapters.SolutionsAdapter;
 import com.brainy.brainy.R;
 import com.brainy.brainy.data.Answer;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -62,6 +70,14 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
     private Boolean mProcessPoints = false;
     private DatabaseReference mDatabaseFavourite, mDatabaseUsersFavourite;
+
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    SolutionsAdapter answersAdapter;
+    private final List<Answer> answerList = new ArrayList<>();
+    LinearLayoutManager mLinearlayout;
+
+    private static final int TOTAL_ITEMS_TO_LOAD = 10;
+    private int currentPage =1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,11 +105,46 @@ public class ReadQuestionActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
 
-        mAnsList = (RecyclerView) findViewById(R.id.mAnsList);
+       /* mAnsList = (RecyclerView) findViewById(R.id.mAnsList);
         mAnsList.setLayoutManager(layoutManager);
         mAnsList.setHasFixedSize(true);
-
+*/
         auth = FirebaseAuth.getInstance();
+
+
+        answersAdapter = new SolutionsAdapter(ReadQuestionActivity.this,answerList);
+
+        mAnsList = (RecyclerView) findViewById(R.id.mAnsList);
+        mLinearlayout = new LinearLayoutManager(ReadQuestionActivity.this);
+
+        mAnsList.setHasFixedSize(true);
+        mAnsList.setLayoutManager(new LinearLayoutManager(ReadQuestionActivity.this));
+        mAnsList.setAdapter(answersAdapter);
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        currentPage++;
+                        answerList.clear();
+                        LoadMessage();
+
+
+                    }
+                },3000);
+
+            }
+        });
+
+        answerList.clear();
+        LoadMessage();
+
 
         // SYNC DATABASE
         mDatabaseQuestions.keepSynced(true);
@@ -277,6 +328,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                             newPost.child("post_id").setValue(newPost.getKey());
                                             newPost.child("posted_date").setValue(stringDate2);
                                             newPost.child("question_key").setValue(QuizKey);
+                                            newPost.child("post_id").setValue(newPost.getKey());
 
 
                                             //SEND ANSWER TO USEERS ANSWERS IN DATABASE
@@ -285,6 +337,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                             newPost2.child("posted_date").setValue(stringDate2);
                                             newPost2.child("question_key").setValue(QuizKey);
                                             newPost2.child("posted_quiz_title").setValue(question_title);
+                                            newPost2.child("post_id").setValue(newPost2.getKey());
 
                                         }
 
@@ -302,14 +355,18 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                             final String sender_uid = dataSnapshot.child("sender_uid").getValue().toString();
 
                                             final DatabaseReference newPost3 = mDatabaseUsersInbox.child(sender_uid).push();
-                                            newPost3.child("posted_answer").setValue(questionBodyTag);
-                                            newPost3.child("sender_uid").setValue(auth.getCurrentUser().getUid());
-                                            newPost3.child("sender_name").setValue(name);
-                                            newPost3.child("sender_image").setValue(image);
-                                            newPost3.child("quiz_key").setValue(QuizKey);
-                                            newPost3.child("posted_date").setValue(stringDate2);
-                                            newPost3.child("question_key").setValue(QuizKey);
-                                            newPost3.child("posted_reason").setValue("answered your question");
+
+                                            Map<String, Object> map = new HashMap<>();
+                                            map.put("posted_reason", "answered your question");
+                                            map.put("posted_answer", questionBodyTag);
+                                            map.put("sender_uid", auth.getCurrentUser().getUid());
+                                            map.put("sender_name", name);
+                                            map.put("read", false);
+                                            map.put("question_key", QuizKey);
+                                            map.put("sender_image", image);
+                                            map.put("posted_date", stringDate2);
+                                            map.put("post_id", newPost3.getKey());
+                                            newPost3.setValue(map);
                                         }
 
                                         @Override
@@ -421,8 +478,74 @@ public class ReadQuestionActivity extends AppCompatActivity {
             }
         });
 
+        //DISPLAY NUMBER OF UP VOTES A QUIZ HAS.....
+        mDatabaseQuestions.child(QuizKey).child("Quiz_votes").child("up_votes").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                TextView voteUpCount = (TextView) findViewById(R.id.vote_up_counter);
+                voteUpCount.setText(dataSnapshot.getChildrenCount() + "");
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         intQuizVoting();
         initDiscussForum();
+
+    }
+
+    private void LoadMessage() {
+
+        Query quizQuery = mDatabaseQuestions.child(QuizKey).child("Answers").limitToLast(currentPage * TOTAL_ITEMS_TO_LOAD);
+
+        if (quizQuery == null) {
+
+         /*   noAns.setVisibility(View.VISIBLE);*/
+
+        } else {
+
+           /* noAns.setVisibility(View.GONE);*/
+        }
+
+        quizQuery.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                Answer message = dataSnapshot.getValue(Answer.class);
+
+                answerList.add(message);
+                answersAdapter.notifyDataSetChanged();
+
+                mSwipeRefreshLayout.setRefreshing(false);
+
+              /*  mQuestionsList.scrollToPosition(questionList.size()-1);*/
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
     }
 
@@ -717,7 +840,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
     }
 
-    @Override
+    /*@Override
     protected void onResume() {
         super.onResume();
 
@@ -767,7 +890,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                             dialog.setContentView(R.layout.vote_dialog);
                             dialog.setCancelable(false);
-                            /*dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));*/
+                            *//*dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));*//*
                             dialog.show();
 
                             Button cancel = (Button) dialog.findViewById(R.id.cancel);
@@ -794,7 +917,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                                                 if (dataSnapshot.child(answer_key).child("votes").hasChild(auth.getCurrentUser().getUid())) {
 
-                                                   /* mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").child(auth.getCurrentUser().getUid()).removeValue();*/
+                                                   *//* mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").child(auth.getCurrentUser().getUid()).removeValue();*//*
                                                     Toast.makeText(ReadQuestionActivity.this, "You cannot vote more than once",Toast.LENGTH_LONG).show();
 
                                                     //add user uid to points database
@@ -904,7 +1027,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                                     if (dataSnapshot.child(answer_key).child("down_votes").hasChild(auth.getCurrentUser().getUid())) {
 
-                                                   /* mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").child(auth.getCurrentUser().getUid()).removeValue();*/
+                                                   *//* mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").child(auth.getCurrentUser().getUid()).removeValue();*//*
                                         Toast.makeText(ReadQuestionActivity.this, "You have already down voted",Toast.LENGTH_LONG).show();
 
                                         //add user uid to points database
@@ -1067,7 +1190,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
     }
 
-
+*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
