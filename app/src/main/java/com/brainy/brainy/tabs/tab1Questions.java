@@ -2,6 +2,7 @@ package com.brainy.brainy.tabs;
 
 
 import android.app.SearchManager;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,6 +29,7 @@ import android.widget.Toast;
 
 import com.brainy.brainy.Adapters.QuestionAdapter;
 import com.brainy.brainy.activity.MainActivity;
+import com.brainy.brainy.activity.SearchActivity;
 import com.brainy.brainy.data.Question;
 import com.brainy.brainy.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -63,8 +65,6 @@ public class tab1Questions extends Fragment {
     private RecyclerView mQuestionsList;
     private ProgressBar mProgressBar;
     private Spinner spinner1;
-
-
     private ViewPager mViewPager;
     PullToLoadView pullToLoadView;
 
@@ -138,6 +138,7 @@ public class tab1Questions extends Fragment {
                 return view;
             }
         };
+
         spinnerArrayAdapter.setDropDownViewResource(spinner_item);
         spinner.setAdapter(spinnerArrayAdapter);
 
@@ -175,7 +176,6 @@ public class tab1Questions extends Fragment {
 
                     questionList.clear();
                     topicFilterMessage();
-
 
                 }
             }
@@ -620,9 +620,13 @@ public class tab1Questions extends Fragment {
 
         switch (item.getItemId()) {
             case R.id.action_search:
+
+                Intent myIntent = new Intent(getActivity(), SearchActivity.class);
+               /* myIntent.putExtra("key", value); //Optional parameters*/
+                getActivity().startActivity(myIntent);
                 return true;
 
-            /*case R.id.menuLogout :
+           /* case R.id.a :
                 logoutUser();
                 return true;*/
 
@@ -637,7 +641,7 @@ public class tab1Questions extends Fragment {
         MenuItem mSearchMenuItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) mSearchMenuItem.getActionView();
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+       /* searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 return false;
@@ -686,7 +690,7 @@ public class tab1Questions extends Fragment {
                 return true;
             }
 
-        });
+        });*/
     }
 
 }

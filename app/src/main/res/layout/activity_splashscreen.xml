@@ -13,8 +13,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <ImageView
-            android:layout_width="75dp"
-            android:layout_height="75dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:id="@+id/splash"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="25dp"

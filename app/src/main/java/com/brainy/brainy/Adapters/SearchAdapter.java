@@ -1,6 +1,7 @@
 package com.brainy.brainy.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.brainy.brainy.R;
+import com.brainy.brainy.activity.ReadQuestionActivity;
 import com.brainy.brainy.data.Answer;
 import com.brainy.brainy.data.Question;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,25 +30,26 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by Shephard on 8/7/2017.
  */
 
-public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersViewHolder>
+public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.AnswersViewHolder>
 {
 
-    private List<Answer>  mAnswersList;
+    private List<Question>  mAnswersList;
     Context ctx;
 
     private DatabaseReference mDatabase;
     FirebaseAuth mAuth;
 
-    public AnswersAdapter(Context c, List<Answer> mAnswersList)
+    public SearchAdapter(Context ctx, List<Question> mAnswersList)
     {
         this.mAnswersList = mAnswersList;
+        this.ctx = ctx;
     }
 
     @Override
     public AnswersViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.answer3_item,parent, false);
+                .inflate(R.layout.search_item,parent, false);
 
         return new AnswersViewHolder(v);
     }
@@ -69,6 +72,7 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
 
         public AnswersViewHolder(View itemView) {
             super(itemView);
+            mView = itemView;
 
             post_answer = (TextView) itemView.findViewById(R.id.posted_answer);
             post_quiz_title = (TextView) itemView.findViewById(R.id.post_quiz_title);
@@ -77,7 +81,7 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
             post_name = (TextView) itemView.findViewById(R.id.post_name);
             post_date = (TextView) itemView.findViewById(R.id.post_date);
             voteCount = (TextView) itemView.findViewById(R.id.voteCount);
-
+            mAuth= FirebaseAuth.getInstance();
             mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
 
         }
@@ -148,59 +152,29 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
     @Override
     public void onBindViewHolder(final AnswersViewHolder holder, int position) {
 
-        final Answer c = mAnswersList.get(position);
+        final Question c = mAnswersList.get(position);
       /*  String quiz_key = getRef(position).getKey();*/
 
+        holder.post_answer.setText(c.getQuestion_body());
+        holder.post_quiz_title.setText(c.getQuestion_title());
 
-       /* holder.post_name.setText(c.getSender_name());*/
-        holder.post_answer.setText(c.getPosted_answer());
-        holder.post_date.setText(c.getPosted_date());
-        holder.post_quiz_title.setText(c.getPosted_quiz_title());
-
-        final String answer_key = c.getPost_id();
-        final String QuizKey = c.getQuestion_key();
-
-        //COUNT NUMBER OF VOTE ON ANSWERS
-        if (answer_key != null) {
-            mDatabase
-                    .child(QuizKey)
-                    .child("Answers")
-                    .child(answer_key)
-                    .child("votes")
-                    .addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
-                        @Override
-                        public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
-                            holder.voteCount.setText(dataSnapshot.getChildrenCount() + "");
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-        }
+        final String quiz_key = c.getPost_id();
 
 
-        /*Picasso.with(ctx)
-                .load(c.getSender_image())
-                .placeholder(R.drawable.placeholder_image)
-                .networkPolicy(NetworkPolicy.OFFLINE)
-                .into(holder.civ, new Callback() {
+        holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSuccess() {
+            public void onClick(View v) {
+
+                if (mAuth.getCurrentUser() != null) {
+                    mDatabase.child(quiz_key).child("views").child(mAuth.getCurrentUser().getUid()).setValue("iView");
+                }
+                Intent openRead = new Intent(ctx, ReadQuestionActivity.class);
+                openRead.putExtra("question_id", quiz_key );
+                ctx.startActivity(openRead);
 
             }
+        });
 
-            @Override
-            public void onError() {
-
-                Picasso.with(ctx)
-                        .load(c.getSender_image())
-                        .placeholder(R.drawable.placeholder_image)
-                        .networkPolicy(NetworkPolicy.OFFLINE)
-                        .into(holder.civ);
-            }
-        });*/
     }
 
 }

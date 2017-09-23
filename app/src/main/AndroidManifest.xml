@@ -48,7 +48,10 @@
         <activity
             android:name=".activity.EditProfileActivity"
             android:label="Profile"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.SearchActivity"
+            ></activity>
     </application>
 
 </manifest>
