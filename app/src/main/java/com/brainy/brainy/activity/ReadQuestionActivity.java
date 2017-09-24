@@ -56,7 +56,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ReadQuestionActivity extends AppCompatActivity {
 
     private RelativeLayout share, favourite, answer;
-    private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseUsersInbox, mDatabaseUsersPoints, mDatabaseUsersAns;
+    private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseUsersInbox, mDatabaseUsersPoints, mDatabaseUsersAns, mDatabaseNotifications;
     private RecyclerView mAnsList;
     Context mContext;
     private FirebaseAuth auth;
@@ -98,6 +98,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
         mDatabaseUsersAns = FirebaseDatabase.getInstance().getReference().child("Users_answers");
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseQuestions = FirebaseDatabase.getInstance().getReference().child("Questions");
+        mDatabaseNotifications = FirebaseDatabase.getInstance().getReference().child("Notifications");
 
         quizVoteDown = (ImageView) findViewById(R.id.quiz_vote_down);
         quizVoteUp = (ImageView) findViewById(R.id.quiz_vote_up);
@@ -113,7 +114,6 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
 
         answersAdapter = new SolutionsAdapter(ReadQuestionActivity.this,answerList);
-
         mAnsList = (RecyclerView) findViewById(R.id.mAnsList);
         mLinearlayout = new LinearLayoutManager(ReadQuestionActivity.this);
 
@@ -301,6 +301,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                             final DatabaseReference newPost = mDatabaseQuestions.child(QuizKey).child("Answers").push();
                             final DatabaseReference newPost2 = mDatabaseUsersAns.child(auth.getCurrentUser().getUid()).push();
 
+
                             mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -347,14 +348,29 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                         }
                                     });
 
-                                        //SEND MESSAGE TO QUIZ OWNER'S INBOX
+
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+
+
+                        } if( !TextUtils.isEmpty(questionBodyTag)) {
+
+                            mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                    final String name = dataSnapshot.child("name").getValue().toString();
+                                    final String image = dataSnapshot.child("user_image").getValue().toString();
+                                    final DatabaseReference newPost3 = mDatabaseUsersInbox.child(auth.getCurrentUser().getUid()).push();
+                                    //SEND MESSAGE TO QUIZ OWNER'S INBOX
                                     mDatabaseQuestions.child(QuizKey).addValueEventListener(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                            final String sender_uid = dataSnapshot.child("sender_uid").getValue().toString();
-
-                                            final DatabaseReference newPost3 = mDatabaseUsersInbox.child(sender_uid).push();
 
                                             Map<String, Object> map = new HashMap<>();
                                             map.put("posted_reason", "answered your question");
@@ -367,6 +383,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                             map.put("posted_date", stringDate2);
                                             map.put("post_id", newPost3.getKey());
                                             newPost3.setValue(map);
+
                                         }
 
                                         @Override
@@ -384,7 +401,6 @@ public class ReadQuestionActivity extends AppCompatActivity {
                             });
 
                         }
-
                     }
                 });
             }

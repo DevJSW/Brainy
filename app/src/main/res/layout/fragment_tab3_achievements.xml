@@ -58,7 +58,7 @@
     <com.brainy.brainy.data.MyFont
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="The favourite tray is where all your favourite questions are stored for future reference."
+        android:text="The favourite tray is where all your favourite questions are stored for easy reference."
         android:layout_above="@+id/signIn"
         android:layout_centerHorizontal="true"
         android:layout_marginRight="20dp"

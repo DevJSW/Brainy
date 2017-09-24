@@ -44,6 +44,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -299,7 +300,7 @@ public class tab3Achievements extends Fragment {
 
         Date date = new Date();
         final String stringDate = DateFormat.getDateInstance().format(date);
-
+        String deviceToken = FirebaseInstanceId.getInstance().getToken();
 
         final DatabaseReference newPost = mDatabaseUsers;
 
@@ -311,9 +312,9 @@ public class tab3Achievements extends Fragment {
         newPost.child(auth.getCurrentUser().getUid()).child("uid").setValue(auth.getCurrentUser().getUid());
         newPost.child(auth.getCurrentUser().getUid()).child("user_gmail").setValue(personEmail);
         newPost.child(auth.getCurrentUser().getUid()).child("sign_in_type").setValue("google_signIn");
-        newPost.child(auth.getCurrentUser().getUid()).child("bio").setValue("");
         newPost.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Beginner");
         newPost.child(auth.getCurrentUser().getUid()).child("points_earned").setValue("0");
+        newPost.child(auth.getCurrentUser().getUid()).child("device_token").setValue(deviceToken);
 
     }
 

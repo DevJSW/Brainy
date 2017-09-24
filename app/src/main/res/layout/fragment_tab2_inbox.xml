@@ -73,6 +73,7 @@
             android:layout_height="40dp"
             android:padding="5dp"
             android:id="@+id/signIn"
+            android:layout_marginTop="5dp"
             android:background="@drawable/button_bg"
             android:textColor="@color/colorAccent"
             android:text="Sign in"

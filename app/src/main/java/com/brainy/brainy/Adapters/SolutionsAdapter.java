@@ -45,7 +45,7 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
     private List<Answer>  mAnswersList;
     Context ctx;
 
-    private DatabaseReference mDatabase, mDatabaseUsers;
+    private DatabaseReference mDatabase, mDatabaseUsers, mDatabaseUsersAns;
     FirebaseAuth mAuth;
 
     public SolutionsAdapter(Context c, List<Answer> mAnswersList)
@@ -87,8 +87,14 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
             upVote = (ImageView) itemView.findViewById(R.id.approve);
             downVote = (ImageView) itemView.findViewById(R.id.downvote);
 
+            mAuth = FirebaseAuth.getInstance();
             mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
             mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+            mDatabaseUsersAns = FirebaseDatabase.getInstance().getReference().child("Users_answers").child(mAuth.getCurrentUser().getUid());
+
+            mDatabase.keepSynced(true);
+            mDatabaseUsers.keepSynced(true);
+            mDatabaseUsersAns.keepSynced(true);
 
         }
 
@@ -230,7 +236,8 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
                                     } else {
 
                                         mDatabase.child(QuizKey).child("Answers").child(answer_key).child("votes").child(mAuth.getCurrentUser().getUid()).setValue("iVote");
-
+                                        //PROFILE USER ANSWERS
+                                        mDatabaseUsersAns.child(answer_key).child("votes").setValue("iVote");
                                         // CHECK IF USER HAS VOTED AND ADD 10 POINTS TO THE USER WHO POSTED THE ANSWER.....................
                                         mDatabase.child(QuizKey).addValueEventListener(new ValueEventListener() {
                                             @Override

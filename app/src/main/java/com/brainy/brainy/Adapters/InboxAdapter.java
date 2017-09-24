@@ -175,7 +175,6 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.QuestionView
                 if (read_status.equals(true) ) {
 
                     holder.post_answer.setTextColor(Color.parseColor("#ABABAB"));
-
                 } else {
 
                     holder.post_answer.setTextColor(Color.BLACK);

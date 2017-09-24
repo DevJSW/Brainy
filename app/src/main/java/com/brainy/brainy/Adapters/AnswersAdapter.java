@@ -34,7 +34,7 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
     private List<Answer>  mAnswersList;
     Context ctx;
 
-    private DatabaseReference mDatabase;
+    private DatabaseReference mDatabase, mDatabaseProfileAns;
     FirebaseAuth mAuth;
 
     public AnswersAdapter(Context c, List<Answer> mAnswersList)
@@ -77,8 +77,11 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
             post_name = (TextView) itemView.findViewById(R.id.post_name);
             post_date = (TextView) itemView.findViewById(R.id.post_date);
             voteCount = (TextView) itemView.findViewById(R.id.voteCount);
-
+            mAuth = FirebaseAuth.getInstance();
             mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
+            mDatabaseProfileAns = FirebaseDatabase.getInstance().getReference().child("Users_answers").child(mAuth.getCurrentUser().getUid());
+            mDatabase.keepSynced(true);
+            mDatabaseProfileAns.keepSynced(true);
 
         }
 
@@ -157,6 +160,7 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
         holder.post_date.setText(c.getPosted_date());
         holder.post_quiz_title.setText(c.getPosted_quiz_title());
 
+
         final String answer_key = c.getPost_id();
         final String QuizKey = c.getQuestion_key();
 
@@ -165,6 +169,24 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
             mDatabase
                     .child(QuizKey)
                     .child("Answers")
+                    .child(answer_key)
+                    .child("votes")
+                    .addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
+                        @Override
+                        public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
+                            holder.voteCount.setText(dataSnapshot.getChildrenCount() + "");
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+        }
+
+        //COUNT PROFILE USER ANSWERS
+        if (answer_key != null) {
+            mDatabaseProfileAns
                     .child(answer_key)
                     .child("votes")
                     .addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
