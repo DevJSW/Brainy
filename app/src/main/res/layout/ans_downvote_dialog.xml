@@ -49,7 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16dp"
-                android:text="Voting for this question means you found it USEFUL. This individual will be AWARDED 5 Points! "/>
+                android:text="Down-Voting this answer means you find it INCORRECT or MISLEADING. This individual will LOOSE 2 Points! and you will also LOOSE 1 Point! "/>
 
         </android.support.design.widget.TextInputLayout>
 

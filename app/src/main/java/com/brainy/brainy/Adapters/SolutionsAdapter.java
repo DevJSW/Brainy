@@ -23,6 +23,7 @@ import com.brainy.brainy.activity.ReadQuestionActivity;
 import com.brainy.brainy.data.Answer;
 import com.brainy.brainy.data.brainy;
 import com.firebase.client.DataSnapshot;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -49,9 +50,10 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
     private DatabaseReference mDatabase, mDatabaseUsers, mDatabaseUsersAns;
     FirebaseAuth mAuth;
 
-    public SolutionsAdapter(Context c, List<Answer> mAnswersList)
+    public SolutionsAdapter(Context ctx, List<Answer> mAnswersList)
     {
         this.mAnswersList = mAnswersList;
+        this.ctx = ctx;
     }
 
     @Override
@@ -146,7 +148,7 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
     }
 
     @Override
-    public void onBindViewHolder(final AnswersViewHolder holder, int position) {
+    public void onBindViewHolder(final AnswersViewHolder holder, final int position) {
 
       /*  String quiz_key = getRef(position).getKey();*/
 
@@ -156,6 +158,8 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         final Boolean[] mProcessApproval = {false};
         mDatabase.keepSynced(true);
+
+        mAuth = FirebaseAuth.getInstance();
 
         final String answer_key = c.getPost_id();
         final String QuizKey = c.getQuestion_key();
@@ -187,17 +191,16 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
 
         holder.upVote.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
 
                 if ((mAuth.getCurrentUser() != null))
                 {
 
-                   /* // custom dialog
+                    // custom dialog
                     final Dialog dialog = new Dialog(ctx);
                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    dialog.setContentView(R.layout.vote_dialog);
+                    dialog.setContentView(R.layout.up_vote_dialog);
                     dialog.setCancelable(false);
-                            /*//*dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));*//**//*
                     dialog.show();
 
                     Button cancel = (Button) dialog.findViewById(R.id.cancel);
@@ -211,9 +214,9 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
                     Button create = (Button) dialog.findViewById(R.id.create);
                     create.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(View v) {
+                        public void onClick(final View v) {
 
-                            dialog.dismiss();*/
+                            dialog.dismiss();
                             mProcessApproval[0] = true;
 
                             mDatabase.child(QuizKey).child("Answers").addValueEventListener(new ValueEventListener() {
@@ -222,7 +225,8 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
 
                                     if (dataSnapshot.child(answer_key).child("votes").hasChild(mAuth.getCurrentUser().getUid())) {
 
-                                       /* Snackbar.make(ctx, "You have already voted ", Snackbar.LENGTH_SHORT).show();*/
+                                        Toast.makeText(ctx, "You have already voted for this answer",Toast.LENGTH_LONG).show();
+                                        /*Snackbar.make(v, "You have already voted for this answer ", Snackbar.LENGTH_SHORT).show();*/
 
                                         mDatabase.child(QuizKey).child("Answers").child(answer_key).child("votes").addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
                                             @Override
@@ -240,6 +244,7 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
                                         mDatabase.child(QuizKey).child("Answers").child(answer_key).child("votes").child(mAuth.getCurrentUser().getUid()).setValue("iVote");
                                         //PROFILE USER ANSWERS
                                         mDatabaseUsersAns.child(answer_key).child("votes").setValue("iVote");
+
                                         // CHECK IF USER HAS VOTED AND ADD 10 POINTS TO THE USER WHO POSTED THE ANSWER.....................
                                         mDatabase.child(QuizKey).addValueEventListener(new ValueEventListener() {
                                             @Override
@@ -279,7 +284,8 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
                                             }
                                         });
 
-                                     //   Toast.makeText(ctx, "Vote was successful",Toast.LENGTH_LONG).show();
+                                        /*Toast.makeText(ctx, "Vote was successful",Toast.LENGTH_LONG).show();*/
+                                        Snackbar.make(v, "Vote was successful ", Snackbar.LENGTH_SHORT).show();
 
                                     }
 
@@ -290,14 +296,23 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
 
                                 }
                             });
-/*
                         }
 
-                    });*/
+                    });
 
                 } else
                 {
-                    Toast.makeText(ctx, "You need to have an account for you to vote",Toast.LENGTH_LONG).show();
+                    Snackbar snackbar = Snackbar
+                            .make(v, "You need to sign in first for you to vote for an answer", Snackbar.LENGTH_LONG)
+                            .setAction("SIGN IN", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Snackbar snackbar1 = Snackbar.make(view, "Your vote has been reversed!", Snackbar.LENGTH_SHORT);
+                                    snackbar1.show();
+                                }
+                            });
+
+                    snackbar.show();
                 }
             }
         });
@@ -307,63 +322,111 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
 
         holder.downVote.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(final View view) {
 
                 mProcessApproval[0] = true;
 
+                if ((mAuth.getCurrentUser() != null))
+                {
 
-                mDatabase.child(QuizKey).child("Answers").addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.child(answer_key).child("down_votes").hasChild(mAuth.getCurrentUser().getUid())) {
+                    // custom dialog
+                    final Dialog dialog = new Dialog(ctx);
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.ans_downvote_dialog);
+                    dialog.setCancelable(false);
+                    dialog.show();
 
-                            //* mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").child(auth.getCurrentUser().getUid()).removeValue();*//*
-                            Toast.makeText(ctx, "You have already down voted",Toast.LENGTH_LONG).show();
+                    Button cancel = (Button) dialog.findViewById(R.id.cancel);
+                    cancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
 
-                            mProcessApproval[0] = false;
+                    Button create = (Button) dialog.findViewById(R.id.create);
+                    create.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(final View v) {
 
-                        } else {
-                            mDatabase.child(QuizKey).child("Answers").child(answer_key).child("down_votes").child(mAuth.getCurrentUser().getUid()).setValue("iVote");
-
-                            // CHECK IF USER HAS DOWN VOTED AND DEDUCT 2 POINTS TO THE USER WHO POSTED THE ANSWER.....................
-
-                            mDatabase.child(QuizKey).addValueEventListener(new ValueEventListener() {
+                            dialog.dismiss();
+                            mDatabase.child(QuizKey).child("Answers").addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
-                                    final String sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
+                                    if (dataSnapshot.child(answer_key).child("down_votes").hasChild(mAuth.getCurrentUser().getUid())) {
 
-                                    mDatabaseUsers.child(sender_uid).child("points_earned").addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
-                                            Long user_points = (Long) dataSnapshot.getValue();
-                                                    user_points = user_points - 2;
+                                        //* mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").child(auth.getCurrentUser().getUid()).removeValue();*//*
+                           /* Toast.makeText(ctx, "You have already down voted this answer",Toast.LENGTH_LONG).show();
+                            Toast.makeText(ctx, "You need to have an account for you to vote",Toast.LENGTH_LONG).show();*/
+                                        Snackbar snackbar = Snackbar
+                                                .make(view, "You have already down voted this answer", Snackbar.LENGTH_LONG)
+                                                .setAction("UNDO", new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(final View view) {
 
-                                            mDatabaseUsers.child(sender_uid).child("points_earned").setValue(user_points);
+                                                        mDatabase.child(QuizKey).child("Answers").child(answer_key).child("down_votes").child(mAuth.getCurrentUser().getUid()).removeValue();
+                                                        Snackbar snackbar1 = Snackbar.make(view, "Your vote has been reversed!", Snackbar.LENGTH_SHORT);
 
-                                            //ALSO DEDUCT 1 POINT FROM THIS USER.....
 
-                                            Long current_user_points = (Long) dataSnapshot.getValue();
-                                            current_user_points = current_user_points - 1;
-                                        }
+                                                    }
+                                                });
 
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
+                                        snackbar.show();
 
-                                        }
-                                    });
+                                        mProcessApproval[0] = false;
 
-                                    mDatabase.child(QuizKey).child("Answers").child(answer_key).child("down_votes").addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
-                                            holder.voteCount.setText(dataSnapshot.getChildrenCount() + "");
-                                        }
+                                    } else {
+                                        mDatabase.child(QuizKey).child("Answers").child(answer_key).child("down_votes").child(mAuth.getCurrentUser().getUid()).setValue("iVote");
 
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
+                                        // CHECK IF USER HAS DOWN VOTED AND DEDUCT 2 POINTS TO THE USER WHO POSTED THE ANSWER.....................
 
-                                        }
-                                    });
-                                    Toast.makeText(ctx, "Down vote was successful", Toast.LENGTH_LONG).show();
+                                        mDatabase.child(QuizKey).addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
+                                                final String sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
+
+                                                mDatabaseUsers.child(sender_uid).child("points_earned").addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
+                                                        Long user_points = (Long) dataSnapshot.getValue();
+                                                        user_points = user_points - 2;
+
+                                                        mDatabaseUsers.child(sender_uid).child("points_earned").setValue(user_points);
+
+                                                        //ALSO DEDUCT 1 POINT FROM THIS USER.....
+
+                                                        Long current_user_points = (Long) dataSnapshot.getValue();
+                                                        current_user_points = current_user_points - 1;
+
+                                                        mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("points_earned").setValue(current_user_points);
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(DatabaseError databaseError) {
+
+                                                    }
+                                                });
+
+                                                mDatabase.child(QuizKey).child("Answers").child(answer_key).child("down_votes").addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
+                                                        holder.voteCount.setText(dataSnapshot.getChildrenCount() + "");
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(DatabaseError databaseError) {
+
+                                                    }
+                                                });
+                                                Toast.makeText(ctx, "Down vote was successful", Toast.LENGTH_LONG).show();
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+                                    }
                                 }
 
                                 @Override
@@ -372,13 +435,24 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
                                 }
                             });
                         }
-                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    });
 
-                    }
-                });
+                } else
+                {
+                    Snackbar snackbar = Snackbar
+                            .make(view, "You need to sign in first for you to vote for an answer", Snackbar.LENGTH_LONG)
+                            .setAction("SIGN IN", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Snackbar snackbar1 = Snackbar.make(view, "Your vote has been reversed!", Snackbar.LENGTH_SHORT);
+                                    snackbar1.show();
+                                }
+                            });
+
+                    snackbar.show();
+                }
+
 
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
