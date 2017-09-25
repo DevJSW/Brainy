@@ -58,27 +58,16 @@
                     android:layout_height="wrap_content">
 
                         <LinearLayout
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/main_lay"
                             android:background="@drawable/chat_bubble"
                             android:layout_marginLeft="2dp"
                             android:layout_marginRight="10dp"
-                            android:layout_marginBottom="3dp"
                             android:layout_marginTop="2dp"
                             android:orientation="vertical">
 
-                            <com.brainy.brainy.data.MyFont
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginLeft="10dp"
-                                android:text="date"
-                                android:paddingTop="3dp"
-                                android:layout_marginRight="8dp"
-                                android:layout_alignParentRight="true"
-                                android:textSize="9dp"
-                                android:layout_gravity="right"
-                                android:id="@+id/post_date" />
+
 
                             <com.brainy.brainy.data.MyFont
                                 android:layout_width="wrap_content"
@@ -88,8 +77,10 @@
                                 android:layout_marginLeft="18dp"
                                 android:id="@+id/post_message"
                                 android:textSize="14dp"
+                                android:padding="2dp"
                                 android:layout_marginBottom="10dp"
-                                android:layout_marginRight="5dp" />
+                                android:layout_marginTop="7dp"
+                                android:layout_marginRight="9dp" />
 
 
                            <!-- <RelativeLayout
@@ -133,7 +124,17 @@
 
                        </LinearLayout>
 
-
+                    <com.brainy.brainy.data.MyFont
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="20dp"
+                        android:text="date"
+                        android:paddingTop="3dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_below="@+id/main_lay"
+                        android:textSize="9dp"
+                        android:layout_gravity="right"
+                        android:id="@+id/post_date" />
 
                 </RelativeLayout>
 

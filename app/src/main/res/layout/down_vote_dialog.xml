@@ -24,9 +24,9 @@
             <com.brainy.brainy.data.MyBoldFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#529fe2"
+                android:textColor="#ed1e33"
                 android:textSize="18dp"
-                android:text="Vote"/>
+                android:text="Vote alert!"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -49,7 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16dp"
-                android:text="Voting for this question means you found it USEFUL. This individual will be awarded 5 Points! "/>
+                android:text="You will loose 1 point if you down vote this question?"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -97,7 +97,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@null"
-            android:text="Vote"
+            android:text="OK"
             android:textSize="14dp"
             android:textAllCaps="false"
             android:textColor="@color/colorAccent"

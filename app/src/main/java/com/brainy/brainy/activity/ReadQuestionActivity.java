@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -64,7 +65,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
     private ImageView quizVoteUp;
     private ImageView quizVoteDown;
-
+    private View parent_view;
     private Boolean mProcessApproval = false;
     private Boolean mProcessFavourite = false;
 
@@ -100,6 +101,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
         mDatabaseQuestions = FirebaseDatabase.getInstance().getReference().child("Questions");
         mDatabaseNotifications = FirebaseDatabase.getInstance().getReference().child("Notifications");
 
+        parent_view = findViewById(android.R.id.content);
         quizVoteDown = (ImageView) findViewById(R.id.quiz_vote_down);
         quizVoteUp = (ImageView) findViewById(R.id.quiz_vote_up);
 
@@ -607,7 +609,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                     Button create = (Button) dialog.findViewById(R.id.create);
                     create.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(View v) {
+                        public void onClick(final View v) {
 
                             dialog.dismiss();
                             mProcessApproval = true;
@@ -621,7 +623,18 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                         if (dataSnapshot.child("up_votes").hasChild(auth.getCurrentUser().getUid())) {
 
                                                    /* mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").child(auth.getCurrentUser().getUid()).removeValue();*/
-                                            Toast.makeText(ReadQuestionActivity.this, "You have already voted",Toast.LENGTH_LONG).show();
+                                           /* Toast.makeText(ReadQuestionActivity.this, "You have already voted for this question",Toast.LENGTH_LONG).show();*/
+                                            Snackbar snackbar = Snackbar
+                                                    .make(parent_view, "You have already voted for this question", Snackbar.LENGTH_LONG)
+                                                    .setAction("UNDO", new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+                                                            Snackbar snackbar1 = Snackbar.make(parent_view, "Your vote has been reversed!", Snackbar.LENGTH_SHORT);
+                                                            snackbar1.show();
+                                                        }
+                                                    });
+
+                                            snackbar.show();
 
                                             //add user uid to points database
                                             mDatabaseQuestions.child(QuizKey).child("Quiz_votes").child("up_votes").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -640,26 +653,34 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                             });
                                             mProcessApproval = false;
 
-                                        } else{
+                                        } else {
 
-                                            mDatabaseQuestions.child(QuizKey).child("Quiz_votes").child("up_votes").child(auth.getCurrentUser().getUid()).setValue("iVote");
+                                                    mDatabaseQuestions.child(QuizKey).child("Quiz_votes").child("up_votes").child(auth.getCurrentUser().getUid()).setValue("iVote");
 
-                                            // CHECK IF USER HAS VOTED AND ADD 5 POINTS TO THE USER WHO POSTED THE QUESTION.....................
+                                                    // CHECK IF USER HAS VOTED AND ADD 5 POINTS TO THE USER WHO POSTED THE QUESTION.....................
 
-                                            mDatabaseQuestions.child(QuizKey).addValueEventListener(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                                    final String sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
-
-                                                    mDatabaseUsers.child(sender_uid).child("points_earned").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    mDatabaseQuestions.child(QuizKey).addValueEventListener(new ValueEventListener() {
                                                         @Override
                                                         public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                                            Long user_points = (Long) dataSnapshot.getValue();
-                                                            user_points = user_points + 5;
+                                                            final String sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
 
-                                                            mDatabaseUsers.child(sender_uid).child("points_earned").setValue(user_points);
+                                                            mDatabaseUsers.child(sender_uid).child("points_earned").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                                @Override
+                                                                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                                    Long user_points = (Long) dataSnapshot.getValue();
+                                                                    user_points = user_points + 5;
+
+                                                                    mDatabaseUsers.child(sender_uid).child("points_earned").setValue(user_points);
+
+                                                                }
+
+                                                                @Override
+                                                                public void onCancelled(DatabaseError databaseError) {
+
+                                                                }
+                                                            });
 
                                                         }
 
@@ -667,32 +688,26 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                                         public void onCancelled(DatabaseError databaseError) {
 
                                                         }
+
                                                     });
 
-                                                }
+                                                    mDatabaseQuestions.child(QuizKey).child("Quiz_votes").child("up_votes").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                                @Override
-                                                public void onCancelled(DatabaseError databaseError) {
+                                                            TextView voteUpCount = (TextView) findViewById(R.id.vote_up_counter);
+                                                            voteUpCount.setText(dataSnapshot.getChildrenCount() + "");
+                                                        }
 
-                                                }
+                                                        @Override
+                                                        public void onCancelled(DatabaseError databaseError) {
 
-                                            });
+                                                        }
+                                                    });
+                                                    mProcessApproval = false;
+                                                    Toast.makeText(ReadQuestionActivity.this, "Vote was successful",Toast.LENGTH_LONG).show();
 
-                                            mDatabaseQuestions.child(QuizKey).child("Quiz_votes").child("up_votes").addListenerForSingleValueEvent(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                                    TextView voteUpCount = (TextView) findViewById(R.id.vote_up_counter);
-                                                    voteUpCount.setText(dataSnapshot.getChildrenCount() + "");
-                                                }
-
-                                                @Override
-                                                public void onCancelled(DatabaseError databaseError) {
-
-                                                }
-                                            });
-                                            mProcessApproval = false;
-                                            Toast.makeText(ReadQuestionActivity.this, "Vote was successful",Toast.LENGTH_LONG).show();
 
                                         }
 
@@ -728,7 +743,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                     // custom dialog
                     final Dialog dialog = new Dialog(context);
                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    dialog.setContentView(R.layout.vote_dialog);
+                    dialog.setContentView(R.layout.down_vote_dialog);
                     dialog.setCancelable(false);
                             /*dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));*/
                     dialog.show();
@@ -758,7 +773,6 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                         if (dataSnapshot.child("down_votes").hasChild(auth.getCurrentUser().getUid())) {
 
                                                    /* mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").child(auth.getCurrentUser().getUid()).removeValue();*/
-                                            Toast.makeText(ReadQuestionActivity.this, "You have already voted",Toast.LENGTH_LONG).show();
 
                                             //add user uid to points database
                                             mDatabaseQuestions.child(QuizKey).child("Quiz_votes").child("down_votes").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -776,7 +790,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                             });
                                             mProcessApproval = false;
 
-                                        } else{
+                                        } else {
 
                                             mDatabaseQuestions.child(QuizKey).child("Quiz_votes").child("down_votes").child(auth.getCurrentUser().getUid()).setValue("iVote");
 
@@ -827,6 +841,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                                                 }
                                             });
+
                                             mProcessApproval = false;
                                             Toast.makeText(ReadQuestionActivity.this, "Vote was successful",Toast.LENGTH_LONG).show();
 

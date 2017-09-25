@@ -2,10 +2,12 @@ package com.brainy.brainy.Adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -59,6 +61,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         public TextView message;
         public TextView post_date;
         public ImageView civ;
+        public RelativeLayout min_rely;
+        public LinearLayout linearChat;
         public TextView viewCounter, answersCounter, favouritesCounter;
 
         RelativeLayout answer_rely;
@@ -71,7 +75,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             sender_name = (TextView) itemView.findViewById(R.id.post_name);
             civ = (CircleImageView) itemView.findViewById(R.id.post_image);
             post_date = (TextView) itemView.findViewById(R.id.post_date);
+            linearChat = (LinearLayout) itemView.findViewById(R.id.main_lay);
 
+            mAuth = FirebaseAuth.getInstance();
             mDatabase = FirebaseDatabase.getInstance().getReference().child("Discuss_forum");
 
         }
@@ -132,6 +138,25 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         holder.sender_name.setText(c.getSender_name());
         holder.message.setText(c.getMessage());
         holder.post_date.setText(c.getPosted_date());
+
+        String from_user_id = c.getSender_uid();
+
+        if (from_user_id.equals(mAuth.getCurrentUser().getUid())) {
+
+           holder.linearChat.setGravity(Gravity.RIGHT);
+
+         /*  RelativeLayout.LayoutParams linearParams = new RelativeLayout.LayoutParams(
+                   LinearLayout.LayoutParams.WRAP_CONTENT,
+                   LinearLayout.LayoutParams.WRAP_CONTENT
+
+           );
+            linearParams.gra = RelativeLayout.ALIGN_RIGHT;
+           holder.linearChat.setLayoutParams(linearParams);*/
+
+        } else {
+
+            holder.linearChat.setGravity(Gravity.LEFT);
+        }
 
         Picasso.with(ctx)
                 .load(c.getSender_image())

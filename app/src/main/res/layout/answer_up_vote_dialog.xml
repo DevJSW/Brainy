@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="#529fe2"
                 android:textSize="18dp"
-                android:text="Vote"/>
+                android:text="Vote alert!"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -49,7 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16dp"
-                android:text="Voting for this question means you found it USEFUL. This individual will be awarded 5 Points! "/>
+                android:text="Voting for this answer means you either AGREE with it or it was USEFUL to you, 10 points will be awarded to this individual"/>
 
         </android.support.design.widget.TextInputLayout>
 
@@ -97,7 +97,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@null"
-            android:text="Vote"
+            android:text="ACCEPT"
             android:textSize="14dp"
             android:textAllCaps="false"
             android:textColor="@color/colorAccent"

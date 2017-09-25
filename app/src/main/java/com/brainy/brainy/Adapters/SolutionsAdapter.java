@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -220,7 +221,8 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
                                 public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
 
                                     if (dataSnapshot.child(answer_key).child("votes").hasChild(mAuth.getCurrentUser().getUid())) {
-                                      //  Toast.makeText(ctx, "You cannot vote more than once",Toast.LENGTH_LONG).show();
+
+                                       /* Snackbar.make(ctx, "You have already voted ", Snackbar.LENGTH_SHORT).show();*/
 
                                         mDatabase.child(QuizKey).child("Answers").child(answer_key).child("votes").addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
                                             @Override
