@@ -108,7 +108,6 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.QuestionView
             post_date.setText(posted_date);
         }
 
-
         public void setSender_name(String sender_name) {
 
             TextView post_name = (TextView) mView.findViewById(R.id.post_name);
@@ -175,6 +174,7 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.QuestionView
                 if (read_status.equals(true) ) {
 
                     holder.post_answer.setTextColor(Color.parseColor("#ABABAB"));
+
                 } else {
 
                     holder.post_answer.setTextColor(Color.BLACK);

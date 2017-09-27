@@ -24,7 +24,7 @@
             <com.brainy.brainy.data.MyBoldFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#529fe2"
+                android:textColor="#ef0f1b"
                 android:textSize="18dp"
                 android:text="Vote"/>
 
@@ -49,7 +49,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16dp"
-                android:text="Down-Voting this answer means you find it INCORRECT or MISLEADING. This individual will LOOSE 2 Points! and you will also LOOSE 1 Point! "/>
+                android:text="Down-voting this answer means you find it INCORRECT or MISLEADING. This individual will LOOSE 2 Points! and you will also LOOSE 1 Point! "/>
 
         </android.support.design.widget.TextInputLayout>
 

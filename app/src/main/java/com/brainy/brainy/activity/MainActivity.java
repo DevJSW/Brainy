@@ -1,12 +1,19 @@
 package com.brainy.brainy.activity;
 
 import android.app.Dialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -46,6 +53,7 @@ import com.brainy.brainy.tabs.tab2Inbox;
 import com.brainy.brainy.tabs.tab3Achievements;
 import com.brainy.brainy.tabs.tab4More;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -70,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
     String selectedTopic = null;
     private ViewPager mViewPager;
     private FloatingActionButton fab;
-    private DatabaseReference mDatabaseUsers, mDatabaseQuestions;
+    private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseInboxUsers;
     Context mContext;
     private FirebaseAuth auth;
 
@@ -128,7 +136,9 @@ public class MainActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseQuestions = FirebaseDatabase.getInstance().getReference().child("Questions");
+        mDatabaseInboxUsers = FirebaseDatabase.getInstance().getReference().child("Users_inbox");
         mDatabaseQuestions.keepSynced(true);
+        mDatabaseInboxUsers.keepSynced(true);
         mDatabaseUsers.keepSynced(true);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -146,6 +156,131 @@ public class MainActivity extends AppCompatActivity {
         initPageChanger();
         checkUserLoggedIn();
       /*  getUserLocation();*/
+        checkForNotifications();
+        awardReputation();
+
+    }
+
+    private void awardReputation() {
+
+        if (auth.getCurrentUser() != null) {
+
+            mDatabaseUsers.child(auth.getCurrentUser().getUid()).addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                    int users_points = (int) dataSnapshot.child("points_earned").getValue();
+                  /*  String user_reputation = dataSnapshot.child("reputation").getValue().toString();*/
+
+                    if (users_points < 100) {
+
+                        mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Beginner");
+                        // PREVELAGE
+
+                    } else if (users_points > 100 && users_points < 499) {
+
+                        mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Smart");
+
+                    } else if (users_points > 500 && users_points < 999) {
+
+                        mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Intelligent");
+
+                    }  else if (users_points > 1000 && users_points < 1999) {
+
+                        mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Brainy");
+
+                    } else if (users_points > 2000 ) {
+
+                        mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Super Brainy");
+
+                    }
+
+
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+    }
+
+
+    private void checkForNotifications() {
+
+        mDatabaseInboxUsers.child(auth.getCurrentUser().getUid()).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                String name = (String) dataSnapshot.child("sender_name").getValue();
+                String image = (String) dataSnapshot.child("sender_image").getValue();
+                String question_key = (String) dataSnapshot.child("question_key").getValue();
+                String sender_uid = (String) dataSnapshot.child("sendert_uid").getValue();
+                String message = (String) dataSnapshot.child("posted_answer").getValue();
+                Boolean read_status = (Boolean) dataSnapshot.child("read").getValue();
+                String post_id = (String) dataSnapshot.child("post_id").getValue();
+
+                if (read_status.equals(false)) {
+                    // send notification to reciever
+
+                    Context context = getApplicationContext();
+                    Intent intent = new Intent(context, ReadQuestionActivity.class);
+                    intent.putExtra("question_id", question_key);
+                    PendingIntent pIntent = PendingIntent.getActivity(MainActivity.this, 0, intent, 0);
+                    Notification noty = new Notification.Builder(MainActivity.this)
+                            .setContentTitle("Brainy")
+                            .setTicker("Inbox alert!")
+                            .setContentText(name + " answered a question you asked - " + message)
+                            .setSmallIcon(R.drawable.ic_brainy_tech_noty)
+                            .setContentIntent(pIntent).getNotification();
+
+
+                    noty.flags = Notification.FLAG_AUTO_CANCEL;
+                    Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                    Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+                    r.play();
+                    NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                    nm.notify(0, noty);
+
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
     }
 

@@ -1,6 +1,7 @@
 package com.brainy.brainy.activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Build;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -145,7 +146,12 @@ public class EditProfileActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.ic_edit) {
+
+            Intent openRead = new Intent(EditProfileActivity.this, ProfileEditActivity.class);
+           /* openRead.putExtra("question_id", QuizKey );*/
+            startActivity(openRead);
+
             return true;
         }
         switch (item.getItemId()) {

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.brainy.brainy.activity.ProfileEditActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@drawable/placeholder_image"
+                android:id="@+id/userimg"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="10dp"/>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/userimg"
+                android:layout_marginRight="25dp"
+                android:layout_marginBottom="5dp"
+                android:layout_gravity="center_horizontal">
+
+                <com.brainy.brainy.data.CustomEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/input_name"
+                    android:text="name"
+                    android:hint="Edit Name"/>
+
+            </android.support.design.widget.TextInputLayout>
+        </RelativeLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="25dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="25dp"
+            android:layout_gravity="center_horizontal">
+
+            <com.brainy.brainy.data.CustomEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/input_bio"
+                android:layout_marginBottom="5dp"
+                android:text="bio"
+                android:hint="Edit Bio"/>
+
+        </android.support.design.widget.TextInputLayout>
+    </LinearLayout>
+
+
+    <com.brainy.brainy.data.MyButton
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:text="Save"
+        android:id="@+id/save_btn"
+        android:layout_margin="5dp"
+        android:textColor="#ffff"
+        android:background="@color/colorPrimary"
+        android:layout_alignParentBottom="true"
+        />
+
+</RelativeLayout>

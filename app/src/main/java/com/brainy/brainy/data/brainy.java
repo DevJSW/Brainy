@@ -45,4 +45,5 @@ public class brainy extends Application {
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
 
     }
+
 }

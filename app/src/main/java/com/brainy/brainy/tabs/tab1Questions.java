@@ -99,6 +99,23 @@ public class tab1Questions extends Fragment {
                 "Health Science"
         };
 
+        String[] law_topics = new String[]{
+                "Sub-topic...",
+                "ACCIDENTS & INJURIES",
+                "BANKRUPTCY & DEBT",
+                "CAR & MOTOR VEHICLE ACCIDENTS",
+                "CIVIL RIGHTS",
+                "DANGEROUS PRODUCTS",
+                "DIVORCE & FAMILY LAW",
+                "EMPLOYEES' RIGHTS",
+                "ESTATES & PROBATE",
+                "IMMIGRATION LAW",
+                "INTELLECTUAL PROPERTY",
+                "REAL ESTATE",
+                "SMALL BUSINESS",
+                "OTHERS"
+        };
+
         // Initializing a String Array
         String[] options = new String[]{
                 "Active",

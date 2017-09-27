@@ -13,9 +13,11 @@ import com.brainy.brainy.R;
 import com.brainy.brainy.data.Answer;
 import com.brainy.brainy.data.Question;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -33,6 +35,7 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
 
     private List<Answer>  mAnswersList;
     Context ctx;
+    String postID = null;
 
     private DatabaseReference mDatabase, mDatabaseProfileAns;
     FirebaseAuth mAuth;
@@ -55,6 +58,7 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
 
         View mView;
 
+        String postID = null;
         public TextView post_answer;
         public TextView post_quiz_title;
         public TextView post_name;
@@ -164,6 +168,38 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
         final String answer_key = c.getPost_id();
         final String QuizKey = c.getQuestion_key();
 
+       /* //geting post id from main quiz
+        mDatabase.child(QuizKey).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //COUNT NUMBER OF VOTE ON ANSWERS
+                String postId = dataSnapshot.child("post_id").getValue().toString();
+                if (postId != null) {
+                    mDatabase
+                            .child(QuizKey)
+                            .child("Answers")
+                            .child(postId)
+                            .child("votes")
+                            .addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
+                                @Override
+                                public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
+                                    holder.voteCount.setText(dataSnapshot.getChildrenCount() + "");
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });*/
+
         //COUNT NUMBER OF VOTE ON ANSWERS
         if (answer_key != null) {
             mDatabase
@@ -182,9 +218,9 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
 
                         }
                     });
-        }
 
-        //COUNT PROFILE USER ANSWERS
+        }
+       /* //COUNT PROFILE USER ANSWERS
         if (answer_key != null) {
             mDatabaseProfileAns
                     .child(answer_key)
@@ -201,7 +237,7 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
                         }
                     });
         }
-
+*/
 
         /*Picasso.with(ctx)
                 .load(c.getSender_image())
