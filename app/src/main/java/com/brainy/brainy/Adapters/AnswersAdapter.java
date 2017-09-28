@@ -207,9 +207,9 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
                     .child("Answers")
                     .child(answer_key)
                     .child("votes")
-                    .addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
+                    .addValueEventListener(new ValueEventListener() {
                         @Override
-                        public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
+                        public void onDataChange(DataSnapshot dataSnapshot) {
                             holder.voteCount.setText(dataSnapshot.getChildrenCount() + "");
                         }
 

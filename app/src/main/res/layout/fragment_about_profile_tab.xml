@@ -32,7 +32,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:lineSpacingExtra="2sp"
-                    android:layout_margin="17dp"
+                    android:textSize="14dp"
+                    android:layout_margin="15dp"
                     android:id="@+id/user_bio"
                     />
 

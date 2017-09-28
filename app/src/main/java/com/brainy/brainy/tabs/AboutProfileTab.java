@@ -25,7 +25,7 @@ import com.squareup.picasso.Picasso;
 
 public class AboutProfileTab extends Fragment {
 
-    private DatabaseReference mDatabaseUsers;
+    private DatabaseReference mDatabaseUsers, mDatabaseFavourites;
     private FirebaseAuth mAuth;
     private StorageReference mStorage;
     private TextView pointsEarned, reputation, userBio, favourites;
@@ -45,8 +45,10 @@ public class AboutProfileTab extends Fragment {
 
         mAuth = FirebaseAuth.getInstance();
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
+        mDatabaseFavourites = FirebaseDatabase.getInstance().getReference().child("Users_favourite").child(mAuth.getCurrentUser().getUid());
         mStorage = FirebaseStorage.getInstance().getReference();
         mDatabaseUsers.keepSynced(true);
+        mDatabaseFavourites.keepSynced(true);
 
         favourites = (TextView) v.findViewById(R.id.favourite);
         reputation = (TextView) v.findViewById(R.id.reputation);
@@ -68,6 +70,18 @@ public class AboutProfileTab extends Fragment {
                     pointsEarned.setText(user_point_earned);
                 }
 
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        mDatabaseFavourites.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                favourites.setText(dataSnapshot.getChildrenCount() + "");
             }
 
             @Override

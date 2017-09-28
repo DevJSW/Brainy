@@ -16,20 +16,46 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp">
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <!--<de.hdodenhof.circleimageview.CircleImageView
                 android:layout_width="70dp"
                 android:layout_height="70dp"
                 android:src="@drawable/placeholder_image"
                 android:id="@+id/userimg"
                 android:layout_gravity="center_horizontal"
-                android:layout_margin="10dp"/>
+                android:layout_margin="10dp"/>-->
+
+            <RelativeLayout
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_margin="15dp"
+                android:id="@+id/rely"
+                android:layout_gravity="center_horizontal"
+                android:orientation="vertical">
+
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:id="@+id/userimg"
+                    android:src="@drawable/placeholder_image"
+                    android:layout_gravity="center_horizontal" />
+
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:src="@drawable/edit_photo"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"/>
+
+
+            </RelativeLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/userimg"
-                android:layout_marginRight="25dp"
+                android:layout_toRightOf="@+id/rely"
+                android:layout_marginRight="20dp"
                 android:layout_marginBottom="5dp"
                 android:layout_gravity="center_horizontal">
 
@@ -57,6 +83,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/input_bio"
                 android:layout_marginBottom="5dp"
+                android:maxLength="135"
                 android:text="bio"
                 android:hint="Edit Bio"/>
 

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 import com.brainy.brainy.R;
 import com.brainy.brainy.activity.EditProfileActivity;
 import com.brainy.brainy.activity.ProfileActivity;
+import com.google.firebase.auth.FirebaseAuth;
 
 
 /**
@@ -27,13 +29,15 @@ import com.brainy.brainy.activity.ProfileActivity;
  */
 public class tab4More extends Fragment {
 
+    private FirebaseAuth auth;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_tab4_more, container, false);
 
-
+        auth = FirebaseAuth.getInstance();
         LinearLayout openSettings = (LinearLayout) v.findViewById(R.id.lin_settings);
         openSettings.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,6 +51,22 @@ public class tab4More extends Fragment {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(new Intent(getActivity(), EditProfileActivity.class)));
+
+                if (auth.getCurrentUser() != null) {
+                    startActivity(new Intent(new Intent(getActivity(), EditProfileActivity.class)));
+                } else {
+                    Snackbar snackbar = Snackbar
+                            .make(v, "You need to be signed in order for you to post a question!", Snackbar.LENGTH_LONG)
+                            .setAction("SIGN IN", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Snackbar snackbar1 = Snackbar.make(view, "SIGNED IN!", Snackbar.LENGTH_SHORT);
+                                    snackbar1.show();
+                                }
+                            });
+
+                    snackbar.show();
+                }
             }
         });
 

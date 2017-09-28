@@ -45,6 +45,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.brainy.brainy.R;
 import com.brainy.brainy.Services.GPSTracker;
@@ -149,28 +150,46 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                sendQuestion();
+                if (auth.getCurrentUser() != null) {
+                    sendQuestion();
+                } else {
+                    Snackbar snackbar = Snackbar
+                            .make(view, "You need to be signed in order for you to post a question!", Snackbar.LENGTH_LONG)
+                            .setAction("SIGN IN", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Snackbar snackbar1 = Snackbar.make(view, "SIGNED IN!", Snackbar.LENGTH_SHORT);
+                                    snackbar1.show();
+                                }
+                            });
+
+                    snackbar.show();
+                }
             }
         });
         
         initPageChanger();
         checkUserLoggedIn();
       /*  getUserLocation();*/
-        checkForNotifications();
-        awardReputation();
-
+      if (auth.getCurrentUser() != null) {
+          checkForNotifications();
+          awardReputation();
+      }
     }
 
     private void awardReputation() {
 
+
+
         if (auth.getCurrentUser() != null) {
 
-            mDatabaseUsers.child(auth.getCurrentUser().getUid()).addChildEventListener(new ChildEventListener() {
+            mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Long users_points = (Long) dataSnapshot.child("points_earned").getValue();
+                    String users_pints = (String) dataSnapshot.child("bio").getValue();
+                    String user_reputation = dataSnapshot.child("reputation").getValue().toString();
 
-                    int users_points = (int) dataSnapshot.child("points_earned").getValue();
-                  /*  String user_reputation = dataSnapshot.child("reputation").getValue().toString();*/
 
                     if (users_points < 100) {
 
@@ -194,23 +213,6 @@ public class MainActivity extends AppCompatActivity {
                         mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Super Brainy");
 
                     }
-
-
-                }
-
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
                 }
 
                 @Override
@@ -219,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+
     }
 
 

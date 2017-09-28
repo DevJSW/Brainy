@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.brainy.brainy.Adapters.InboxAdapter;
 import com.brainy.brainy.Adapters.QuestionAdapter;
 import com.brainy.brainy.R;
+import com.brainy.brainy.activity.ProfileEditActivity;
 import com.brainy.brainy.activity.ReadQuestionActivity;
 import com.brainy.brainy.data.Answer;
 import com.brainy.brainy.data.Question;
@@ -356,6 +357,10 @@ public class tab2Inbox extends Fragment {
                 personId = account.getId();
                 personPhoto = account.getPhotoUrl();
 
+                Intent openProfileEdit = new Intent(getActivity(), ProfileEditActivity.class);
+                           /* openRead.putExtra("question_id", quiz_key );*/
+                startActivity(openProfileEdit);
+
             } else {
                 // Google Sign In failed, update UI appropriately
                 // ...
@@ -388,6 +393,9 @@ public class tab2Inbox extends Fragment {
                            // startActivity(new Intent(LoginActivity.this, MainActivity.class));
 
                             postUserInfoToDB();
+                            Intent openProfileEdit = new Intent(getActivity(), ProfileEditActivity.class);
+                           /* openRead.putExtra("question_id", quiz_key );*/
+                            startActivity(openProfileEdit);
 
                         }
 

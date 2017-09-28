@@ -340,7 +340,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                             newPost2.child("posted_date").setValue(stringDate2);
                                             newPost2.child("question_key").setValue(QuizKey);
                                             newPost2.child("posted_quiz_title").setValue(question_title);
-                                            newPost2.child("post_id").setValue(newPost2.getKey());
+                                            newPost2.child("post_id").setValue(newPost.getKey());
 
                                         }
 
