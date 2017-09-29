@@ -39,7 +39,7 @@
 
             </android.support.v7.widget.CardView>
 
-            <com.brainy.brainy.data.MyBoldFont
+    <com.brainy.brainy.data.MyBoldFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Achievements"
@@ -97,15 +97,15 @@
                         android:text="Reputation:"
                         />
 
-                        <com.brainy.brainy.data.MyFont
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/colorAccent"
-                            android:id="@+id/reputation"
-                            android:textSize="16dp"
-                            android:layout_alignParentRight="true"
-                            android:text="Beginner"
-                            />
+                            <com.brainy.brainy.data.MyFont
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorAccent"
+                                android:id="@+id/reputation"
+                                android:textSize="16dp"
+                                android:layout_alignParentRight="true"
+                                android:text="Beginner"
+                                />
 
                 </RelativeLayout>
 

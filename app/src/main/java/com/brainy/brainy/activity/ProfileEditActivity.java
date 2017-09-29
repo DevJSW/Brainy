@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.brainy.brainy.R;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -72,15 +73,12 @@ public class ProfileEditActivity extends AppCompatActivity {
                 String name = dataSnapshot.child("name").getValue().toString();
                 String image = dataSnapshot.child("user_image").getValue().toString();
 
-                    Picasso.with(ProfileEditActivity.this)
-                        .load(image)
-                        .placeholder(R.drawable.placeholder_image)
-                        .networkPolicy(NetworkPolicy.OFFLINE)
-                        .into(userImg);
-
                 inputName.setText(name);
                 inputBio.setText(bio);
 
+                Glide.with(ProfileEditActivity.this)
+                        .load(image)
+                        .into(userImg);
 
               /*  } else {}*/
 
@@ -115,6 +113,7 @@ public class ProfileEditActivity extends AppCompatActivity {
             final String name = inputName.getText().toString();
             final String bio = inputBio.getText().toString();
 
+            if (mImageUri != null)
             if (mImageUri.getLastPathSegment() != null) {
                 StorageReference filepath = mStorage.child("Profile_images").child(mImageUri.getLastPathSegment());
 

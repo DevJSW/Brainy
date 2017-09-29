@@ -232,6 +232,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                     });
                 }
             });
+
         } else {}
 
         if (auth.getCurrentUser() != null) {

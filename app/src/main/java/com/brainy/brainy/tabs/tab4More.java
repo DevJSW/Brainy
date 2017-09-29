@@ -50,13 +50,12 @@ public class tab4More extends Fragment {
         openEditProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(new Intent(getActivity(), EditProfileActivity.class)));
 
                 if (auth.getCurrentUser() != null) {
                     startActivity(new Intent(new Intent(getActivity(), EditProfileActivity.class)));
                 } else {
                     Snackbar snackbar = Snackbar
-                            .make(v, "You need to be signed in order for you to post a question!", Snackbar.LENGTH_LONG)
+                            .make(v, "You need to be sign in!", Snackbar.LENGTH_LONG)
                             .setAction("SIGN IN", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {

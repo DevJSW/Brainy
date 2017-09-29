@@ -89,7 +89,6 @@
                     <com.brainy.brainy.data.MyFont
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:text="question_topic"
                       android:id="@+id/quizTopic"
                       android:textColor="@color/colorAccent"
                       android:textSize="17dp"
@@ -100,7 +99,6 @@
                     <com.brainy.brainy.data.MyFont
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="question_body"
                         android:id="@+id/quizBody"
                         android:textSize="16dp"
                         android:layout_marginBottom="15dp"

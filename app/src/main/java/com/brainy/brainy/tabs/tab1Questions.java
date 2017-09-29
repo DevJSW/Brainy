@@ -480,7 +480,6 @@ public class tab1Questions extends Fragment {
 
                 questionList.add(message);
                 questionAdapter.notifyDataSetChanged();
-
                 mSwipeRefreshLayout.setRefreshing(false);
 
             }
@@ -557,6 +556,7 @@ public class tab1Questions extends Fragment {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
+                //questionList.clear();
                 Question message = dataSnapshot.getValue(Question.class);
 
                 questionList.add(message);

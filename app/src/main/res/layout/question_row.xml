@@ -40,7 +40,7 @@
                             android:layout_margin="10dp"
                             app:civ_border_width="1dp"
                             app:civ_border_color="#fff"
-                            android:src="@drawable/ic_profile_placeholder"/>
+                            android:src="@drawable/placeholder_image"/>
 
 
                 </RelativeLayout>

@@ -27,7 +27,33 @@
 
         </android.support.v7.widget.Toolbar>
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <RelativeLayout
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_margin="10dp"
+            android:id="@+id/rely"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical">
+
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:id="@+id/user_avator"
+                android:src="@drawable/placeholder_image"
+                android:layout_gravity="center_horizontal" />
+
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:id="@+id/brainy_badge"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"/>
+
+
+        </RelativeLayout>
+
+        <!--<de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_marginRight="5dp"
@@ -36,7 +62,7 @@
             android:id="@+id/user_avator"
             android:layout_marginTop="10dp"
             app:layout_scrollFlags="scroll|enterAlways"
-            android:src="@drawable/placeholder_image"/>
+            android:src="@drawable/placeholder_image"/>-->
 
         <com.brainy.brainy.data.MyFont
             android:layout_width="wrap_content"

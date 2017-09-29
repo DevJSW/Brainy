@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
                     sendQuestion();
                 } else {
                     Snackbar snackbar = Snackbar
-                            .make(view, "You need to be signed in order for you to post a question!", Snackbar.LENGTH_LONG)
+                            .make(view, "You need to sign in first to be able to post a question!", Snackbar.LENGTH_LONG)
                             .setAction("SIGN IN", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -170,10 +170,11 @@ public class MainActivity extends AppCompatActivity {
         
         initPageChanger();
         checkUserLoggedIn();
-      /*  getUserLocation();*/
+
       if (auth.getCurrentUser() != null) {
           checkForNotifications();
           awardReputation();
+          getUserLocation();
       }
     }
 
@@ -249,7 +250,7 @@ public class MainActivity extends AppCompatActivity {
                     Notification noty = new Notification.Builder(MainActivity.this)
                             .setContentTitle("Brainy")
                             .setTicker("Inbox alert!")
-                            .setContentText(name + " answered a question you asked - " + message)
+                            .setContentText(name + " answered a question you posted - " + message)
                             .setSmallIcon(R.drawable.ic_brainy_tech_noty)
                             .setContentIntent(pIntent).getNotification();
 
@@ -357,6 +358,7 @@ public class MainActivity extends AppCompatActivity {
 
         final EditText questionTitleInput = (EditText) dialog.findViewById(R.id.questionTitleInput);
         final EditText questionBodyInput = (EditText) dialog.findViewById(R.id.questionBodyInput);
+
         final Button cancel = (Button) dialog.findViewById(R.id.cancel);
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -364,6 +366,7 @@ public class MainActivity extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
+
         final Spinner spinner = (Spinner) dialog.findViewById(R.id.spinner);
         // Initializing an ArrayAdapter
         final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
@@ -374,6 +377,7 @@ public class MainActivity extends AppCompatActivity {
                 {
                     // Disable the first item from Spinner
                     // First item will be use for hint
+
                     return false;
                 }
                 else
@@ -433,10 +437,13 @@ public class MainActivity extends AppCompatActivity {
 
                 final String questionTitlTag = questionTitleInput.getText().toString().trim();
                 final String questionBodyTag = questionBodyInput.getText().toString().trim();
-                if (TextUtils.isEmpty(questionTitlTag) || TextUtils.isEmpty(questionBodyTag)) {
+                if (TextUtils.isEmpty(questionTitlTag)) {
+
+                    Toast.makeText(MainActivity.this, "Question title CANNOT not be empty!",Toast.LENGTH_LONG).show();
 
                 } else if (selectedTopic == null) {
 
+                    Toast.makeText(MainActivity.this, "Please tag your question!",Toast.LENGTH_LONG).show();
                 } else {
 
                     dialog.dismiss();
@@ -458,6 +465,26 @@ public class MainActivity extends AppCompatActivity {
                             map.put("tag", selectedTopic);
                             map.put("post_id", newPost.getKey());
                             newPost.setValue(map);
+
+                            final Context context = MainActivity.this;
+
+                            // custom dialog
+                            final Dialog dialog = new Dialog(context);
+                            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                            dialog.setContentView(R.layout.success_dialog);
+                            dialog.setCancelable(false);
+                            /*dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));*/
+                            dialog.show();
+
+                            Button create = (Button) dialog.findViewById(R.id.create);
+                            create.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(final View v) {
+
+                                    dialog.dismiss();
+                                }
+
+                            });
 
                         }
 
@@ -513,47 +540,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-   /* @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_main, menu);
-        MenuItem item = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) item.getActionView();
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_logout) {
-
-            // sign out
-            auth.signOut();
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-*/
-    public static class PlaceholderFragment extends Fragment {
+     public static class PlaceholderFragment extends Fragment {
 
         private static final String ARG_SECTION_NUMBER = "section_number";
 

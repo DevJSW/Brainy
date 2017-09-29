@@ -65,8 +65,6 @@
                 android:orientation="vertical">
 
 
-
-
                 <com.brainy.brainy.data.MyFont
                     android:id="@+id/posted_answer"
                     android:layout_width="wrap_content"
@@ -83,7 +81,7 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="right"
+
                     android:layout_marginBottom="5dp"
                     android:layout_marginRight="5dp"
                     android:orientation="horizontal">
@@ -95,8 +93,8 @@
                         android:orientation="vertical">
 
                          <de.hdodenhof.circleimageview.CircleImageView
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
                                 android:layout_marginTop="7dp"
                                 android:layout_marginRight="5dp"
                                 android:id="@+id/post_image"
@@ -114,22 +112,56 @@
                         android:layout_marginRight="5dp"
                         android:orientation="vertical">
 
-                        <com.brainy.brainy.data.MyFont
-                            android:id="@+id/post_name"
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="username"
-                            android:textColor="#59a7e7"
-                            android:layout_marginTop="3dp"
-                            android:textSize="11dp"
-                            android:textStyle="bold" />
+                            android:orientation="horizontal">
+
+                            <com.brainy.brainy.data.MyFont
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="By: "
+                                android:textColor="#59a7e7"
+                                android:layout_marginTop="1dp"
+                                android:textSize="11dp"
+                                android:textStyle="bold" />
+
+                            <com.brainy.brainy.data.MyFont
+                                android:id="@+id/post_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="username"
+                                android:textColor="#59a7e7"
+                                android:layout_marginTop="1dp"
+                                android:textSize="11dp"
+                                android:textStyle="bold" />
+
+                            <com.brainy.brainy.data.MyFont
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text=" - "
+                                android:textColor="#59a7e7"
+                                android:layout_marginTop="1dp"
+                                android:textSize="11dp"
+                                android:textStyle="bold" />
+
+                            <com.brainy.brainy.data.MyFont
+                                android:id="@+id/post_date"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="1dp"
+                                android:text="date"
+                                android:textColor="@color/colorAccent"
+                                android:textSize="9dp" />
+
+                        </LinearLayout>
 
                         <com.brainy.brainy.data.MyFont
-                            android:id="@+id/post_date"
+                            android:id="@+id/post_location"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="1dp"
-                            android:text="date"
+                            android:text="Location"
                             android:textColor="@color/colorAccent"
                             android:textSize="9dp" />
 

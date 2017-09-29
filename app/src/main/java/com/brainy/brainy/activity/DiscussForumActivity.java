@@ -170,8 +170,6 @@ public class DiscussForumActivity extends AppCompatActivity {
                     }
                 });
 
-
-
                 /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();*/
             }

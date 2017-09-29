@@ -36,6 +36,8 @@ import com.brainy.brainy.tabs.tab1Questions;
 import com.brainy.brainy.tabs.tab2Inbox;
 import com.brainy.brainy.tabs.tab3Achievements;
 import com.brainy.brainy.tabs.tab4More;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -44,6 +46,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
@@ -109,13 +112,18 @@ public class EditProfileActivity extends AppCompatActivity {
                 String name = dataSnapshot.child("name").getValue().toString();
                 String image = dataSnapshot.child("user_image").getValue().toString();
 
-                Picasso.with(EditProfileActivity.this)
-                        .load(image)
-                        .placeholder(R.drawable.placeholder_image)
-                        .networkPolicy(NetworkPolicy.OFFLINE)
-                        .into(mGroupIcon);
 
                 username.setText(name);
+
+               /* Glide.with(EditProfileActivity.this)
+                        .load(image)
+                        .priority(Priority.IMMEDIATE)
+                        .into(mGroupIcon);*/
+
+               Glide.with(EditProfileActivity.this)
+                       .load(image)
+                       .into(mGroupIcon);
+
 
 
               /*  } else {}*/
@@ -128,6 +136,59 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
 
+        if (mAuth.getCurrentUser() != null) {
+
+            awardBadge();
+        }
+
+    }
+
+    private void awardBadge() {
+
+        mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Long users_points = (Long) dataSnapshot.child("points_earned").getValue();
+                String users_pints = (String) dataSnapshot.child("bio").getValue();
+                String user_reputation = dataSnapshot.child("reputation").getValue().toString();
+
+                ImageView badge = (ImageView) findViewById(R.id.brainy_badge);
+
+                if (users_points < 100) {
+
+                    mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("reputation").setValue("Beginner");
+                    badge.setVisibility(View.GONE);
+                    // PREVELAGE
+
+                } else if (users_points > 100 && users_points < 499) {
+
+                    mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("reputation").setValue("Smart");
+                    badge.setImageResource(R.drawable.smart_badge);
+
+                } else if (users_points > 500 && users_points < 999) {
+
+                    mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("reputation").setValue("Intelligent");
+                    badge.setImageResource(R.drawable.intelligent_badge);
+
+                }  else if (users_points > 1000 && users_points < 1999) {
+
+                    mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("reputation").setValue("Brainy");
+                    badge.setImageResource(R.drawable.brainy_badge);
+
+                } else if (users_points > 2000 ) {
+
+                    mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("reputation").setValue("Super Brainy");
+                    badge.setImageResource(R.drawable.super_brainy_badge);
+
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
 

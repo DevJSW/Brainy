@@ -10,8 +10,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.brainy.brainy.R;
+import com.brainy.brainy.activity.ProfileEditActivity;
 import com.brainy.brainy.data.Answer;
 import com.brainy.brainy.data.Question;
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -123,27 +125,10 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
 
             final CircleImageView civ = (CircleImageView) mView.findViewById(R.id.post_image);
 
-            Picasso.with(ctx)
+            Glide.with(ctx)
                     .load(sender_image)
-                    .networkPolicy(NetworkPolicy.OFFLINE)
-                    .placeholder(R.drawable.placeholder_image)
-                    .into(civ, new Callback() {
-                @Override
-                public void onSuccess() {
-                    Picasso.with(ctx)
-                            .load(sender_image)
-                            .into(civ);
-                }
+                    .into(civ);
 
-                @Override
-                public void onError() {
-
-                    Picasso.with(ctx)
-                            .load(sender_image)
-                            .placeholder(R.drawable.placeholder_image)
-                            .into(civ);
-                }
-            });
         }
     }
 
