@@ -98,6 +98,8 @@ public class tab2Inbox extends Fragment {
 
     private static final int TOTAL_ITEMS_TO_LOAD = 10;
     private int currentPage = 1;
+    private int itemPos = 0;
+    private String mLastKey = "";
 
 
     public tab2Inbox() {
@@ -174,7 +176,7 @@ public class tab2Inbox extends Fragment {
 
                         currentPage++;
                         questionList.clear();
-                        LoadMessage();
+                        LoadMoreMessage();
 
 
                     }
@@ -216,6 +218,55 @@ public class tab2Inbox extends Fragment {
         initSignIn();
 
         return view;
+    }
+
+    private void LoadMoreMessage() {
+
+        Query quizQuery = mDatabaseUserInbox.child(auth.getCurrentUser().getUid()).orderByKey().endAt(mLastKey).limitToLast(15);
+
+        quizQuery.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                Answer message = dataSnapshot.getValue(Answer.class);
+
+                questionList.add(itemPos++, message);
+                if (itemPos == 1) {
+
+                    String messageKey = dataSnapshot.getKey();
+                    mLastKey = messageKey;
+                }
+
+                inboxAdapter.notifyDataSetChanged();
+                inboxAdapter.notifyItemInserted(0);
+
+                mSwipeRefreshLayout.setRefreshing(false);
+
+              /*  mQuestionsList.scrollToPosition(questionList.size()-1);*/
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     @Override

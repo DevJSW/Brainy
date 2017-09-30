@@ -74,6 +74,8 @@ public class tab1Questions extends Fragment {
 
     private static final int TOTAL_ITEMS_TO_LOAD = 10;
     private int currentPage = 1;
+    private int itemPos = 0;
+    private String mLastKey = "";
 
 
     @Override
@@ -396,8 +398,9 @@ public class tab1Questions extends Fragment {
                     public void run() {
 
                         currentPage++;
+                        itemPos = 0;
                         questionList.clear();
-                        LoadMessage();
+                        LoadMoreMessage();
 
 
                     }
@@ -408,6 +411,57 @@ public class tab1Questions extends Fragment {
 
         return v;
 
+    }
+
+    private void LoadMoreMessage() {
+
+        Query quizQuery = mDatabase.orderByKey().endAt(mLastKey).limitToLast(10);
+
+        quizQuery.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                //questionList.clear();
+                Question message = dataSnapshot.getValue(Question.class);
+
+                questionList.add(itemPos++,message);
+                if (itemPos == 1) {
+
+                    String messageKey = dataSnapshot.getKey();
+                    mLastKey = messageKey;
+                }
+
+
+                questionAdapter.notifyDataSetChanged();
+                questionAdapter.notifyItemInserted(0);
+
+                mSwipeRefreshLayout.setRefreshing(false);
+
+               /* mLinearlayout.scrollToPositionWithOffset(10, 0);*/
+              /*  mQuestionsList.scrollToPosition(questionList.size()-1);*/
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -558,6 +612,13 @@ public class tab1Questions extends Fragment {
 
                 //questionList.clear();
                 Question message = dataSnapshot.getValue(Question.class);
+
+                itemPos++;
+                if (itemPos == 1) {
+
+                    String messageKey = dataSnapshot.getKey();
+                    mLastKey = messageKey;
+                }
 
                 questionList.add(message);
                 questionAdapter.notifyDataSetChanged();

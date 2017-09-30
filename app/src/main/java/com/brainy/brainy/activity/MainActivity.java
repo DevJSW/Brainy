@@ -7,6 +7,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
@@ -23,6 +25,8 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -174,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
       if (auth.getCurrentUser() != null) {
           checkForNotifications();
           awardReputation();
-          getUserLocation();
+          /*getUserLocation();*/
       }
     }
 
@@ -247,6 +251,9 @@ public class MainActivity extends AppCompatActivity {
                     Intent intent = new Intent(context, ReadQuestionActivity.class);
                     intent.putExtra("question_id", question_key);
                     PendingIntent pIntent = PendingIntent.getActivity(MainActivity.this, 0, intent, 0);
+                   /* Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.saf_appbanner);
+                    NotificationCompat.BigPictureStyle style = new NotificationCompat.BigPictureStyle();
+                    style.bigPicture(bitmap);*/
                     Notification noty = new Notification.Builder(MainActivity.this)
                             .setContentTitle("Brainy")
                             .setTicker("Inbox alert!")
@@ -261,6 +268,18 @@ public class MainActivity extends AppCompatActivity {
                     r.play();
                     NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                     nm.notify(0, noty);
+
+                    /*NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+                    Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.saf_appbanner);
+
+                    builder.setContentTitle("Brainy");
+                    NotificationCompat.BigPictureStyle style = new NotificationCompat.BigPictureStyle();
+                    style.bigPicture(bitmap);
+
+                    builder.bigPicture(bitmap)
+                    Notification notification1 = builder.build();
+                    NotificationManagerCompat.from(getApplicationContext()).notify(0, notification1);
+*/
 
                 }
             }
