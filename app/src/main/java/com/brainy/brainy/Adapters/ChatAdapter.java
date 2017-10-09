@@ -141,23 +141,24 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
         String from_user_id = c.getSender_uid();
 
-        if (from_user_id.equals(mAuth.getCurrentUser().getUid())) {
+        if (mAuth.getCurrentUser() != null) {
+            if (from_user_id.equals(mAuth.getCurrentUser().getUid())) {
 
-           holder.linearChat.setGravity(Gravity.RIGHT);
+                holder.linearChat.setGravity(Gravity.RIGHT);
 
-         /*  RelativeLayout.LayoutParams linearParams = new RelativeLayout.LayoutParams(
-                   LinearLayout.LayoutParams.WRAP_CONTENT,
-                   LinearLayout.LayoutParams.WRAP_CONTENT
+             /*  RelativeLayout.LayoutParams linearParams = new RelativeLayout.LayoutParams(
+                       LinearLayout.LayoutParams.WRAP_CONTENT,
+                       LinearLayout.LayoutParams.WRAP_CONTENT
 
-           );
-            linearParams.gra = RelativeLayout.ALIGN_RIGHT;
-           holder.linearChat.setLayoutParams(linearParams);*/
+               );
+                linearParams.gra = RelativeLayout.ALIGN_RIGHT;
+               holder.linearChat.setLayoutParams(linearParams);*/
 
-        } else {
+            } else {
 
-            holder.linearChat.setGravity(Gravity.LEFT);
+                holder.linearChat.setGravity(Gravity.LEFT);
+            }
         }
-
         Picasso.with(ctx)
                 .load(c.getSender_image())
                 .placeholder(R.drawable.placeholder_image)

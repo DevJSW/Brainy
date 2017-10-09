@@ -105,6 +105,14 @@ public class AnsProfileTab extends Fragment {
         answerList.clear();
         LoadMessage();
 
+        if (answerList.size() < 0) {
+
+            noAns.setVisibility(View.VISIBLE);
+
+        } else {
+
+            noAns.setVisibility(View.GONE);
+        }
 
 
         return v;

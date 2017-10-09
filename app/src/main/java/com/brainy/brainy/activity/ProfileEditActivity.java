@@ -113,8 +113,7 @@ public class ProfileEditActivity extends AppCompatActivity {
             final String name = inputName.getText().toString();
             final String bio = inputBio.getText().toString();
 
-            if (mImageUri != null)
-            if (mImageUri.getLastPathSegment() != null) {
+            if (mImageUri != null && mImageUri.getLastPathSegment() != null) {
                 StorageReference filepath = mStorage.child("Profile_images").child(mImageUri.getLastPathSegment());
 
                 filepath.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -131,7 +130,7 @@ public class ProfileEditActivity extends AppCompatActivity {
                     }
                 });
 
-            } else {
+            } else if (name != null || bio != null){
 
                 mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("name").setValue(name);
                 mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("bio").setValue(bio);
@@ -140,6 +139,24 @@ public class ProfileEditActivity extends AppCompatActivity {
                 mprogress.dismiss();
 
                 Toast.makeText(ProfileEditActivity.this, "Saved successfully!", Toast.LENGTH_LONG).show();
+            } else if (mImageUri != null && mImageUri.getLastPathSegment() != null && name != null || bio != null) {
+
+                StorageReference filepath = mStorage.child("Profile_images").child(mImageUri.getLastPathSegment());
+
+                filepath.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                        final Uri downloadUrl = taskSnapshot.getDownloadUrl();
+
+                        mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("user_image").setValue(downloadUrl.toString());
+                        mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("name").setValue(name);
+                        mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("bio").setValue(bio);
+                        mprogress.dismiss();
+
+                        Toast.makeText(ProfileEditActivity.this, "Saved successfully!", Toast.LENGTH_LONG).show();
+                    }
+                });
             }
         }
     }

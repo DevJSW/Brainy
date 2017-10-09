@@ -12,6 +12,7 @@ import com.srx.widget.PullCallback;
 import com.srx.widget.PullToLoadView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Shephard on 8/25/2017.
@@ -28,24 +29,29 @@ public class Paginator {
     private Boolean hasLoadedAll = false;
     private int nextPage;
 
+    private int ITEMS_PER_PAGE = 5;
+
     QuestionAdapter questionAdapter;
     private final ArrayList<Question> questionList = new ArrayList<>();
 
-    public Paginator(Context c, PullToLoadView pullToLoadView) {
+    public Paginator(Context c, PullToLoadView pullToLoadView, RecyclerView mQuestionsList) {
         this.c=c;
         this.pullToLoadView=pullToLoadView;
+        this.mQuestionsList=mQuestionsList;
+
+        ITEMS_PER_PAGE = 10;
 
         RecyclerView rv = pullToLoadView.getRecyclerView();
         rv.setLayoutManager(new LinearLayoutManager(c, LinearLayoutManager.VERTICAL, false));
 
         questionAdapter = new QuestionAdapter(c, new ArrayList<Question>());
-        rv.setAdapter(questionAdapter);
+        mQuestionsList.setAdapter(questionAdapter);
 
         initializePaginator();
 
     }
 
-    private void initializePaginator() {
+    public void initializePaginator() {
 
         pullToLoadView.isLoadMoreEnabled(true);
         pullToLoadView.setPullCallback(new PullCallback() {
@@ -60,13 +66,13 @@ public class Paginator {
 
                 questionList.clear();
                 hasLoadedAll=false;
-                LoadData(1);
+                LoadData(0);
 
             }
 
             @Override
             public boolean isLoading() {
-                return isLoading();
+                return isLoading;
             }
 
             @Override
@@ -85,12 +91,11 @@ public class Paginator {
             @Override
             public void run() {
 
-                for (int i=0; i<5; i++) {
+               /* for (Question question : getCurrentQuestion(page)) {
 
-                    questionList.add(new Question("question : "+String.valueOf(i)+ "int page : " +String.valueOf(page)));
+                    questionList.add(question);
 
-                }
-
+                }*/
                 pullToLoadView.setComplete();
                 isLoading=false;
                 nextPage=page+1;
@@ -98,5 +103,19 @@ public class Paginator {
             }
         },3000);
     }
+
+
+    // CURRENT PAGE QUESTION LIST
+
+   /* public List<Question> getCurrentQuestion(int currentPage) {
+
+        int startItem = currentPage * ITEMS_PER_PAGE;
+        List<Question> currentQuestion = new ArrayList<>();
+
+        try {
+
+        }
+    }*/
+
 }
 

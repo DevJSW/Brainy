@@ -252,7 +252,9 @@ public class tab3Achievements extends Fragment {
                 personId = account.getId();
                 personPhoto = account.getPhotoUrl();
 
-
+                postUserInfoToDB();
+                Toast.makeText(getActivity(), "Sign in success!.",
+                        Toast.LENGTH_LONG).show();
 
             } else {
                 // Google Sign In failed, update UI appropriately
@@ -288,7 +290,9 @@ public class tab3Achievements extends Fragment {
                             // startActivity(new Intent(LoginActivity.this, MainActivity.class));
 
                             postUserInfoToDB();
-
+                            postUserInfoToDB();
+                            Toast.makeText(getActivity(), "Sign in success!.",
+                                    Toast.LENGTH_LONG).show();
                         }
 
                         // ...
@@ -366,6 +370,7 @@ public class tab3Achievements extends Fragment {
             };
 
             mFavouriteList.setAdapter(firebaseRecyclerAdapter);
+
         }
 
     }

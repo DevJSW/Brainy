@@ -2,11 +2,15 @@ package com.brainy.brainy.activity;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -14,20 +18,34 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.brainy.brainy.Adapters.ChatAdapter;
 import com.brainy.brainy.Adapters.QuestionAdapter;
 import com.brainy.brainy.R;
 import com.brainy.brainy.data.Chat;
 import com.brainy.brainy.data.Question;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,6 +53,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -44,6 +63,16 @@ import java.util.List;
 import java.util.Map;
 
 public class DiscussForumActivity extends AppCompatActivity {
+
+    String  personName = "";
+    String  personEmail = "";
+    String  personId = "";
+    Uri personPhoto = null;
+
+    private static final String TAG = "DiscussForum";
+    private GoogleApiClient mGoogleApiClient;
+    private static int RC_SIGN_IN = 1;
+    private ProgressBar progressBar;
 
     private RecyclerView mAnsList;
     private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseDiscussForum;
@@ -97,81 +126,91 @@ public class DiscussForumActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (auth.getCurrentUser() != null) {
+                    final Context context = DiscussForumActivity.this;
 
-                final Context context = DiscussForumActivity.this;
+                    // custom dialog
+                    final Dialog dialog = new Dialog(context);
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.chat_dialog);
+                    dialog.setCancelable(false);
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                    dialog.show();
 
-                // custom dialog
-                final Dialog dialog = new Dialog(context);
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                dialog.setContentView(R.layout.answer_dialog);
-                dialog.setCancelable(false);
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-                dialog.show();
+                    final EditText questionBodyInput = (EditText) dialog.findViewById(R.id.questionBodyInput);
+                    Button cancel = (Button) dialog.findViewById(R.id.cancel);
+                    cancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
 
-                final EditText questionBodyInput = (EditText) dialog.findViewById(R.id.questionBodyInput);
-                Button cancel = (Button) dialog.findViewById(R.id.cancel);
-                cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
+                    Button create = (Button) dialog.findViewById(R.id.create);
+                    create.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 
-                Button create = (Button) dialog.findViewById(R.id.create);
-                create.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                            startPosting();
+                            dialog.dismiss();
+                        }
 
-                        startPosting();
-                        dialog.dismiss();
-                    }
+                        private void startPosting() {
 
-                    private void startPosting() {
+                            Date date = new Date();
+                            final String stringDate = DateFormat.getDateTimeInstance().format(date);
+                            final String stringDate2 = DateFormat.getDateInstance().format(date);
 
-                        Date date = new Date();
-                        final String stringDate = DateFormat.getDateTimeInstance().format(date);
-                        final String stringDate2 = DateFormat.getDateInstance().format(date);
-
-                        final String questionBodyTag = questionBodyInput.getText().toString().trim();
-                        if (TextUtils.isEmpty(questionBodyTag)) {
+                            final String questionBodyTag = questionBodyInput.getText().toString().trim();
+                            if (TextUtils.isEmpty(questionBodyTag)) {
 
 
-                        } else {
+                            } else {
 
-                            final DatabaseReference newPost = mDatabaseDiscussForum.child(QuizKey).push();
+                                final DatabaseReference newPost = mDatabaseDiscussForum.child(QuizKey).push();
 
-                            mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                    final String name = dataSnapshot.child("name").getValue().toString();
+                                        final String name = dataSnapshot.child("name").getValue().toString();
                                    /* final String image = dataSnapshot.child("image").getValue().toString();*/
-                                    // getting user uid
+                                        // getting user uid
 
-                                    Map<String, Object> map = new HashMap<>();
-                                    map.put("message", questionBodyTag);
-                                    map.put("sender_uid", auth.getCurrentUser().getUid());
-                                    map.put("sender_name", dataSnapshot.child("name").getValue());
-                                    map.put("sender_image", dataSnapshot.child("user_image").getValue());
-                                    map.put("posted_date", stringDate2);
-                                    map.put("post_id", newPost.getKey());
-                                    newPost.setValue(map);
+                                        Map<String, Object> map = new HashMap<>();
+                                        map.put("message", questionBodyTag);
+                                        map.put("sender_uid", auth.getCurrentUser().getUid());
+                                        map.put("sender_name", dataSnapshot.child("name").getValue());
+                                        map.put("sender_image", dataSnapshot.child("user_image").getValue());
+                                        map.put("posted_date", stringDate2);
+                                        map.put("post_id", newPost.getKey());
+                                        newPost.setValue(map);
 
-                                }
+                                    }
 
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+
+                            }
+
+                        }
+                    });
+                }else {
+                    Snackbar snackbar = Snackbar
+                            .make(view, "You need to sign in first to be able to post a question!", Snackbar.LENGTH_LONG)
+                            .setAction("SIGN IN", new View.OnClickListener() {
                                 @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
+                                public void onClick(View view) {
+                                    showSignInDialog();
                                 }
                             });
 
-                        }
+                    snackbar.show();
+                }
 
-                    }
-                });
-
-                /*Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();*/
             }
         });
 
@@ -227,6 +266,150 @@ public class DiscussForumActivity extends AppCompatActivity {
 
         chatList.clear();
         LoadMessage();
+    }
+
+    private void showSignInDialog() {
+
+        final Context context = DiscussForumActivity.this;
+
+        // custom dialog
+        final Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.sign_in_dialog);
+        dialog.setTitle("Let's get started...");
+        dialog.show();
+
+        Button googleBtn = (Button) dialog.findViewById(R.id.googleBtn);
+        googleBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                initGoogleSignIn();
+                dialog.dismiss();
+            }
+        });
+
+
+    }
+
+    private void initGoogleSignIn() {
+
+        // Configure Google Sign In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(DiscussForumActivity.this)
+                .enableAutoManage(DiscussForumActivity.this, new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+                        Toast.makeText(DiscussForumActivity.this, "Failed to connect to Google, check your internet connection.",
+                                Toast.LENGTH_LONG).show();
+                    }
+                })
+
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        // Configure Google Sign In
+        progressBar.setVisibility(View.VISIBLE);
+
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+
+        progressBar.setVisibility(View.GONE);
+
+
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        progressBar.setVisibility(View.VISIBLE);
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (result.isSuccess()) {
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = result.getSignInAccount();
+                firebaseAuthWithGoogle(account);
+
+                personName = account.getDisplayName();
+                personEmail = account.getEmail();
+                personId = account.getId();
+                personPhoto = account.getPhotoUrl();
+
+                postUserInfoToDB();
+                Toast.makeText(DiscussForumActivity.this, "Sign in success!.",
+                        Toast.LENGTH_LONG).show();
+
+            } else {
+                // Google Sign In failed, update UI appropriately
+                // ...
+
+                progressBar.setVisibility(View.GONE);
+            }
+        }
+
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
+
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        auth.signInWithCredential(credential)
+                .addOnCompleteListener(DiscussForumActivity.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "signInWithCredential", task.getException());
+                            Toast.makeText(DiscussForumActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+
+                            // startActivity(new Intent(LoginActivity.this, MainActivity.class));
+
+                            postUserInfoToDB();
+                            postUserInfoToDB();
+                            Toast.makeText(DiscussForumActivity.this, "Sign in success!.",
+                                    Toast.LENGTH_LONG).show();
+
+                        }
+
+                        // ...
+                    }
+                });
+    }
+
+    private void postUserInfoToDB() {
+
+        Date date = new Date();
+        final String stringDate = DateFormat.getDateInstance().format(date);
+        String deviceToken = FirebaseInstanceId.getInstance().getToken();
+
+        final DatabaseReference newPost = mDatabaseUsers;
+
+        newPost.child(auth.getCurrentUser().getUid()).child("name").setValue(personName);
+        newPost.child(auth.getCurrentUser().getUid()).child("status").setValue("");
+        newPost.child(auth.getCurrentUser().getUid()).child("user_image").setValue(personPhoto.toString());
+        newPost.child(auth.getCurrentUser().getUid()).child("joined_date").setValue(stringDate);
+        newPost.child(auth.getCurrentUser().getUid()).child("personId").setValue(personId);
+        newPost.child(auth.getCurrentUser().getUid()).child("uid").setValue(auth.getCurrentUser().getUid());
+        newPost.child(auth.getCurrentUser().getUid()).child("user_gmail").setValue(personEmail);
+        newPost.child(auth.getCurrentUser().getUid()).child("sign_in_type").setValue("google_signIn");
+        newPost.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Beginner");
+        newPost.child(auth.getCurrentUser().getUid()).child("points_earned").setValue(10);
+        newPost.child(auth.getCurrentUser().getUid()).child("device_token").setValue(deviceToken);
+
     }
 
     private void LoadMessage() {

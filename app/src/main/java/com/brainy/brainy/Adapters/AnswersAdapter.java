@@ -149,7 +149,6 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
         holder.post_date.setText(c.getPosted_date());
         holder.post_quiz_title.setText(c.getPosted_quiz_title());
 
-
         final String answer_key = c.getPost_id();
         final String QuizKey = c.getQuestion_key();
 
@@ -205,6 +204,7 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
                     });
 
         }
+
        /* //COUNT PROFILE USER ANSWERS
         if (answer_key != null) {
             mDatabaseProfileAns

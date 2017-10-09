@@ -48,6 +48,7 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
     Context ctx;
 
     private DatabaseReference mDatabase, mDatabaseUsers, mDatabaseUsersAns;
+    public Boolean mProcessApproval = false;
     FirebaseAuth mAuth;
 
     public SolutionsAdapter(Context ctx, List<Answer> mAnswersList)
@@ -78,7 +79,6 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
         public Boolean mProcessApproval = false;
         RelativeLayout answer_rely;
 
-
         public AnswersViewHolder(View itemView) {
             super(itemView);
 
@@ -93,7 +93,7 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
             mAuth = FirebaseAuth.getInstance();
             mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
             mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
-            mDatabaseUsersAns = FirebaseDatabase.getInstance().getReference().child("Users_answers").child(mAuth.getCurrentUser().getUid());
+            mDatabaseUsersAns = FirebaseDatabase.getInstance().getReference().child("Users_answers");
 
             mDatabase.keepSynced(true);
             mDatabaseUsers.keepSynced(true);
@@ -156,7 +156,7 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
         mAuth= FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
-        final Boolean[] mProcessApproval = {false};
+        //final boolean mProcessApproval = false;
         mDatabase.keepSynced(true);
 
         mAuth = FirebaseAuth.getInstance();
@@ -217,78 +217,86 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
                         public void onClick(final View v) {
 
                             dialog.dismiss();
-                            mProcessApproval[0] = true;
+                            mProcessApproval = true;
 
-                            mDatabase.child(QuizKey).child("Answers").addValueEventListener(new ValueEventListener() {
+                            final ValueEventListener valueEventListener = mDatabase.child(QuizKey).child("Answers").addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
 
-                                    if (dataSnapshot.child(answer_key).child("votes").hasChild(mAuth.getCurrentUser().getUid())) {
+                                    if (mProcessApproval) {
 
-                                        Toast.makeText(ctx, "You have already voted for this answer",Toast.LENGTH_LONG).show();
+                                        if (dataSnapshot.child(answer_key).child("votes").hasChild(mAuth.getCurrentUser().getUid())) {
+
+                                            Toast.makeText(ctx, "You have already voted for this answer", Toast.LENGTH_LONG).show();
                                         /*Snackbar.make(v, "You have already voted for this answer ", Snackbar.LENGTH_SHORT).show();*/
 
-                                        mDatabase.child(QuizKey).child("Answers").child(answer_key).child("votes").addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
-                                                holder.voteCount.setText(dataSnapshot.getChildrenCount() + "");
-                                            }
+                                            mDatabase.child(QuizKey).child("Answers").child(answer_key).child("votes").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
+                                                    holder.voteCount.setText(dataSnapshot.getChildrenCount() + "");
+                                                }
 
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
 
-                                            }
-                                        });
-                                    } else {
+                                                }
+                                            });
+                                        } else {
 
-                                        mDatabase.child(QuizKey).child("Answers").child(answer_key).child("votes").child(mAuth.getCurrentUser().getUid()).setValue("iVote");
-                                        //PROFILE USER ANSWERS
-                                        mDatabaseUsersAns.child(answer_key).child("votes").setValue("iVote");
+                                            mDatabase.child(QuizKey).child("Answers").child(answer_key).child("votes").child(mAuth.getCurrentUser().getUid()).setValue("iVote");
+                                            //PROFILE USER ANSWERS
+                                            mDatabaseUsersAns.child(mAuth.getCurrentUser().getUid()).child(answer_key).child("votes").setValue("iVote");
 
-                                        // CHECK IF USER HAS VOTED AND ADD 10 POINTS TO THE USER WHO POSTED THE ANSWER.....................
-                                        mDatabase.child(QuizKey).addValueEventListener(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
-                                                final String sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
-                                                mDatabaseUsers.child(sender_uid).child("points_earned").addValueEventListener(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
-                                                        Long user_points = (Long) dataSnapshot.getValue();
-                                                        user_points = user_points + 10;
+                                            // CHECK IF USER HAS VOTED AND ADD 10 POINTS TO THE USER WHO POSTED THE ANSWER.....................
 
-                                                        mDatabaseUsers.child(sender_uid).child("points_earned").setValue(user_points);
-                                                    }
+                                            final int p = 10;
 
-                                                    @Override
-                                                    public void onCancelled(DatabaseError databaseError) {
+                                            mDatabase.child(QuizKey).addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
+                                                    final String sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
+                                                    mDatabaseUsers.child(sender_uid).child("points_earned").addValueEventListener(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
 
-                                                    }
-                                                });
-                                            }
+                                                                Long user_points = (Long) dataSnapshot.getValue();
+                                                                user_points = user_points + p;
 
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {
+                                                                mDatabaseUsers.child(sender_uid).child("points_earned").setValue(user_points);
 
-                                            }
-                                        });
+                                                        }
 
-                                        mDatabase.child(QuizKey).child("Answers").child(answer_key).child("votes").addValueEventListener(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
-                                                holder.voteCount.setText(dataSnapshot.getChildrenCount() + "");
-                                            }
+                                                        @Override
+                                                        public void onCancelled(DatabaseError databaseError) {
 
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {
+                                                        }
+                                                    });
+                                                }
 
-                                            }
-                                        });
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
 
-                                        /*Toast.makeText(ctx, "Vote was successful",Toast.LENGTH_LONG).show();*/
-                                        Snackbar.make(v, "Vote was successful ", Snackbar.LENGTH_SHORT).show();
+                                                }
+                                            });
 
+                                            mDatabase.child(QuizKey).child("Answers").child(answer_key).child("votes").addValueEventListener(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
+                                                    holder.voteCount.setText(dataSnapshot.getChildrenCount() + "");
+                                                }
+
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+
+                                                }
+                                            });
+                                            mProcessApproval = false;
+                                            Snackbar.make(v, "Vote was successful ", Snackbar.LENGTH_SHORT).show();
+
+                                        }
+
+                                        mProcessApproval = false;
                                     }
-
                                 }
 
                                 @Override
@@ -324,81 +332,109 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
             @Override
             public void onClick(final View view) {
 
-                mProcessApproval[0] = true;
+                mProcessApproval = true;
+                if (mProcessApproval) {
 
-                if ((mAuth.getCurrentUser() != null))
-                {
+                    if ((mAuth.getCurrentUser() != null)) {
 
-                    // custom dialog
-                    final Dialog dialog = new Dialog(ctx);
-                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    dialog.setContentView(R.layout.ans_downvote_dialog);
-                    dialog.setCancelable(false);
-                    dialog.show();
+                        // custom dialog
+                        final Dialog dialog = new Dialog(ctx);
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        dialog.setContentView(R.layout.ans_downvote_dialog);
+                        dialog.setCancelable(false);
+                        dialog.show();
 
-                    Button cancel = (Button) dialog.findViewById(R.id.cancel);
-                    cancel.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dialog.dismiss();
-                        }
-                    });
+                        Button cancel = (Button) dialog.findViewById(R.id.cancel);
+                        cancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
 
-                    Button create = (Button) dialog.findViewById(R.id.create);
-                    create.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(final View v) {
+                        Button create = (Button) dialog.findViewById(R.id.create);
+                        create.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(final View v) {
+                                mProcessApproval = true;
+                                if (mProcessApproval) {
 
-                            dialog.dismiss();
-                            mDatabase.child(QuizKey).child("Answers").addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
-                                    if (dataSnapshot.child(answer_key).child("down_votes").hasChild(mAuth.getCurrentUser().getUid())) {
+                                    dialog.dismiss();
+                                    mDatabase.child(QuizKey).child("Answers").addValueEventListener(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
+                                            if (dataSnapshot.child(answer_key).child("down_votes").hasChild(mAuth.getCurrentUser().getUid())) {
 
-                                        //* mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").child(auth.getCurrentUser().getUid()).removeValue();*//*
+                                                //* mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").child(auth.getCurrentUser().getUid()).removeValue();*//*
                            /* Toast.makeText(ctx, "You have already down voted this answer",Toast.LENGTH_LONG).show();
                             Toast.makeText(ctx, "You need to have an account for you to vote",Toast.LENGTH_LONG).show();*/
-                                        Snackbar snackbar = Snackbar
-                                                .make(view, "You have already down voted this answer", Snackbar.LENGTH_LONG)
-                                                .setAction("UNDO", new View.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(final View view) {
+                                                Snackbar snackbar = Snackbar
+                                                        .make(view, "You have already down voted this answer", Snackbar.LENGTH_LONG)
+                                                        .setAction("UNDO", new View.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(final View view) {
 
-                                                        mDatabase.child(QuizKey).child("Answers").child(answer_key).child("down_votes").child(mAuth.getCurrentUser().getUid()).removeValue();
-                                                        Snackbar snackbar1 = Snackbar.make(view, "Your vote has been reversed!", Snackbar.LENGTH_SHORT);
+                                                                mDatabase.child(QuizKey).child("Answers").child(answer_key).child("down_votes").child(mAuth.getCurrentUser().getUid()).removeValue();
+                                                                Snackbar snackbar1 = Snackbar.make(view, "Your vote has been reversed!", Snackbar.LENGTH_SHORT);
 
 
-                                                    }
-                                                });
+                                                            }
+                                                        });
 
-                                        snackbar.show();
+                                                snackbar.show();
 
-                                        mProcessApproval[0] = false;
 
-                                    } else {
-                                        mDatabase.child(QuizKey).child("Answers").child(answer_key).child("down_votes").child(mAuth.getCurrentUser().getUid()).setValue("iVote");
+                                            } else {
+                                                mDatabase.child(QuizKey).child("Answers").child(answer_key).child("down_votes").child(mAuth.getCurrentUser().getUid()).setValue("iVote");
 
-                                        // CHECK IF USER HAS DOWN VOTED AND DEDUCT 2 POINTS TO THE USER WHO POSTED THE ANSWER.....................
+                                                // CHECK IF USER HAS DOWN VOTED AND DEDUCT 2 POINTS TO THE USER WHO POSTED THE ANSWER.....................
 
-                                        mDatabase.child(QuizKey).addValueEventListener(new ValueEventListener() {
-                                            @Override
-                                            public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
-                                                final String sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
+                                                final int p = 2;
+                                                final int d = 1;
 
-                                                mDatabaseUsers.child(sender_uid).child("points_earned").addValueEventListener(new ValueEventListener() {
+                                                mDatabase.child(QuizKey).addValueEventListener(new ValueEventListener() {
                                                     @Override
                                                     public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
-                                                        Long user_points = (Long) dataSnapshot.getValue();
-                                                        user_points = user_points - 2;
+                                                        final String sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
 
-                                                        mDatabaseUsers.child(sender_uid).child("points_earned").setValue(user_points);
+                                                        mDatabaseUsers.child(sender_uid).child("points_earned").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
 
-                                                        //ALSO DEDUCT 1 POINT FROM THIS USER.....
 
-                                                        Long current_user_points = (Long) dataSnapshot.getValue();
-                                                        current_user_points = current_user_points - 1;
 
-                                                        mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("points_earned").setValue(current_user_points);
+                                                                    Long user_points = (Long) dataSnapshot.getValue();
+                                                                    user_points = user_points - p;
+
+                                                                    mDatabaseUsers.child(sender_uid).child("points_earned").setValue(user_points);
+
+                                                                    //ALSO DEDUCT 1 POINT FROM THIS USER.....
+
+                                                                    Long current_user_points = (Long) dataSnapshot.getValue();
+                                                                    current_user_points = current_user_points - d;
+
+                                                                    mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("points_earned").setValue(current_user_points);
+
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(DatabaseError databaseError) {
+
+                                                            }
+                                                        });
+
+                                                        mDatabase.child(QuizKey).child("Answers").child(answer_key).child("down_votes").addValueEventListener(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
+                                                                holder.voteCount.setText(dataSnapshot.getChildrenCount() + "");
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(DatabaseError databaseError) {
+
+                                                            }
+                                                        });
+                                                        Toast.makeText(ctx, "Down vote was successful", Toast.LENGTH_LONG).show();
                                                     }
 
                                                     @Override
@@ -406,54 +442,34 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
 
                                                     }
                                                 });
-
-                                                mDatabase.child(QuizKey).child("Answers").child(answer_key).child("down_votes").addValueEventListener(new ValueEventListener() {
-                                                    @Override
-                                                    public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
-                                                        holder.voteCount.setText(dataSnapshot.getChildrenCount() + "");
-                                                    }
-
-                                                    @Override
-                                                    public void onCancelled(DatabaseError databaseError) {
-
-                                                    }
-                                                });
-                                                Toast.makeText(ctx, "Down vote was successful", Toast.LENGTH_LONG).show();
                                             }
+                                        }
 
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {
+                                        @Override
+                                        public void onCancelled(DatabaseError databaseError) {
 
-                                            }
-                                        });
+                                        }
+                                    });
+                                }
+                            }
+
+                        });
+
+                    } else {
+                        Snackbar snackbar = Snackbar
+                                .make(view, "You need to sign in first for you to vote for an answer", Snackbar.LENGTH_LONG)
+                                .setAction("SIGN IN", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        Snackbar snackbar1 = Snackbar.make(view, "Your vote has been reversed!", Snackbar.LENGTH_SHORT);
+                                        snackbar1.show();
                                     }
-                                }
+                                });
 
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
+                        snackbar.show();
+                    }
 
-                                }
-                            });
-                        }
-
-                    });
-
-                } else
-                {
-                    Snackbar snackbar = Snackbar
-                            .make(view, "You need to sign in first for you to vote for an answer", Snackbar.LENGTH_LONG)
-                            .setAction("SIGN IN", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    Snackbar snackbar1 = Snackbar.make(view, "Your vote has been reversed!", Snackbar.LENGTH_SHORT);
-                                    snackbar1.show();
-                                }
-                            });
-
-                    snackbar.show();
                 }
-
-
                 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             }

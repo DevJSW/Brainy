@@ -1,11 +1,13 @@
 package com.brainy.brainy.tabs;
 
 
+import android.annotation.SuppressLint;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
@@ -18,6 +20,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -28,10 +31,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.brainy.brainy.Adapters.QuestionAdapter;
+import com.brainy.brainy.activity.EndlessRecyclerViewScrollListener;
 import com.brainy.brainy.activity.MainActivity;
+import com.brainy.brainy.activity.Paginator;
 import com.brainy.brainy.activity.SearchActivity;
+import com.brainy.brainy.data.OnLoadMoreListener;
 import com.brainy.brainy.data.Question;
 import com.brainy.brainy.R;
+import com.github.pwittchen.infinitescroll.library.InfiniteScrollListener;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -39,6 +47,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.srx.widget.PullCallback;
 import com.srx.widget.PullToLoadView;
 
 import java.util.ArrayList;
@@ -63,21 +72,42 @@ public class tab1Questions extends Fragment {
     private DatabaseReference mDatabaseChatroom, mDatabaseViews, mDatabase;
     private FirebaseAuth mAuth;
     private RecyclerView mQuestionsList;
+    private RecyclerView mQuestionsList2;
     private ProgressBar mProgressBar;
     private Spinner spinner1;
     private ViewPager mViewPager;
     PullToLoadView pullToLoadView;
+    private Boolean isLoading = false;
+    private Boolean hasLoadedAll = false;
+    private int nextPage;
 
     QuestionAdapter questionAdapter;
     private final List<Question> questionList = new ArrayList<>();
     LinearLayoutManager mLinearlayout;
 
+
+    private static final String TAG = "tab1Question";
+    private GoogleApiClient mGoogleApiClient;
+    private static int RC_SIGN_IN = 1;
+    private ProgressBar progressBar;
+
+    //PAGINATION
     private static final int TOTAL_ITEMS_TO_LOAD = 10;
     private int currentPage = 1;
     private int itemPos = 0;
     private String mLastKey = "";
+    private String mFirstKey = "";
 
+    private String newestPostId;
+    private String oldestPostId;
+    private int startAt = 0;
 
+    private EndlessRecyclerViewScrollListener scrollListener;
+
+    private int visibleThreshold = 7;
+    private int lastVisibleItem, totalItemCount;
+
+    @SuppressLint("ResourceAsColor")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -87,15 +117,19 @@ public class tab1Questions extends Fragment {
         final Spinner spinner = (Spinner) v.findViewById(R.id.spinner);
         final Spinner spinner2 = (Spinner) v.findViewById(R.id.spinner2);
 
+        //auth
+        pullToLoadView= (PullToLoadView) v.findViewById(R.id.pullToLoadView);
+
         // Initializing a String Array
         String[] topics = new String[]{
                 "Select a topic...",
                 "Math",
-                "Computer science",
-                "Economics",
+                "Computer science & ICT",
+                "Business & Economics",
                 "Law",
                 "Languages",
-                "Physics",
+                "Geography & Geology",
+                "Physics & Electronics",
                 "Chemistry",
                 "Aviation",
                 "Health Science"
@@ -368,15 +402,17 @@ public class tab1Questions extends Fragment {
         mDatabaseUsers.keepSynced(true);
         mDatabase.keepSynced(true);
 
+        progressBar = (ProgressBar) v.findViewById(R.id.progressBar1); //
         mViewPager = (ViewPager) v.findViewById(R.id.container);
-
         mNoPostTxt = (TextView) v.findViewById(R.id.noPostTxt);
         mProgressBar = (ProgressBar) v.findViewById(R.id.progressBar);
 
 
         pullToLoadView = (PullToLoadView) v.findViewById(R.id.pullToLoadView);
-        mQuestionsList = pullToLoadView.getRecyclerView();
-        pullToLoadView.isLoadMoreEnabled(true);
+       /* mQuestionsList2 = pullToLoadView.getRecyclerView();
+        mQuestionsList2.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        /*pu*//*llToLoadView.isLoadMoreEnabled(true);*/
+       // questionAdapter = new QuestionAdapter(getActivity(), new ArrayList<Question>());
 
         questionAdapter = new QuestionAdapter(getActivity(), questionList);
 
@@ -389,6 +425,7 @@ public class tab1Questions extends Fragment {
         mQuestionsList.setLayoutManager(mLinearlayout);
         mQuestionsList.setAdapter(questionAdapter);
 
+
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -400,7 +437,7 @@ public class tab1Questions extends Fragment {
                         currentPage++;
                         itemPos = 0;
                         questionList.clear();
-                        LoadMoreMessage();
+                        LoadLatestMessage();
 
 
                     }
@@ -409,13 +446,60 @@ public class tab1Questions extends Fragment {
             }
         });
 
+       /* mQuestionsList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                totalItemCount = mLinearlayout.getItemCount();
+                lastVisibleItem = mLinearlayout.findLastVisibleItemPosition();
+                if (totalItemCount <= (lastVisibleItem + visibleThreshold)) {
+
+                    progressBar.setVisibility(View.GONE);
+                    isLoading = true;
+                }else {
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            progressBar.setVisibility(View.VISIBLE);
+                            LoadMoreMessage();
+                            progressBar.setVisibility(View.GONE);
+
+
+                        }
+                    }, 3000);
+                    progressBar.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });*/
+
+        scrollListener = new EndlessRecyclerViewScrollListener(mLinearlayout) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+               /* loadNextDataFromApi(page);*/
+               /* LoadMoreMessage();*/
+            }
+        };
+        // Adds the scroll listener to RecyclerView
+        mQuestionsList.addOnScrollListener(scrollListener);
+
+
         return v;
 
     }
 
-    private void LoadMoreMessage() {
 
-        Query quizQuery = mDatabase.orderByKey().endAt(mLastKey).limitToLast(10);
+    private void LoadLatestMessage() {
+
+        Query quizQuery = mDatabase.orderByKey().endAt(mFirstKey).limitToLast(10);
 
         quizQuery.addChildEventListener(new ChildEventListener() {
             @Override
@@ -423,14 +507,18 @@ public class tab1Questions extends Fragment {
 
                 //questionList.clear();
                 Question message = dataSnapshot.getValue(Question.class);
+                String messageKey = dataSnapshot.getKey();
 
                 questionList.add(itemPos++,message);
-                if (itemPos == 1) {
+                if (itemPos == 10) {
 
-                    String messageKey = dataSnapshot.getKey();
                     mLastKey = messageKey;
                 }
 
+                if (itemPos == 0) {
+
+                    mFirstKey = messageKey;
+                }
 
                 questionAdapter.notifyDataSetChanged();
                 questionAdapter.notifyItemInserted(0);
@@ -476,6 +564,115 @@ public class tab1Questions extends Fragment {
         questionList.clear();
         LoadMessage();
     }
+
+    private void LoadMessage() {
+
+        isLoading = true;
+
+        Query quizQuery = mDatabase.limitToLast(TOTAL_ITEMS_TO_LOAD);
+
+        quizQuery.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                //questionList.clear();
+                Question message = dataSnapshot.getValue(Question.class);
+
+                itemPos++;
+                if (itemPos == 10) {
+
+                    String messageKey = dataSnapshot.getKey();
+                    mLastKey = messageKey;
+                }
+
+                if (itemPos == 0) {
+                    String messageKey = dataSnapshot.getKey();
+                    mFirstKey = messageKey;
+                }
+
+                questionList.add(message);
+                questionAdapter.notifyDataSetChanged();
+                questionAdapter.notifyItemInserted(0);
+
+                mSwipeRefreshLayout.setRefreshing(false);
+
+              /*  mQuestionsList.scrollToPosition(questionList.size()-1);*/
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    private void LoadMoreMessage() {
+
+        Query quizQuery = mDatabase.orderByKey().startAt(mLastKey).limitToLast(10);
+
+        quizQuery.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                //questionList.clear();
+                Question message = dataSnapshot.getValue(Question.class);
+                String messageKey = dataSnapshot.getKey();
+
+                questionList.add(itemPos++,message);
+                if (itemPos == 10) {
+
+                    mLastKey = messageKey;
+                }
+
+
+                questionAdapter.notifyDataSetChanged();
+                questionAdapter.notifyItemInserted(0);
+
+                mSwipeRefreshLayout.setRefreshing(false);
+
+               /* mLinearlayout.scrollToPositionWithOffset(10, 0);*/
+              /*  mQuestionsList.scrollToPosition(questionList.size()-1);*/
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
 
     private void LoadSearchMessage() {
 
@@ -602,57 +799,6 @@ public class tab1Questions extends Fragment {
 
     }
 
-    private void LoadMessage() {
-
-        Query quizQuery = mDatabase.limitToLast(currentPage * TOTAL_ITEMS_TO_LOAD);
-
-        quizQuery.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-                //questionList.clear();
-                Question message = dataSnapshot.getValue(Question.class);
-
-                itemPos++;
-                if (itemPos == 1) {
-
-                    String messageKey = dataSnapshot.getKey();
-                    mLastKey = messageKey;
-                }
-
-                questionList.add(message);
-                questionAdapter.notifyDataSetChanged();
-                questionAdapter.notifyItemInserted(0);
-
-                mSwipeRefreshLayout.setRefreshing(false);
-
-              /*  mQuestionsList.scrollToPosition(questionList.size()-1);*/
-
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-    }
-
 
     public void setPullToLoadView(PullToLoadView pullToLoadView) {
         this.pullToLoadView = pullToLoadView;
@@ -719,56 +865,6 @@ public class tab1Questions extends Fragment {
         MenuItem mSearchMenuItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) mSearchMenuItem.getActionView();
 
-       /* searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-
-                Query quizQuery = mDatabase.orderByChild("question_title").startAt(newText.toUpperCase()).limitToLast(currentPage * TOTAL_ITEMS_TO_LOAD);
-
-                quizQuery.addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-                        Question message = dataSnapshot.getValue(Question.class);
-
-                        questionList.add(message);
-                        questionAdapter.notifyDataSetChanged();
-                        questionAdapter.notifyItemInserted(0);
-
-                        mSwipeRefreshLayout.setRefreshing(false);
-
-                    }
-
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-
-                return true;
-            }
-
-        });*/
     }
 
 }

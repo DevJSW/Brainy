@@ -94,7 +94,7 @@
     <com.brainy.brainy.data.MyButton
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:text="Save"
+        android:text="Update"
         android:id="@+id/save_btn"
         android:layout_margin="5dp"
         android:textColor="#ffff"

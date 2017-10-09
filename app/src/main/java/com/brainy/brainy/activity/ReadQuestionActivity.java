@@ -4,8 +4,10 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -15,6 +17,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,7 +36,18 @@ import com.brainy.brainy.Adapters.SolutionsAdapter;
 import com.brainy.brainy.R;
 import com.brainy.brainy.data.Answer;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -41,6 +55,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
@@ -55,6 +70,17 @@ import java.util.Map;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ReadQuestionActivity extends AppCompatActivity {
+
+    String  personName = null;
+    String  personEmail = null;
+    String  personId = null;
+    Uri personPhoto = null;
+    private Button signIn;
+    private DatabaseReference mDatabaseUserInbox;
+    private static final String TAG = "tab2Inbox";
+    private GoogleApiClient mGoogleApiClient;
+    private static int RC_SIGN_IN = 1;
+    private ProgressBar progressBar;
 
     private RelativeLayout share, favourite, answer;
     private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseUsersInbox, mDatabaseUsersPoints, mDatabaseUsersAns, mDatabaseNotifications;
@@ -160,80 +186,91 @@ public class ReadQuestionActivity extends AppCompatActivity {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         }
 
-        if (auth.getCurrentUser() != null) {
             favourite = (RelativeLayout) findViewById(R.id.favourite);
             favourite.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    if (auth.getCurrentUser() != null) {
+                        mProcessFavourite = true;
 
-                    mProcessFavourite = true;
+                        mDatabaseFavourite.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    mDatabaseFavourite.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                if (mProcessFavourite) {
 
-                            if (mProcessFavourite) {
+                                    if (dataSnapshot.hasChild(auth.getCurrentUser().getUid())) {
 
-                                if (dataSnapshot.hasChild(auth.getCurrentUser().getUid())) {
+                                        ImageView starred = (ImageView) findViewById(R.id.starredImg);
+                                        starred.setImageResource(R.drawable.star_img);
+                                        mDatabaseFavourite.child(auth.getCurrentUser().getUid()).removeValue();
+                                        mDatabaseUsersFavourite.child(auth.getCurrentUser().getUid()).child(QuizKey).removeValue();
 
-                                    ImageView starred = (ImageView) findViewById(R.id.starredImg);
-                                    starred.setImageResource(R.drawable.star_img);
-                                    mDatabaseFavourite.child(auth.getCurrentUser().getUid()).removeValue();
-                                    mDatabaseUsersFavourite.child(auth.getCurrentUser().getUid()).child(QuizKey).removeValue();
+                                        mProcessFavourite = false;
 
-                                    mProcessFavourite = false;
+                                    } else {
 
-                                } else {
+                                        ImageView starred = (ImageView) findViewById(R.id.starredImg);
+                                        starred.setImageResource(R.drawable.star_yellow);
+                                        mDatabaseFavourite.child(auth.getCurrentUser().getUid()).setValue("isFavourite");
 
-                                    ImageView starred = (ImageView) findViewById(R.id.starredImg);
-                                    starred.setImageResource(R.drawable.star_yellow);
-                                    mDatabaseFavourite.child(auth.getCurrentUser().getUid()).setValue("isFavourite");
+                                        //ADD QUESTION TO USER_FAVOURITE IN DATABASE
+                                        mDatabaseQuestions.child(QuizKey).addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                    //ADD QUESTION TO USER_FAVOURITE IN DATABASE
-                                    mDatabaseQuestions.child(QuizKey).addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                                String question_title = dataSnapshot.child("question_title").getValue().toString();
+                                                String question_body = dataSnapshot.child("question_body").getValue().toString();
+                                                String sender_name = dataSnapshot.child("sender_name").getValue().toString();
+                                                String sender_image = dataSnapshot.child("sender_image").getValue().toString();
+                                                String posted_date = dataSnapshot.child("posted_date").getValue().toString();
 
-                                            String question_title = dataSnapshot.child("question_title").getValue().toString();
-                                            String question_body = dataSnapshot.child("question_body").getValue().toString();
-                                            String sender_name = dataSnapshot.child("sender_name").getValue().toString();
-                                            String sender_image = dataSnapshot.child("sender_image").getValue().toString();
-                                            String posted_date = dataSnapshot.child("posted_date").getValue().toString();
+                                                final DatabaseReference newPost = mDatabaseUsersFavourite.child(auth.getCurrentUser().getUid()).child(QuizKey);
 
-                                            final DatabaseReference newPost = mDatabaseUsersFavourite.child(auth.getCurrentUser().getUid()).child(QuizKey);
+                                                Map<String, Object> map = new HashMap<>();
+                                                map.put("question_title", question_title);
+                                                map.put("question_body", question_body);
+                                                map.put("sender_uid", auth.getCurrentUser().getUid());
+                                                map.put("sender_name", sender_name);
+                                                map.put("sender_image", sender_image);
+                                                map.put("posted_date", posted_date);
+                                                map.put("post_id", newPost.getKey());
+                                                newPost.setValue(map);
 
-                                            Map<String, Object> map = new HashMap<>();
-                                            map.put("question_title", question_title);
-                                            map.put("question_body", question_body);
-                                            map.put("sender_uid", auth.getCurrentUser().getUid());
-                                            map.put("sender_name", sender_name);
-                                            map.put("sender_image", sender_image);
-                                            map.put("posted_date", posted_date);
-                                            map.put("post_id", newPost.getKey());
-                                            newPost.setValue(map);
+                                            }
 
-                                        }
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
 
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
+                                            }
+                                        });
 
-                                        }
-                                    });
-
-                                    mProcessFavourite = false;
+                                        mProcessFavourite = false;
+                                    }
                                 }
                             }
-                        }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
 
-                        }
-                    });
+                            }
+                        });
+                    } else {
+                        Snackbar snackbar = Snackbar
+                                .make(parent_view, "You need to be signed in for you to favourite this question", Snackbar.LENGTH_LONG)
+                                .setAction("SIGN IN", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        showSignInDialog();
+                                    }
+                                });
+
+                        snackbar.show();
+                    }
                 }
             });
 
-        } else {}
+
 
         if (auth.getCurrentUser() != null) {
             // always check if question is users favourite
@@ -256,156 +293,173 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                 }
             });
-        } else {}
+        } else {
+
+        }
         answer = (RelativeLayout) findViewById(R.id.answer);
         answer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                final Context context = ReadQuestionActivity.this;
+                if (auth.getCurrentUser() != null) {
 
-                // custom dialog
-                final Dialog dialog = new Dialog(context);
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                dialog.setContentView(R.layout.answer_dialog);
-                dialog.setCancelable(false);
-                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
-                dialog.show();
+                    final Context context = ReadQuestionActivity.this;
 
-                final EditText questionBodyInput = (EditText) dialog.findViewById(R.id.questionBodyInput);
-                Button cancel = (Button) dialog.findViewById(R.id.cancel);
-                cancel.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
+                    // custom dialog
+                    final Dialog dialog = new Dialog(context);
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.answer_dialog);
+                    dialog.setCancelable(false);
+                    dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));
+                    dialog.show();
 
-                Button create = (Button) dialog.findViewById(R.id.create);
-                create.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                    final EditText questionBodyInput = (EditText) dialog.findViewById(R.id.questionBodyInput);
+                    Button cancel = (Button) dialog.findViewById(R.id.cancel);
+                    cancel.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
 
-                        startPosting();
-                        dialog.dismiss();
-                    }
+                    Button create = (Button) dialog.findViewById(R.id.create);
+                    create.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 
-                    private void startPosting() {
+                            startPosting();
+                            dialog.dismiss();
+                        }
 
-                        Date date = new Date();
-                        final String stringDate = DateFormat.getDateTimeInstance().format(date);
-                        final String stringDate2 = DateFormat.getDateInstance().format(date);
+                        private void startPosting() {
 
-                        final String questionBodyTag = questionBodyInput.getText().toString().trim();
-                        if ( TextUtils.isEmpty(questionBodyTag)) {
+                            Date date = new Date();
+                            final String stringDate = DateFormat.getDateTimeInstance().format(date);
+                            final String stringDate2 = DateFormat.getDateInstance().format(date);
 
-                        } else {
+                            final String questionBodyTag = questionBodyInput.getText().toString().trim();
+                            if (TextUtils.isEmpty(questionBodyTag)) {
 
-                            final DatabaseReference newPost = mDatabaseQuestions.child(QuizKey).child("Answers").push();
-                            final DatabaseReference newPost2 = mDatabaseUsersAns.child(auth.getCurrentUser().getUid()).push();
+                            } else {
+
+                                final DatabaseReference newPost = mDatabaseQuestions.child(QuizKey).child("Answers").push();
+                                final DatabaseReference newPost2 = mDatabaseUsersAns.child(auth.getCurrentUser().getUid()).push();
 
 
-                            mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                    final String name = dataSnapshot.child("name").getValue().toString();
-                                    final String image = dataSnapshot.child("user_image").getValue().toString();
+                                        final String name = dataSnapshot.child("name").getValue().toString();
+                                        final String image = dataSnapshot.child("user_image").getValue().toString();
 
-                                    mDatabaseQuestions.child(QuizKey).addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                        mDatabaseQuestions.child(QuizKey).addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                            String question_title = dataSnapshot.child("question_title").getValue().toString();
+                                                String question_title = dataSnapshot.child("question_title").getValue().toString();
 
-                                            //DELETE UNANSERED CHILD FROM DATABASE
-                                            if (dataSnapshot.hasChild("Unanswered")) {
-                                                mDatabaseQuestions.child(QuizKey).child("Unanswered").removeValue();
+                                                //DELETE UNANSERED CHILD FROM DATABASE
+                                                if (dataSnapshot.hasChild("Unanswered")) {
+                                                    mDatabaseQuestions.child(QuizKey).child("Unanswered").removeValue();
+                                                }
+
+                                                // getting user uid
+                                                newPost.child("posted_answer").setValue(questionBodyTag);
+                                                newPost.child("sender_uid").setValue(auth.getCurrentUser().getUid());
+                                                newPost.child("question_title").setValue(question_title);
+                                                newPost.child("sender_name").setValue(name);
+                                                newPost.child("sender_image").setValue(image);
+                                                newPost.child("post_id").setValue(newPost.getKey());
+                                                newPost.child("posted_date").setValue(stringDate2);
+                                                newPost.child("question_key").setValue(QuizKey);
+                                                newPost.child("post_id").setValue(newPost.getKey());
+
+
+                                                //SEND ANSWER TO USEERS ANSWERS IN DATABASE
+                                                newPost2.child("posted_answer").setValue(questionBodyTag);
+                                                newPost2.child("sender_image").setValue(dataSnapshot.child("user_image").getValue());
+                                                newPost2.child("posted_date").setValue(stringDate2);
+                                                newPost2.child("question_key").setValue(QuizKey);
+                                                newPost2.child("posted_quiz_title").setValue(question_title);
+                                                newPost2.child("post_id").setValue(newPost.getKey());
+
                                             }
 
-                                            // getting user uid
-                                            newPost.child("posted_answer").setValue(questionBodyTag);
-                                            newPost.child("sender_uid").setValue(auth.getCurrentUser().getUid());
-                                            newPost.child("question_title").setValue(question_title);
-                                            newPost.child("sender_name").setValue(name);
-                                            newPost.child("sender_image").setValue(image);
-                                            newPost.child("post_id").setValue(newPost.getKey());
-                                            newPost.child("posted_date").setValue(stringDate2);
-                                            newPost.child("question_key").setValue(QuizKey);
-                                            newPost.child("post_id").setValue(newPost.getKey());
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
 
 
-                                            //SEND ANSWER TO USEERS ANSWERS IN DATABASE
-                                            newPost2.child("posted_answer").setValue(questionBodyTag);
-                                            newPost2.child("sender_image").setValue(dataSnapshot.child("user_image").getValue());
-                                            newPost2.child("posted_date").setValue(stringDate2);
-                                            newPost2.child("question_key").setValue(QuizKey);
-                                            newPost2.child("posted_quiz_title").setValue(question_title);
-                                            newPost2.child("post_id").setValue(newPost.getKey());
+                                    }
 
-                                        }
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
 
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
-
-                                        }
-                                    });
+                                    }
+                                });
 
 
-                                }
+                            }
+                            if (!TextUtils.isEmpty(questionBodyTag)) {
 
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
+                                mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                }
-                            });
+                                        final String name = dataSnapshot.child("name").getValue().toString();
+                                        final String image = dataSnapshot.child("user_image").getValue().toString();
+                                        final DatabaseReference newPost3 = mDatabaseUsersInbox.child(auth.getCurrentUser().getUid()).push();
+                                        //SEND MESSAGE TO QUIZ OWNER'S INBOX
+                                        mDatabaseQuestions.child(QuizKey).addValueEventListener(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
 
+                                                Map<String, Object> map = new HashMap<>();
+                                                map.put("posted_reason", "answered your question");
+                                                map.put("posted_answer", questionBodyTag);
+                                                map.put("sender_uid", auth.getCurrentUser().getUid());
+                                                map.put("sender_name", name);
+                                                map.put("read", false);
+                                                map.put("question_key", QuizKey);
+                                                map.put("sender_image", image);
+                                                map.put("posted_date", stringDate2);
+                                                map.put("post_id", newPost3.getKey());
+                                                newPost3.setValue(map);
 
-                        } if( !TextUtils.isEmpty(questionBodyTag)) {
+                                            }
 
-                            mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
 
-                                    final String name = dataSnapshot.child("name").getValue().toString();
-                                    final String image = dataSnapshot.child("user_image").getValue().toString();
-                                    final DatabaseReference newPost3 = mDatabaseUsersInbox.child(auth.getCurrentUser().getUid()).push();
-                                    //SEND MESSAGE TO QUIZ OWNER'S INBOX
-                                    mDatabaseQuestions.child(QuizKey).addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            }
+                                        });
 
-                                            Map<String, Object> map = new HashMap<>();
-                                            map.put("posted_reason", "answered your question");
-                                            map.put("posted_answer", questionBodyTag);
-                                            map.put("sender_uid", auth.getCurrentUser().getUid());
-                                            map.put("sender_name", name);
-                                            map.put("read", false);
-                                            map.put("question_key", QuizKey);
-                                            map.put("sender_image", image);
-                                            map.put("posted_date", stringDate2);
-                                            map.put("post_id", newPost3.getKey());
-                                            newPost3.setValue(map);
+                                    }
 
-                                        }
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
 
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
+                                    }
+                                });
 
-                                        }
-                                    });
-
-                                }
-
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-
-                                }
-                            });
-
+                            }
                         }
-                    }
-                });
+                    });
+                } else {
+                    Snackbar snackbar = Snackbar
+                            .make(parent_view, "You need to have an account for you to vote", Snackbar.LENGTH_LONG)
+                            .setAction("SIGN IN", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    showSignInDialog();
+                                }
+                            });
+
+                    snackbar.show();
+                }
             }
         });
 
@@ -626,14 +680,14 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                                    /* mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").child(auth.getCurrentUser().getUid()).removeValue();*/
                                            /* Toast.makeText(ReadQuestionActivity.this, "You have already voted for this question",Toast.LENGTH_LONG).show();*/
                                             Snackbar snackbar = Snackbar
-                                                    .make(parent_view, "You have already voted for this question", Snackbar.LENGTH_LONG)
-                                                    .setAction("UNDO", new View.OnClickListener() {
+                                                    .make(parent_view, "You have already voted for this question", Snackbar.LENGTH_LONG);
+                                                   /* .setAction("UNDO", new View.OnClickListener() {
                                                         @Override
                                                         public void onClick(View view) {
                                                             Snackbar snackbar1 = Snackbar.make(parent_view, "Your vote has been reversed!", Snackbar.LENGTH_SHORT);
                                                             snackbar1.show();
                                                         }
-                                                    });
+                                                    });*/
 
                                             snackbar.show();
 
@@ -727,14 +781,13 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                 } else
                 {
-                    Toast.makeText(ReadQuestionActivity.this, "You need to have an account for you to vote",Toast.LENGTH_LONG).show();
+                    Toast.makeText(ReadQuestionActivity.this, "You need to be signed in for you to vote",Toast.LENGTH_LONG).show();
                     Snackbar snackbar = Snackbar
-                            .make(parent_view, "You need to have an account for you to vote", Snackbar.LENGTH_LONG)
+                            .make(parent_view, "You need to be signed in for you to vote", Snackbar.LENGTH_LONG)
                             .setAction("SIGN IN", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    Snackbar snackbar1 = Snackbar.make(parent_view, "Your vote has been reversed!", Snackbar.LENGTH_SHORT);
-                                    snackbar1.show();
+                                    showSignInDialog();
                                 }
                             });
 
@@ -785,6 +838,17 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                         if (dataSnapshot.child("down_votes").hasChild(auth.getCurrentUser().getUid())) {
 
                                                    /* mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").child(auth.getCurrentUser().getUid()).removeValue();*/
+                                            Snackbar snackbar = Snackbar
+                                                    .make(parent_view, "You have already down-voted this question", Snackbar.LENGTH_LONG);
+                                                   /* .setAction("UNDO", new View.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(View view) {
+                                                            Snackbar snackbar1 = Snackbar.make(parent_view, "Your vote has been reversed!", Snackbar.LENGTH_SHORT);
+                                                            snackbar1.show();
+                                                        }
+                                                    });*/
+
+                                            snackbar.show();
 
                                             //add user uid to points database
                                             mDatabaseQuestions.child(QuizKey).child("Quiz_votes").child("down_votes").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -890,14 +954,161 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
     }
 
+
+    private void showSignInDialog() {
+
+        final Context context = ReadQuestionActivity.this;
+
+        // custom dialog
+        final Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.sign_in_dialog);
+        dialog.setTitle("Let's get started...");
+        dialog.show();
+
+        Button googleBtn = (Button) dialog.findViewById(R.id.googleBtn);
+        googleBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                initGoogleSignIn();
+                dialog.dismiss();
+            }
+        });
+
+
+    }
+
+    private void initGoogleSignIn() {
+
+        // Configure Google Sign In
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(ReadQuestionActivity.this)
+                .enableAutoManage(ReadQuestionActivity.this, new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+                        Toast.makeText(ReadQuestionActivity.this, "Failed to connect to Google, check your internet connection.",
+                                Toast.LENGTH_LONG).show();
+                    }
+                })
+
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+
+        // Configure Google Sign In
+        progressBar.setVisibility(View.VISIBLE);
+
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
+
+        progressBar.setVisibility(View.GONE);
+
+
+    }
+
+
     @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        progressBar.setVisibility(View.VISIBLE);
+
+        // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+        if (requestCode == RC_SIGN_IN) {
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            if (result.isSuccess()) {
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = result.getSignInAccount();
+                firebaseAuthWithGoogle(account);
+
+                personName = account.getDisplayName();
+                personEmail = account.getEmail();
+                personId = account.getId();
+                personPhoto = account.getPhotoUrl();
+
+                Toast.makeText(ReadQuestionActivity.this, "Sign in success!.",
+                        Toast.LENGTH_LONG).show();
+                this.recreate();
+
+            } else {
+                // Google Sign In failed, update UI appropriately
+                // ...
+
+                progressBar.setVisibility(View.GONE);
+            }
+        }
+
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
+        Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
+
+        AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
+        auth.signInWithCredential(credential)
+                .addOnCompleteListener(ReadQuestionActivity.this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
+
+                        // If sign in fails, display a message to the user. If sign in succeeds
+                        // the auth state listener will be notified and logic to handle the
+                        // signed in user can be handled in the listener.
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "signInWithCredential", task.getException());
+                            Toast.makeText(ReadQuestionActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+
+                            // startActivity(new Intent(LoginActivity.this, MainActivity.class));
+
+                            postUserInfoToDB();
+                            Intent openProfileEdit = new Intent(ReadQuestionActivity.this, ProfileEditActivity.class);
+                           /* openRead.putExtra("question_id", quiz_key );*/
+                            startActivity(openProfileEdit);
+
+                        }
+
+                        // ...
+                    }
+                });
+    }
+
+    private void postUserInfoToDB() {
+
+        Date date = new Date();
+        final String stringDate = DateFormat.getDateInstance().format(date);
+        String deviceToken = FirebaseInstanceId.getInstance().getToken();
+
+        final DatabaseReference newPost = mDatabaseUsers;
+
+        newPost.child(auth.getCurrentUser().getUid()).child("name").setValue(personName);
+        newPost.child(auth.getCurrentUser().getUid()).child("status").setValue("");
+        newPost.child(auth.getCurrentUser().getUid()).child("user_image").setValue(personPhoto.toString());
+        newPost.child(auth.getCurrentUser().getUid()).child("joined_date").setValue(stringDate);
+        newPost.child(auth.getCurrentUser().getUid()).child("personId").setValue(personId);
+        newPost.child(auth.getCurrentUser().getUid()).child("uid").setValue(auth.getCurrentUser().getUid());
+        newPost.child(auth.getCurrentUser().getUid()).child("user_gmail").setValue(personEmail);
+        newPost.child(auth.getCurrentUser().getUid()).child("sign_in_type").setValue("google_signIn");
+        newPost.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Beginner");
+        newPost.child(auth.getCurrentUser().getUid()).child("points_earned").setValue(10);
+        newPost.child(auth.getCurrentUser().getUid()).child("device_token").setValue(deviceToken);
+
+    }
+
+
+
+   /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_read, menu);
-       /* this.menu = menu;*/
+       *//* this.menu = menu;*//*
         return true;
     }
-
+*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -20,6 +20,15 @@
         android:id="@+id/noAnsTxt"
         android:textColor="@color/colorPrimary"/>
 
+    <ProgressBar
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/progressBar"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone" />
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

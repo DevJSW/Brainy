@@ -27,10 +27,9 @@
                 android:layout_height="wrap_content"
                 android:hint="Type your question *"
                 android:inputType="textEmailAddress"
-                android:maxLength="80"
+                android:maxLength="100"
                 android:layout_marginBottom="7dp"
-                android:maxLines="1"
-                android:singleLine="true"
+                android:maxLines="2"
                 android:textColorHint="#121111"
                 android:textColor="#121111" />
 

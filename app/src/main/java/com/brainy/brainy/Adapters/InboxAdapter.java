@@ -260,6 +260,7 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.QuestionView
 
                                 mDatabase.child(answer_key).removeValue();
                                 dialog.dismiss();
+                                notifyDataSetChanged();
                             }
 
                         })
