@@ -6,7 +6,7 @@
     android:layout_gravity="center"
     android:gravity="center"
     android:id="@+id/lin_lay"
-    android:background="@color/colorPrimary"
+    android:background="#ffff"
     tools:context="com.brainy.brainy.activity.Splashscreen">
 
     <LinearLayout
@@ -14,12 +14,12 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <ImageView
-            android:layout_width="90dp"
-            android:layout_height="90dp"
+            android:layout_width="95dp"
+            android:layout_height="95dp"
             android:id="@+id/splash"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="25dp"
-            android:src="@drawable/launcher_brainy" />
+            android:src="@drawable/brainy_round" />
 
     </LinearLayout>
 

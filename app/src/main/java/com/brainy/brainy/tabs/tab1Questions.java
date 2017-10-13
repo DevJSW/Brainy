@@ -52,6 +52,7 @@ import com.srx.widget.PullToLoadView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static com.brainy.brainy.R.layout.spinner_item;
@@ -92,8 +93,9 @@ public class tab1Questions extends Fragment {
     private ProgressBar progressBar;
 
     //PAGINATION
-    private static final int TOTAL_ITEMS_TO_LOAD = 10;
+    private static int TOTAL_ITEMS_TO_LOAD = 5;
     private int currentPage = 1;
+    private int previousTotal = 9;
     private int itemPos = 0;
     private String mLastKey = "";
     private String mFirstKey = "";
@@ -104,8 +106,8 @@ public class tab1Questions extends Fragment {
 
     private EndlessRecyclerViewScrollListener scrollListener;
 
-    private int visibleThreshold = 7;
-    private int lastVisibleItem, totalItemCount;
+    private int visibleThreshold = 5;
+    private int visibleItemCount, totalItemCount, firstVisibleItem, lastVisibleItem;
 
     @SuppressLint("ResourceAsColor")
     @Override
@@ -129,10 +131,13 @@ public class tab1Questions extends Fragment {
                 "Law",
                 "Languages",
                 "Geography & Geology",
+                "Social Studies",
+                "History and Government",
                 "Physics & Electronics",
                 "Chemistry",
                 "Aviation",
-                "Health Science"
+                "Health Science",
+                "Others"
         };
 
         String[] law_topics = new String[]{
@@ -226,7 +231,6 @@ public class tab1Questions extends Fragment {
 
                         }
                     });
-
                     questionList.clear();
                     topicFilterMessage();
 
@@ -402,7 +406,7 @@ public class tab1Questions extends Fragment {
         mDatabaseUsers.keepSynced(true);
         mDatabase.keepSynced(true);
 
-        progressBar = (ProgressBar) v.findViewById(R.id.progressBar1); //
+        progressBar = (ProgressBar) v.findViewById(R.id.progressBar1);
         mViewPager = (ViewPager) v.findViewById(R.id.container);
         mNoPostTxt = (TextView) v.findViewById(R.id.noPostTxt);
         mProgressBar = (ProgressBar) v.findViewById(R.id.progressBar);
@@ -446,51 +450,30 @@ public class tab1Questions extends Fragment {
             }
         });
 
-       /* mQuestionsList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        mQuestionsList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                totalItemCount = mLinearlayout.getItemCount();
-                lastVisibleItem = mLinearlayout.findLastVisibleItemPosition();
-                if (totalItemCount <= (lastVisibleItem + visibleThreshold)) {
 
-                    progressBar.setVisibility(View.GONE);
-                    isLoading = true;
-                }else {
+                if (!recyclerView.canScrollVertically(1)) {
 
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
 
                             progressBar.setVisibility(View.VISIBLE);
+                            currentPage++;
+                            itemPos = 0;
                             LoadMoreMessage();
                             progressBar.setVisibility(View.GONE);
 
-
                         }
                     }, 3000);
-                    progressBar.setVisibility(View.GONE);
+
+
                 }
             }
-
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-        });*/
-
-        scrollListener = new EndlessRecyclerViewScrollListener(mLinearlayout) {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                // Triggered only when new data needs to be appended to the list
-                // Add whatever code is needed to append new items to the bottom of the list
-               /* loadNextDataFromApi(page);*/
-               /* LoadMoreMessage();*/
-            }
-        };
-        // Adds the scroll listener to RecyclerView
-        mQuestionsList.addOnScrollListener(scrollListener);
-
+        });
 
         return v;
 
@@ -510,14 +493,9 @@ public class tab1Questions extends Fragment {
                 String messageKey = dataSnapshot.getKey();
 
                 questionList.add(itemPos++,message);
-                if (itemPos == 10) {
+                if (itemPos == 1) {
 
                     mLastKey = messageKey;
-                }
-
-                if (itemPos == 0) {
-
-                    mFirstKey = messageKey;
                 }
 
                 questionAdapter.notifyDataSetChanged();
@@ -579,10 +557,11 @@ public class tab1Questions extends Fragment {
                 Question message = dataSnapshot.getValue(Question.class);
 
                 itemPos++;
-                if (itemPos == 10) {
+                if (itemPos == 1) {
 
                     String messageKey = dataSnapshot.getKey();
                     mLastKey = messageKey;
+
                 }
 
                 if (itemPos == 0) {
@@ -624,7 +603,17 @@ public class tab1Questions extends Fragment {
 
     private void LoadMoreMessage() {
 
-        Query quizQuery = mDatabase.orderByKey().startAt(mLastKey).limitToLast(10);
+        progressBar.setVisibility(View.VISIBLE);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                progressBar.setVisibility(View.GONE);
+            }
+        }, 3000); // 3000 milliseconds delay
+
+        Query quizQuery = mDatabase.orderByKey().endAt(mLastKey).limitToLast(5);
+        Toast.makeText(getActivity(), mLastKey,
+                Toast.LENGTH_LONG).show();
 
         quizQuery.addChildEventListener(new ChildEventListener() {
             @Override
@@ -635,11 +624,10 @@ public class tab1Questions extends Fragment {
                 String messageKey = dataSnapshot.getKey();
 
                 questionList.add(itemPos++,message);
-                if (itemPos == 10) {
-
+                if (itemPos == 1) {
                     mLastKey = messageKey;
-                }
 
+                }
 
                 questionAdapter.notifyDataSetChanged();
                 questionAdapter.notifyItemInserted(0);
@@ -647,7 +635,7 @@ public class tab1Questions extends Fragment {
                 mSwipeRefreshLayout.setRefreshing(false);
 
                /* mLinearlayout.scrollToPositionWithOffset(10, 0);*/
-              /*  mQuestionsList.scrollToPosition(questionList.size()-1);*/
+                mQuestionsList.scrollToPosition(5);
 
             }
 
@@ -843,9 +831,9 @@ public class tab1Questions extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.action_search:
+            case R.id.action_search:  //
 
-                Intent myIntent = new Intent(getActivity(), SearchActivity.class);
+                Intent myIntent = new Intent(getActivity(), SearchActivity.class);//
                /* myIntent.putExtra("key", value); //Optional parameters*/
                 getActivity().startActivity(myIntent);
                 return true;
