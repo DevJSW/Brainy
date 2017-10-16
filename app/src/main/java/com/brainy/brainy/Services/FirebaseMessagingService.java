@@ -13,7 +13,6 @@ import com.brainy.brainy.R;
 import com.brainy.brainy.activity.MainActivity;
 import com.google.firebase.messaging.RemoteMessage;
 
-import static com.google.android.gms.internal.zzs.TAG;
 
 /**
  * Created by Shephard on 9/24/2017.

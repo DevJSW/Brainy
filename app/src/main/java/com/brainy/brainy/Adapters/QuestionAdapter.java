@@ -110,9 +110,12 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
         }
 
         public void setQuestion_body(String question_body) {
-
-            TextView post_body = (TextView) mView.findViewById(R.id.post_quiz_body);
-            post_body.setText(question_body);
+            if (question_body != null) {
+                TextView post_body = (TextView) mView.findViewById(R.id.post_quiz_body);
+                post_body.setText(question_body);
+            } else {
+                post_body.setVisibility(View.GONE);
+            }
         }
 
         public void setQuestion_title(String question_title) {
@@ -157,7 +160,11 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
         final String quiz_key = c.getPost_id();
 
         holder.post_title.setText(c.getQuestion_title());
-        holder.post_body .setText(c.getQuestion_body());
+        if (c.getQuestion_body() != null) {
+            holder.post_body.setText(c.getQuestion_body());
+        } else {
+            holder.post_body.setVisibility(View.GONE);
+        }
         holder.post_name.setText(c.getSender_name());
         holder.post_date.setText(c.getPosted_date());
 

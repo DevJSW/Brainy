@@ -47,7 +47,7 @@
                 android:id="@+id/questionBodyInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter more explanation if any..."
+                android:hint="Enter more explanation if any"
                 android:layout_marginBottom="7dp"
                 android:maxLines="5"
                 android:textColorHint="#121111"

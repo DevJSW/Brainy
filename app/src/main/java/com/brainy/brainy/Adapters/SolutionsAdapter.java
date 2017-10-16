@@ -28,6 +28,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
@@ -251,11 +253,14 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
 
                                             final int p = 10;
 
-                                            mDatabase.child(QuizKey).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            mDatabase.child(QuizKey).child("Answers").child(answer_key).addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
+
                                                     final String sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
-                                                    mDatabaseUsers.child(sender_uid).child("points_earned").addValueEventListener(new ValueEventListener() {
+
+
+                                                   /* mDatabaseUsers.child(sender_uid).child("points_earned").addValueEventListener(new ValueEventListener() {
                                                         @Override
                                                         public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
 
@@ -271,6 +276,27 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
 
                                                         }
                                                     });
+*/
+                                                    mDatabaseUsers.child(sender_uid).child("points_earned").runTransaction(new Transaction.Handler() {
+                                                        @Override
+                                                        public Transaction.Result doTransaction(MutableData mutableData) {
+                                                            if (mutableData.getValue() == null) {
+                                                                mutableData.setValue(10);
+                                                            } else {
+                                                                int count = mutableData.getValue(Integer.class);
+                                                                mutableData.setValue(count + 10);
+                                                               // mDatabaseUsers.child(sender_uid).child("points_earned").setValue(user_points);
+                                                            }
+                                                            return Transaction.success(mutableData);
+                                                        }
+
+                                                        @Override
+                                                        public void onComplete(DatabaseError databaseError, boolean b, com.google.firebase.database.DataSnapshot dataSnapshot) {
+
+                                                        }
+
+                                                    });
+
                                                 }
 
                                                 @Override
@@ -392,24 +418,23 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
                                                 final int p = 2;
                                                 final int d = 1;
 
-                                                mDatabase.child(QuizKey).addValueEventListener(new ValueEventListener() {
+                                                mDatabase.child(QuizKey).child("Answers").child(answer_key).addValueEventListener(new ValueEventListener() {
                                                     @Override
                                                     public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
                                                         final String sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
 
-                                                        mDatabaseUsers.child(sender_uid).child("points_earned").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("points_earned").addListenerForSingleValueEvent(new ValueEventListener() {
                                                             @Override
                                                             public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
 
 
-
-                                                                    Long user_points = (Long) dataSnapshot.getValue();
+                                                                 /*   Long user_points = (Long) dataSnapshot.getValue();
                                                                     user_points = user_points - p;
 
                                                                     mDatabaseUsers.child(sender_uid).child("points_earned").setValue(user_points);
 
                                                                     //ALSO DEDUCT 1 POINT FROM THIS USER.....
-
+*/
                                                                     Long current_user_points = (Long) dataSnapshot.getValue();
                                                                     current_user_points = current_user_points - d;
 
@@ -421,6 +446,26 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
                                                             public void onCancelled(DatabaseError databaseError) {
 
                                                             }
+                                                        });
+
+                                                        mDatabaseUsers.child(sender_uid).child("points_earned").runTransaction(new Transaction.Handler() {
+                                                            @Override
+                                                            public Transaction.Result doTransaction(MutableData mutableData) {
+                                                                if (mutableData.getValue() == null) {
+                                                                    mutableData.setValue(-2);
+                                                                } else {
+                                                                    int count = mutableData.getValue(Integer.class);
+                                                                    mutableData.setValue(count - 2);
+                                                                    // mDatabaseUsers.child(sender_uid).child("points_earned").setValue(user_points);
+                                                                }
+                                                                return Transaction.success(mutableData);
+                                                            }
+
+                                                            @Override
+                                                            public void onComplete(DatabaseError databaseError, boolean b, com.google.firebase.database.DataSnapshot dataSnapshot) {
+
+                                                            }
+
                                                         });
 
                                                         mDatabase.child(QuizKey).child("Answers").child(answer_key).child("down_votes").addValueEventListener(new ValueEventListener() {

@@ -155,7 +155,6 @@ public class tab2Inbox extends Fragment {
         }
 
         mNoInbox = (TextView) view.findViewById(R.id.noInboxTxt);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         inboxAdapter = new InboxAdapter(getActivity(), questionList);
 
         mInboxList = (RecyclerView) view.findViewById(R.id.Inbox_list);
@@ -166,25 +165,6 @@ public class tab2Inbox extends Fragment {
         mInboxList.setHasFixedSize(true);
         mInboxList.setLayoutManager(mLinearlayout);
         mInboxList.setAdapter(inboxAdapter);
-
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        currentPage++;
-                        questionList.clear();
-                        LoadMoreMessage();
-
-
-                    }
-                }, 3000);
-
-            }
-        });
 
       /*  questionList.clear();
         if (auth.getCurrentUser() != null) {
@@ -293,7 +273,7 @@ public class tab2Inbox extends Fragment {
                 inboxAdapter.notifyDataSetChanged();
                 inboxAdapter.notifyItemInserted(0);
 
-                mSwipeRefreshLayout.setRefreshing(false);
+
 
               /*  mQuestionsList.scrollToPosition(questionList.size()-1);*/
 

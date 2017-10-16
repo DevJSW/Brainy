@@ -47,6 +47,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.srx.widget.PullCallback;
 import com.srx.widget.PullToLoadView;
 
@@ -99,6 +100,7 @@ public class tab1Questions extends Fragment {
     private int itemPos = 0;
     private String mLastKey = "";
     private String mFirstKey = "";
+    private String mPrevKey = "";
 
     private String newestPostId;
     private String oldestPostId;
@@ -126,6 +128,7 @@ public class tab1Questions extends Fragment {
         String[] topics = new String[]{
                 "Select a topic...",
                 "Math",
+                "Art & Design",
                 "Computer science & ICT",
                 "Business & Economics",
                 "Law",
@@ -134,9 +137,9 @@ public class tab1Questions extends Fragment {
                 "Social Studies",
                 "History and Government",
                 "Physics & Electronics",
-                "Chemistry",
+                "Chemistry & Chemical science",
                 "Aviation",
-                "Health Science",
+                "Medicine & Health Science",
                 "Others"
         };
 
@@ -411,7 +414,6 @@ public class tab1Questions extends Fragment {
         mNoPostTxt = (TextView) v.findViewById(R.id.noPostTxt);
         mProgressBar = (ProgressBar) v.findViewById(R.id.progressBar);
 
-
         pullToLoadView = (PullToLoadView) v.findViewById(R.id.pullToLoadView);
        /* mQuestionsList2 = pullToLoadView.getRecyclerView();
         mQuestionsList2.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
@@ -438,8 +440,8 @@ public class tab1Questions extends Fragment {
                     @Override
                     public void run() {
 
+                        itemPos++;
                         currentPage++;
-                        itemPos = 0;
                         questionList.clear();
                         LoadLatestMessage();
 
@@ -457,11 +459,11 @@ public class tab1Questions extends Fragment {
 
                 if (!recyclerView.canScrollVertically(1)) {
 
+                    progressBar.setVisibility(View.VISIBLE);
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
 
-                            progressBar.setVisibility(View.VISIBLE);
                             currentPage++;
                             itemPos = 0;
                             LoadMoreMessage();
@@ -471,6 +473,9 @@ public class tab1Questions extends Fragment {
                     }, 3000);
 
 
+                } else {
+
+                    progressBar.setVisibility(View.GONE);
                 }
             }
         });
@@ -482,7 +487,7 @@ public class tab1Questions extends Fragment {
 
     private void LoadLatestMessage() {
 
-        Query quizQuery = mDatabase.orderByKey().endAt(mFirstKey).limitToLast(10);
+        Query quizQuery = mDatabase.orderByKey().startAt(mFirstKey).limitToLast(5);
 
         quizQuery.addChildEventListener(new ChildEventListener() {
             @Override
@@ -492,19 +497,24 @@ public class tab1Questions extends Fragment {
                 Question message = dataSnapshot.getValue(Question.class);
                 String messageKey = dataSnapshot.getKey();
 
-                questionList.add(itemPos++,message);
+                if (!mPrevKey.equals(messageKey)) {
+                    questionList.add(itemPos++,message);
+                } else {
+                    mPrevKey = mLastKey;
+                }
+
                 if (itemPos == 1) {
 
                     mLastKey = messageKey;
                 }
-
+                questionList.add(itemPos++,message);
                 questionAdapter.notifyDataSetChanged();
                 questionAdapter.notifyItemInserted(0);
 
                 mSwipeRefreshLayout.setRefreshing(false);
 
-               /* mLinearlayout.scrollToPositionWithOffset(10, 0);*/
-              /*  mQuestionsList.scrollToPosition(questionList.size()-1);*/
+                mLinearlayout.scrollToPositionWithOffset(10, 0);
+                mQuestionsList.scrollToPosition(questionList.size()-1);
 
             }
 
@@ -561,6 +571,7 @@ public class tab1Questions extends Fragment {
 
                     String messageKey = dataSnapshot.getKey();
                     mLastKey = messageKey;
+                    mPrevKey = messageKey;
 
                 }
 
@@ -575,7 +586,8 @@ public class tab1Questions extends Fragment {
 
                 mSwipeRefreshLayout.setRefreshing(false);
 
-              /*  mQuestionsList.scrollToPosition(questionList.size()-1);*/
+                mQuestionsList.scrollToPosition(questionList.size()-1);
+
             }
 
             @Override
@@ -603,14 +615,6 @@ public class tab1Questions extends Fragment {
 
     private void LoadMoreMessage() {
 
-        progressBar.setVisibility(View.VISIBLE);
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                progressBar.setVisibility(View.GONE);
-            }
-        }, 3000); // 3000 milliseconds delay
-
         Query quizQuery = mDatabase.orderByKey().endAt(mLastKey).limitToLast(5);
         Toast.makeText(getActivity(), mLastKey,
                 Toast.LENGTH_LONG).show();
@@ -623,7 +627,14 @@ public class tab1Questions extends Fragment {
                 Question message = dataSnapshot.getValue(Question.class);
                 String messageKey = dataSnapshot.getKey();
 
-                questionList.add(itemPos++,message);
+                if (!mPrevKey.equals(messageKey)) {
+
+                    questionList.add(itemPos++,message);
+
+                } else {
+                    mPrevKey = mLastKey;
+                }
+
                 if (itemPos == 1) {
                     mLastKey = messageKey;
 
@@ -634,7 +645,7 @@ public class tab1Questions extends Fragment {
 
                 mSwipeRefreshLayout.setRefreshing(false);
 
-               /* mLinearlayout.scrollToPositionWithOffset(10, 0);*/
+                mLinearlayout.scrollToPositionWithOffset(10, 0);
                 mQuestionsList.scrollToPosition(5);
 
             }
@@ -677,8 +688,8 @@ public class tab1Questions extends Fragment {
                     questionAdapter.notifyDataSetChanged();
 
                     mSwipeRefreshLayout.setRefreshing(false);
-                } else {
 
+                } else {
 
                 }
 
@@ -743,7 +754,6 @@ public class tab1Questions extends Fragment {
 
             }
         });
-
     }
 
     private void topicFilterMessage() {
@@ -758,9 +768,7 @@ public class tab1Questions extends Fragment {
 
                 questionList.add(message);
                 questionAdapter.notifyDataSetChanged();
-
                 mSwipeRefreshLayout.setRefreshing(false);
-
 
             }
 

@@ -73,6 +73,7 @@ public class tab3Achievements extends Fragment {
     private GoogleApiClient mGoogleApiClient;
     private static int RC_SIGN_IN = 1;
     private ProgressBar progressBar;
+    LinearLayoutManager mLinearlayout;
     public tab3Achievements() {
         // Required empty public constructor
     }
@@ -107,7 +108,10 @@ public class tab3Achievements extends Fragment {
 
         mFavouriteList = (RecyclerView) view.findViewById(R.id.favourite_list);
         mFavouriteList.setHasFixedSize(true);
-        mFavouriteList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mLinearlayout = new LinearLayoutManager(getActivity());
+        mLinearlayout.setReverseLayout(true);
+        mLinearlayout.setStackFromEnd(true);
+        mFavouriteList.setLayoutManager(mLinearlayout);
 
         if (auth.getCurrentUser() != null) {
 

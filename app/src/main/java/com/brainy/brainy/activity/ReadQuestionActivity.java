@@ -53,7 +53,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.squareup.picasso.Callback;
@@ -331,6 +333,8 @@ public class ReadQuestionActivity extends AppCompatActivity {
                             dialog.dismiss();
                         }
 
+
+
                         private void startPosting() {
 
                             Date date = new Date();
@@ -358,6 +362,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                             public void onDataChange(DataSnapshot dataSnapshot) {
 
                                                 String question_title = dataSnapshot.child("question_title").getValue().toString();
+                                                String sender_uid = dataSnapshot.child("sender_uid").getValue().toString();
 
                                                 //DELETE UNANSERED CHILD FROM DATABASE
                                                 if (dataSnapshot.hasChild("Unanswered")) {
@@ -405,46 +410,48 @@ public class ReadQuestionActivity extends AppCompatActivity {
                             }
                             if (!TextUtils.isEmpty(questionBodyTag)) {
 
-                                mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                        final String name = dataSnapshot.child("name").getValue().toString();
-                                        final String image = dataSnapshot.child("user_image").getValue().toString();
-                                        final DatabaseReference newPost3 = mDatabaseUsersInbox.child(auth.getCurrentUser().getUid()).push();
-                                        //SEND MESSAGE TO QUIZ OWNER'S INBOX
-                                        mDatabaseQuestions.child(QuizKey).addValueEventListener(new ValueEventListener() {
+                                                mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                                             @Override
                                             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                                Map<String, Object> map = new HashMap<>();
-                                                map.put("posted_reason", "answered your question");
-                                                map.put("posted_answer", questionBodyTag);
-                                                map.put("sender_uid", auth.getCurrentUser().getUid());
-                                                map.put("sender_name", name);
-                                                map.put("read", false);
-                                                map.put("question_key", QuizKey);
-                                                map.put("sender_image", image);
-                                                map.put("posted_date", stringDate2);
-                                                map.put("post_id", newPost3.getKey());
-                                                newPost3.setValue(map);
+                                                final String name = dataSnapshot.child("name").getValue().toString();
+                                                final String image = dataSnapshot.child("user_image").getValue().toString();
+
+                                                //SEND MESSAGE TO QUIZ OWNER'S INBOX
+                                                mDatabaseQuestions.child(QuizKey).addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                                        String sender_uid = dataSnapshot.child("sender_uid").getValue().toString();
+                                                        final DatabaseReference newPost3 = mDatabaseUsersInbox.child(sender_uid).push();
+
+                                                        Map<String, Object> map = new HashMap<>();
+                                                        map.put("posted_reason", "answered your question");
+                                                        map.put("posted_answer", questionBodyTag);
+                                                        map.put("sender_uid", auth.getCurrentUser().getUid());
+                                                        map.put("sender_name", name);
+                                                        map.put("read", false);
+                                                        map.put("question_key", QuizKey);
+                                                        map.put("sender_image", image);
+                                                        map.put("posted_date", stringDate2);
+                                                        map.put("post_id", newPost3.getKey());
+                                                        newPost3.setValue(map);
+
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(DatabaseError databaseError) {
+
+                                                    }
+                                                });
 
                                             }
-
-                                            @Override
-                                            public void onCancelled(DatabaseError databaseError) {
-
-                                            }
-                                        });
-
-                                    }
 
                                     @Override
                                     public void onCancelled(DatabaseError databaseError) {
 
                                     }
                                 });
-
                             }
                         }
                     });
@@ -720,7 +727,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                                                             final String sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
 
-                                                            mDatabaseUsers.child(sender_uid).child("points_earned").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            /*mDatabaseUsers.child(sender_uid).child("points_earned").addListenerForSingleValueEvent(new ValueEventListener() {
                                                                 @Override
                                                                 public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -735,6 +742,26 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                                                 public void onCancelled(DatabaseError databaseError) {
 
                                                                 }
+                                                            });
+*/
+                                                            mDatabaseUsers.child(sender_uid).child("points_earned").runTransaction(new Transaction.Handler() {
+                                                                @Override
+                                                                public Transaction.Result doTransaction(MutableData mutableData) {
+                                                                    if (mutableData.getValue() == null) {
+                                                                        mutableData.setValue(5);
+                                                                    } else {
+                                                                        int count = mutableData.getValue(Integer.class);
+                                                                        mutableData.setValue(count + 5);
+                                                                        // mDatabaseUsers.child(sender_uid).child("points_earned").setValue(user_points);
+                                                                    }
+                                                                    return Transaction.success(mutableData);
+                                                                }
+
+                                                                @Override
+                                                                public void onComplete(DatabaseError databaseError, boolean b, com.google.firebase.database.DataSnapshot dataSnapshot) {
+
+                                                                }
+
                                                             });
 
                                                         }
@@ -878,15 +905,15 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                                                     final String sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
 
-                                                    mDatabaseUsers.child(sender_uid).child("points_earned").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("points_earned").addListenerForSingleValueEvent(new ValueEventListener() {
                                                         @Override
                                                         public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                                            Long user_points = (Long) dataSnapshot.getValue();
+                                                          /*  Long user_points = (Long) dataSnapshot.getValue();
                                                             user_points = user_points - 2;
 
                                                             mDatabaseUsers.child(sender_uid).child("points_earned").setValue(user_points);
-
+*/
                                                             //ALSO DEDUCT 1 POINT FROM THIS USER.....
 
                                                             Long current_user_points = (Long) dataSnapshot.getValue();
@@ -902,6 +929,26 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                                         }
                                                     });
 
+                                                    mDatabaseUsers.child(sender_uid).child("points_earned").runTransaction(new Transaction.Handler() {
+                                                        @Override
+                                                        public Transaction.Result doTransaction(MutableData mutableData) {
+                                                            if (mutableData.getValue() == null) {
+                                                                mutableData.setValue(-2);
+                                                            } else {
+                                                                int count = mutableData.getValue(Integer.class);
+                                                                mutableData.setValue(count - 2);
+                                                                // mDatabaseUsers.child(sender_uid).child("points_earned").setValue(user_points);
+                                                            }
+                                                            return Transaction.success(mutableData);
+                                                        }
+
+                                                        @Override
+                                                        public void onComplete(DatabaseError databaseError, boolean b, com.google.firebase.database.DataSnapshot dataSnapshot) {
+
+                                                        }
+
+                                                    });
+
                                                 }
 
                                                 @Override
@@ -910,6 +957,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                                 }
 
                                             });
+
 
                                             mDatabaseQuestions.child(QuizKey).child("Quiz_votes").child("down_votes").addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override

@@ -126,19 +126,22 @@ public class MainActivity extends AppCompatActivity {
     String[] topics = new String[]{
             "Tag your question...",
             "Math",
-            "Computer science",
-            "Economics",
-            "Languages",
+            "Art & Design",
+            "Computer science & ICT",
+            "Business & Economics",
             "Law",
-            "Physics",
-            "Chemistry",
+            "Languages",
+            "Geography & Geology",
+            "Social Studies",
+            "History and Government",
+            "Physics & Electronics",
+            "Chemistry & Chemical science",
             "Aviation",
-            "Health Science"
+            "Medicine & Health Science",
+            "Others"
     };
 
-
     final List<String> topicList = new ArrayList<>(Arrays.asList(topics));
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -517,9 +520,7 @@ public class MainActivity extends AppCompatActivity {
                     mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("country").setValue(country);
                     mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("postalCode").setValue(postalCode);
                     mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("knownName").setValue(knownName);
-                    mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("city").setValue(city);
-                    mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("country").setValue(country);
-                    mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("address").setValue(address);
+
                 }
             } catch (IOException e) {
                 e.printStackTrace();
