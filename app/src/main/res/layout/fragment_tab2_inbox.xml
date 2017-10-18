@@ -23,16 +23,16 @@
             </android.support.v7.widget.RecyclerView>
 
 
-        <com.brainy.brainy.data.MyFont
+        <com.brainy.brainy.data.MyBoldFont
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="You inbox is empty."
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
-            android:textSize="17dp"
             android:layout_marginRight="20dp"
             android:layout_marginLeft="20dp"
             android:visibility="gone"
+            android:textSize="18dp"
             android:gravity="center"
             android:layout_marginTop="10dp"
             android:id="@+id/noInboxTxt"
@@ -49,6 +49,7 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:visibility="gone" />
+
 
         <com.brainy.brainy.data.MyFont
             android:layout_width="match_parent"

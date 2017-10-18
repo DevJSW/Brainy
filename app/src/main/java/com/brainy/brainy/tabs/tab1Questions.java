@@ -31,9 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.brainy.brainy.Adapters.QuestionAdapter;
-import com.brainy.brainy.activity.EndlessRecyclerViewScrollListener;
 import com.brainy.brainy.activity.MainActivity;
-import com.brainy.brainy.activity.Paginator;
 import com.brainy.brainy.activity.SearchActivity;
 import com.brainy.brainy.data.OnLoadMoreListener;
 import com.brainy.brainy.data.Question;
@@ -105,8 +103,6 @@ public class tab1Questions extends Fragment {
     private String newestPostId;
     private String oldestPostId;
     private int startAt = 0;
-
-    private EndlessRecyclerViewScrollListener scrollListener;
 
     private int visibleThreshold = 5;
     private int visibleItemCount, totalItemCount, firstVisibleItem, lastVisibleItem;
@@ -489,7 +485,41 @@ public class tab1Questions extends Fragment {
 
         Query quizQuery = mDatabase.orderByKey().startAt(mFirstKey).limitToLast(5);
 
-        quizQuery.addChildEventListener(new ChildEventListener() {
+        quizQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                //questionList.clear();
+                Question message = dataSnapshot.getValue(Question.class);
+                String messageKey = dataSnapshot.getKey();
+
+                if (!mPrevKey.equals(messageKey)) {
+                    questionList.add(itemPos++,message);
+                } else {
+                    mPrevKey = mLastKey;
+                }
+
+                if (itemPos == 1) {
+
+                    mLastKey = messageKey;
+                }
+                questionList.add(itemPos++,message);
+                questionAdapter.notifyDataSetChanged();
+                questionAdapter.notifyItemInserted(0);
+
+                mSwipeRefreshLayout.setRefreshing(false);
+
+                mLinearlayout.scrollToPositionWithOffset(10, 0);
+                mQuestionsList.scrollToPosition(questionList.size()-1);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+       /* quizQuery.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
@@ -537,7 +567,7 @@ public class tab1Questions extends Fragment {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        });*/
     }
 
     @Override

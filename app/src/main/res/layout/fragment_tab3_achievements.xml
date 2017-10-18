@@ -29,13 +29,13 @@
 
         </android.support.v4.widget.SwipeRefreshLayout>
 
-        <com.brainy.brainy.data.MyFont
+        <com.brainy.brainy.data.MyBoldFont
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="You have no favourite questions."
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
-            android:textSize="17dp"
+            android:textSize="18dp"
             android:layout_marginRight="20dp"
             android:layout_marginLeft="20dp"
             android:visibility="gone"

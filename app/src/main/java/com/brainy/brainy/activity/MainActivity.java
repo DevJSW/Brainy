@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
     String selectedTopic = null;
     private ViewPager mViewPager;
     private FloatingActionButton fab;
-    private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseInboxUsers;
+    private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseUsersQuestions, mDatabaseInboxUsers;
     Context mContext;
     private FirebaseAuth auth;
 
@@ -174,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseQuestions = FirebaseDatabase.getInstance().getReference().child("Questions");
+        mDatabaseUsersQuestions = FirebaseDatabase.getInstance().getReference().child("Users_Questions").child(auth.getCurrentUser().getUid());
         mDatabaseInboxUsers = FirebaseDatabase.getInstance().getReference().child("Users_inbox");
         mDatabaseQuestions.keepSynced(true);
         mDatabaseInboxUsers.keepSynced(true);
@@ -644,6 +645,7 @@ public class MainActivity extends AppCompatActivity {
                     dialog.dismiss();
 
                     final DatabaseReference newPost = mDatabaseQuestions.push();
+                    final DatabaseReference newPost2 = mDatabaseUsersQuestions.push();
 
                     mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                         @Override
@@ -660,6 +662,18 @@ public class MainActivity extends AppCompatActivity {
                             map.put("tag", selectedTopic);
                             map.put("post_id", newPost.getKey());
                             newPost.setValue(map);
+
+                            Map<String, Object> map2 = new HashMap<>();
+                            map.put("question_title", questionTitlTag);
+                            map.put("question_body", questionBodyTag);
+                            map.put("sender_uid", auth.getCurrentUser().getUid());
+                            map.put("sender_name", dataSnapshot.child("name").getValue());
+                            map.put("Unanswered", true);
+                            map.put("sender_image", dataSnapshot.child("user_image").getValue());
+                            map.put("posted_date", stringDate2);
+                            map.put("tag", selectedTopic);
+                            map.put("post_id", newPost2.getKey());
+                            newPost2.setValue(map2);
 
                             final Context context = MainActivity.this;
 

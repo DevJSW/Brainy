@@ -49,7 +49,7 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
     private List<Answer>  mAnswersList;
     Context ctx;
 
-    private DatabaseReference mDatabase, mDatabaseUsers, mDatabaseUsersAns;
+    private DatabaseReference mDatabase, mDatabaseUsers, mDatabaseUsersAns, mDatabaseVotes;
     public Boolean mProcessApproval = false;
     FirebaseAuth mAuth;
 
@@ -96,6 +96,7 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
             mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
             mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
             mDatabaseUsersAns = FirebaseDatabase.getInstance().getReference().child("Users_answers");
+            mDatabaseVotes = FirebaseDatabase.getInstance().getReference().child("Votes");
 
             mDatabase.keepSynced(true);
             mDatabaseUsers.keepSynced(true);
@@ -158,6 +159,7 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
         mAuth= FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+        mDatabaseVotes = FirebaseDatabase.getInstance().getReference().child("Votes");
         //final boolean mProcessApproval = false;
         mDatabase.keepSynced(true);
 
@@ -173,6 +175,23 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
 
         //COUNT NUMBER OF VOTE ON ANSWERS
         if (answer_key != null) {
+            mDatabaseVotes
+                    .child(answer_key)
+                    .child("up_votes")
+                    .addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
+                        @Override
+                        public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
+                            holder.voteCount.setText(dataSnapshot.getChildrenCount() + "");
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+        }
+
+       /* if (answer_key != null) {
             mDatabase
                     .child(QuizKey)
                     .child("Answers")
@@ -189,7 +208,7 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
 
                         }
                     });
-        }
+        }*/
 
         holder.upVote.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -221,18 +240,19 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
                             dialog.dismiss();
                             mProcessApproval = true;
 
-                            final ValueEventListener valueEventListener = mDatabase.child(QuizKey).child("Answers").addValueEventListener(new ValueEventListener() {
+                           /* final ValueEventListener valueEventListener = mDatabase.child(QuizKey).child("Answers").addValueEventListener(new ValueEventListener() {*/
+                            final ValueEventListener valueEventListener = mDatabaseVotes.addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
 
                                     if (mProcessApproval) {
 
-                                        if (dataSnapshot.child(answer_key).child("votes").hasChild(mAuth.getCurrentUser().getUid())) {
+                                        if (dataSnapshot.child(answer_key).child("up_votes").hasChild(mAuth.getCurrentUser().getUid())) {
 
                                             Toast.makeText(ctx, "You have already voted for this answer", Toast.LENGTH_LONG).show();
                                         /*Snackbar.make(v, "You have already voted for this answer ", Snackbar.LENGTH_SHORT).show();*/
 
-                                            mDatabase.child(QuizKey).child("Answers").child(answer_key).child("votes").addListenerForSingleValueEvent(new ValueEventListener() {
+                                            mDatabaseVotes.child(answer_key).child("up_votes").addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
                                                     holder.voteCount.setText(dataSnapshot.getChildrenCount() + "");
@@ -245,7 +265,7 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
                                             });
                                         } else {
 
-                                            mDatabase.child(QuizKey).child("Answers").child(answer_key).child("votes").child(mAuth.getCurrentUser().getUid()).setValue("iVote");
+                                            mDatabaseVotes.child(answer_key).child("up_votes").child(mAuth.getCurrentUser().getUid()).setValue("iVote");
                                             //PROFILE USER ANSWERS
                                             mDatabaseUsersAns.child(mAuth.getCurrentUser().getUid()).child(answer_key).child("votes").setValue("iVote");
 
@@ -253,7 +273,7 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
 
                                             final int p = 10;
 
-                                            mDatabase.child(QuizKey).child("Answers").child(answer_key).addListenerForSingleValueEvent(new ValueEventListener() {
+                                            mDatabaseVotes.child(answer_key).child("up_votes").addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
 
@@ -305,7 +325,7 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
                                                 }
                                             });
 
-                                            mDatabase.child(QuizKey).child("Answers").child(answer_key).child("votes").addValueEventListener(new ValueEventListener() {
+                                            mDatabaseVotes.child(answer_key).child("up_votes").addValueEventListener(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
                                                     holder.voteCount.setText(dataSnapshot.getChildrenCount() + "");
@@ -386,7 +406,7 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
                                 if (mProcessApproval) {
 
                                     dialog.dismiss();
-                                    mDatabase.child(QuizKey).child("Answers").addValueEventListener(new ValueEventListener() {
+                                    mDatabaseVotes.addValueEventListener(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
                                             if (dataSnapshot.child(answer_key).child("down_votes").hasChild(mAuth.getCurrentUser().getUid())) {
@@ -400,7 +420,7 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
                                                             @Override
                                                             public void onClick(final View view) {
 
-                                                                mDatabase.child(QuizKey).child("Answers").child(answer_key).child("down_votes").child(mAuth.getCurrentUser().getUid()).removeValue();
+                                                                mDatabaseVotes.child(answer_key).child("down_votes").child(mAuth.getCurrentUser().getUid()).removeValue();
                                                                 Snackbar snackbar1 = Snackbar.make(view, "Your vote has been reversed!", Snackbar.LENGTH_SHORT);
 
 
@@ -411,14 +431,14 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
 
 
                                             } else {
-                                                mDatabase.child(QuizKey).child("Answers").child(answer_key).child("down_votes").child(mAuth.getCurrentUser().getUid()).setValue("iVote");
+                                                mDatabaseVotes.child(answer_key).child("down_votes").child(mAuth.getCurrentUser().getUid()).setValue("iVote");
 
                                                 // CHECK IF USER HAS DOWN VOTED AND DEDUCT 2 POINTS TO THE USER WHO POSTED THE ANSWER.....................
 
                                                 final int p = 2;
                                                 final int d = 1;
 
-                                                mDatabase.child(QuizKey).child("Answers").child(answer_key).addValueEventListener(new ValueEventListener() {
+                                                mDatabaseVotes.child(answer_key).addValueEventListener(new ValueEventListener() {
                                                     @Override
                                                     public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
                                                         final String sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
@@ -468,7 +488,7 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
 
                                                         });
 
-                                                        mDatabase.child(QuizKey).child("Answers").child(answer_key).child("down_votes").addValueEventListener(new ValueEventListener() {
+                                                        mDatabaseVotes.child(answer_key).child("down_votes").addValueEventListener(new ValueEventListener() {
                                                             @Override
                                                             public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
                                                                 holder.voteCount.setText(dataSnapshot.getChildrenCount() + "");

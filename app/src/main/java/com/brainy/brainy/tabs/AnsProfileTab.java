@@ -71,16 +71,13 @@ public class AnsProfileTab extends Fragment {
         // SYNC DATABASE
         mDatabaseAnswers.keepSynced(true);
         mDatabaseUsers.keepSynced(true);
-
         answersAdapter = new AnswersAdapter(getActivity(),answerList);
-
         mAnsList = (RecyclerView) v.findViewById(R.id.mAnsList);
         mLinearlayout = new LinearLayoutManager(getActivity());
 
         mAnsList.setHasFixedSize(true);
         mAnsList.setLayoutManager(new LinearLayoutManager(getActivity()));
         mAnsList.setAdapter(answersAdapter);
-
         mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.refresh);
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -105,15 +102,14 @@ public class AnsProfileTab extends Fragment {
         answerList.clear();
         LoadMessage();
 
-        if (answerList.size() < 0) {
+        if (answerList.size() > 0) {
 
-            noAns.setVisibility(View.VISIBLE);
+            noAns.setVisibility(View.GONE);
 
         } else {
 
-            noAns.setVisibility(View.GONE);
+            noAns.setVisibility(View.VISIBLE);
         }
-
 
         return v;
     }
@@ -121,15 +117,6 @@ public class AnsProfileTab extends Fragment {
     private void LoadMessage() {
 
         Query quizQuery = mDatabaseAnswers.child(auth.getCurrentUser().getUid()).limitToLast(currentPage * TOTAL_ITEMS_TO_LOAD);
-
-        if (quizQuery == null) {
-
-            noAns.setVisibility(View.VISIBLE);
-
-        } else {
-
-            noAns.setVisibility(View.GONE);
-        }
 
         quizQuery.addChildEventListener(new ChildEventListener() {
             @Override

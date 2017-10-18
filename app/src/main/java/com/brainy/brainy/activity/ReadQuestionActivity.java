@@ -74,9 +74,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ReadQuestionActivity extends AppCompatActivity {
 
     String  personName = null;
+    String sender_name = null;
+    String sender_image = null;
     String  personEmail = null;
     String  personId = null;
     Uri personPhoto = null;
+    Boolean isPosting = false;
     private Button signIn;
     private DatabaseReference mDatabaseUserInbox;
     private static final String TAG = "tab2Inbox";
@@ -85,7 +88,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
     private ProgressBar progressBar;
 
     private RelativeLayout share, favourite, answer;
-    private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseUsersInbox, mDatabaseUsersPoints, mDatabaseUsersAns, mDatabaseNotifications;
+    private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseUsersInbox, mDatabaseUsersPoints, mDatabaseUsersAns, mDatabaseAnswers, mDatabaseVotes;
     private RecyclerView mAnsList;
     Context mContext;
     private FirebaseAuth auth;
@@ -127,7 +130,8 @@ public class ReadQuestionActivity extends AppCompatActivity {
         mDatabaseUsersAns = FirebaseDatabase.getInstance().getReference().child("Users_answers");
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseQuestions = FirebaseDatabase.getInstance().getReference().child("Questions");
-        mDatabaseNotifications = FirebaseDatabase.getInstance().getReference().child("Notifications");
+        mDatabaseAnswers = FirebaseDatabase.getInstance().getReference().child("Answers");
+        mDatabaseVotes = FirebaseDatabase.getInstance().getReference().child("Votes");
 
         parent_view = findViewById(android.R.id.content);
         quizVoteDown = (ImageView) findViewById(R.id.quiz_vote_down);
@@ -179,6 +183,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
         // SYNC DATABASE
         mDatabaseQuestions.keepSynced(true);
         mDatabaseUsers.keepSynced(true);
+        mDatabaseVotes.keepSynced(true);
 
         Window window = ReadQuestionActivity.this.getWindow();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -295,9 +300,11 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                 }
             });
+
         } else {
 
         }
+
         answer = (RelativeLayout) findViewById(R.id.answer);
         answer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -333,29 +340,28 @@ public class ReadQuestionActivity extends AppCompatActivity {
                             dialog.dismiss();
                         }
 
-
-
                         private void startPosting() {
 
                             Date date = new Date();
                             final String stringDate = DateFormat.getDateTimeInstance().format(date);
                             final String stringDate2 = DateFormat.getDateInstance().format(date);
 
+                            final DatabaseReference newPost2 = mDatabaseUsersAns.child(auth.getCurrentUser().getUid()).push();
+
+
                             final String questionBodyTag = questionBodyInput.getText().toString().trim();
                             if (TextUtils.isEmpty(questionBodyTag)) {
 
                             } else {
 
-                                final DatabaseReference newPost = mDatabaseQuestions.child(QuizKey).child("Answers").push();
-                                final DatabaseReference newPost2 = mDatabaseUsersAns.child(auth.getCurrentUser().getUid()).push();
 
 
                                 mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                        final String name = dataSnapshot.child("name").getValue().toString();
-                                        final String image = dataSnapshot.child("user_image").getValue().toString();
+                                        sender_name = dataSnapshot.child("name").getValue().toString();
+                                        sender_image = dataSnapshot.child("user_image").getValue().toString();
 
                                         mDatabaseQuestions.child(QuizKey).addValueEventListener(new ValueEventListener() {
                                             @Override
@@ -363,22 +369,23 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                                                 String question_title = dataSnapshot.child("question_title").getValue().toString();
                                                 String sender_uid = dataSnapshot.child("sender_uid").getValue().toString();
+                                                final DatabaseReference newPostAns = mDatabaseAnswers.child(QuizKey).push();
 
                                                 //DELETE UNANSERED CHILD FROM DATABASE
                                                 if (dataSnapshot.hasChild("Unanswered")) {
-                                                    mDatabaseQuestions.child(QuizKey).child("Unanswered").removeValue();
+                                                    mDatabaseAnswers.child(QuizKey).child("Unanswered").removeValue();
                                                 }
 
-                                                // getting user uid
-                                                newPost.child("posted_answer").setValue(questionBodyTag);
-                                                newPost.child("sender_uid").setValue(auth.getCurrentUser().getUid());
-                                                newPost.child("question_title").setValue(question_title);
-                                                newPost.child("sender_name").setValue(name);
-                                                newPost.child("sender_image").setValue(image);
-                                                newPost.child("post_id").setValue(newPost.getKey());
-                                                newPost.child("posted_date").setValue(stringDate2);
-                                                newPost.child("question_key").setValue(QuizKey);
-                                                newPost.child("post_id").setValue(newPost.getKey());
+                                                Map<String, Object> mapAns = new HashMap<>();
+                                                mapAns.put("question_title", question_title);
+                                                mapAns.put("posted_answer", questionBodyTag);
+                                                mapAns.put("sender_uid", auth.getCurrentUser().getUid());
+                                                mapAns.put("sender_name", sender_name);
+                                                mapAns.put("question_key", QuizKey);
+                                                mapAns.put("sender_image", sender_image);
+                                                mapAns.put("posted_date", stringDate2);
+                                                mapAns.put("post_id", newPostAns.getKey());
+                                                newPostAns.setValue(mapAns);
 
 
                                                 //SEND ANSWER TO USEERS ANSWERS IN DATABASE
@@ -387,7 +394,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                                 newPost2.child("posted_date").setValue(stringDate2);
                                                 newPost2.child("question_key").setValue(QuizKey);
                                                 newPost2.child("posted_quiz_title").setValue(question_title);
-                                                newPost2.child("post_id").setValue(newPost.getKey());
+                                                newPost2.child("post_id").setValue(newPostAns.getKey());
 
                                             }
 
@@ -425,18 +432,26 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                                         String sender_uid = dataSnapshot.child("sender_uid").getValue().toString();
                                                         final DatabaseReference newPost3 = mDatabaseUsersInbox.child(sender_uid).push();
 
-                                                        Map<String, Object> map = new HashMap<>();
-                                                        map.put("posted_reason", "answered your question");
-                                                        map.put("posted_answer", questionBodyTag);
-                                                        map.put("sender_uid", auth.getCurrentUser().getUid());
-                                                        map.put("sender_name", name);
-                                                        map.put("read", false);
-                                                        map.put("question_key", QuizKey);
-                                                        map.put("sender_image", image);
-                                                        map.put("posted_date", stringDate2);
-                                                        map.put("post_id", newPost3.getKey());
-                                                        newPost3.setValue(map);
+                                                        isPosting = true;
 
+                                                        if (isPosting) {
+
+                                                            Map<String, Object> map = new HashMap<>();
+                                                            map.put("posted_reason", "answered your question");
+                                                            map.put("posted_answer", questionBodyTag);
+                                                            map.put("sender_uid", auth.getCurrentUser().getUid());
+                                                            map.put("sender_name", name);
+                                                            map.put("read", false);
+                                                            map.put("question_key", QuizKey);
+                                                            map.put("sender_image", image);
+                                                            map.put("posted_date", stringDate2);
+                                                            map.put("post_id", newPost3.getKey());
+                                                            newPost3.setValue(map);
+
+                                                            isPosting = false;
+
+                                                        }
+                                                        isPosting = false;
                                                     }
 
                                                     @Override
@@ -454,7 +469,10 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                 });
                             }
                         }
+
                     });
+
+
                 } else {
                     Snackbar snackbar = Snackbar
                             .make(parent_view, "You need to have an account for you to vote", Snackbar.LENGTH_LONG)
@@ -468,6 +486,9 @@ public class ReadQuestionActivity extends AppCompatActivity {
                     snackbar.show();
                 }
             }
+
+
+
         });
 
         mDatabaseQuestions.child(QuizKey).addValueEventListener(new ValueEventListener() {
@@ -526,7 +547,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
         });
 
         final TextView mNoAnsTxt = (TextView) findViewById(R.id.noAnsTxt);
-        mDatabaseQuestions.child(QuizKey).child("Answers").addValueEventListener(new ValueEventListener() {
+        mDatabaseAnswers.child(QuizKey).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() == null){
@@ -544,7 +565,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
         });
 
         // count number of answers
-        mDatabaseQuestions.child(QuizKey).child("Answers").addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabaseAnswers.child(QuizKey).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -559,7 +580,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
         });
 
         //DISPLAY NUMBER OF UP VOTES A QUIZ HAS.....
-        mDatabaseQuestions.child(QuizKey).child("Quiz_votes").child("up_votes").addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabaseVotes.child(QuizKey).child("up_votes").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -581,16 +602,9 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
     private void LoadMessage() {
 
-        Query quizQuery = mDatabaseQuestions.child(QuizKey).child("Answers").limitToLast(currentPage * TOTAL_ITEMS_TO_LOAD);
+        /*Query quizQuery = mDatabaseAnswers.child(QuizKey).child("Answers").limitToLast(currentPage * TOTAL_ITEMS_TO_LOAD);*/
+        Query quizQuery = mDatabaseAnswers.child(QuizKey).limitToLast(currentPage * TOTAL_ITEMS_TO_LOAD);
 
-        if (quizQuery == null) {
-
-         /*   noAns.setVisibility(View.VISIBLE);*/
-
-        } else {
-
-           /* noAns.setVisibility(View.GONE);*/
-        }
 
         quizQuery.addChildEventListener(new ChildEventListener() {
             @Override
@@ -727,23 +741,6 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                                                             final String sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
 
-                                                            /*mDatabaseUsers.child(sender_uid).child("points_earned").addListenerForSingleValueEvent(new ValueEventListener() {
-                                                                @Override
-                                                                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                                                                    Long user_points = (Long) dataSnapshot.getValue();
-                                                                    user_points = user_points + 5;
-
-                                                                    mDatabaseUsers.child(sender_uid).child("points_earned").setValue(user_points);
-
-                                                                }
-
-                                                                @Override
-                                                                public void onCancelled(DatabaseError databaseError) {
-
-                                                                }
-                                                            });
-*/
                                                             mDatabaseUsers.child(sender_uid).child("points_earned").runTransaction(new Transaction.Handler() {
                                                                 @Override
                                                                 public Transaction.Result doTransaction(MutableData mutableData) {
@@ -788,7 +785,6 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                                     });
                                                     mProcessApproval = false;
                                                     Toast.makeText(ReadQuestionActivity.this, "Vote was successful",Toast.LENGTH_LONG).show();
-
 
 
                                         }
@@ -867,13 +863,6 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                                    /* mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").child(auth.getCurrentUser().getUid()).removeValue();*/
                                             Snackbar snackbar = Snackbar
                                                     .make(parent_view, "You have already down-voted this question", Snackbar.LENGTH_LONG);
-                                                   /* .setAction("UNDO", new View.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(View view) {
-                                                            Snackbar snackbar1 = Snackbar.make(parent_view, "Your vote has been reversed!", Snackbar.LENGTH_SHORT);
-                                                            snackbar1.show();
-                                                        }
-                                                    });*/
 
                                             snackbar.show();
 
@@ -909,11 +898,6 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                                         @Override
                                                         public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                                          /*  Long user_points = (Long) dataSnapshot.getValue();
-                                                            user_points = user_points - 2;
-
-                                                            mDatabaseUsers.child(sender_uid).child("points_earned").setValue(user_points);
-*/
                                                             //ALSO DEDUCT 1 POINT FROM THIS USER.....
 
                                                             Long current_user_points = (Long) dataSnapshot.getValue();

@@ -45,6 +45,7 @@ public class QuizProfileTab extends Fragment {
     private DatabaseReference mDatabaseChatroom,  mDatabaseViews, mDatabase;
     private FirebaseAuth mAuth;
     private RecyclerView mQuestionsList;
+    private TextView noAns;
 
     QuestionAdapter questionAdapter;
     private final List<Question> questionList = new ArrayList<>();
@@ -70,7 +71,7 @@ public class QuizProfileTab extends Fragment {
         mAuth = FirebaseAuth.getInstance();
 
         // database channels
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("Users_Questions");
         mDatabaseChatroom = FirebaseDatabase.getInstance().getReference().child("Chatrooms");
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
 
@@ -116,12 +117,22 @@ public class QuizProfileTab extends Fragment {
         questionList.clear();
         LoadMessage();
 
+        noAns = (TextView) v.findViewById(R.id.noAnsTxt);
+        if (questionList.size() > 0) {
+
+            noAns.setVisibility(View.GONE);
+
+        } else {
+
+            noAns.setVisibility(View.VISIBLE);
+        }
+
         return v;
     }
 
     private void LoadMessage() {
 
-        Query quizQuery = mDatabase.orderByChild("sender_uid").equalTo(mAuth.getCurrentUser().getUid()).limitToLast(currentPage * TOTAL_ITEMS_TO_LOAD);
+        Query quizQuery = mDatabase.child(mAuth.getCurrentUser().getUid()).limitToLast(currentPage * TOTAL_ITEMS_TO_LOAD);
 
         quizQuery.addChildEventListener(new ChildEventListener() {
             @Override
