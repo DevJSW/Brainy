@@ -260,11 +260,10 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.QuestionView
 
                                 mDatabase.child(answer_key).removeValue();
                                 dialog.dismiss();
-                                notifyDataSetChanged();
+                                Toast.makeText(ctx, "Message deleted!",Toast.LENGTH_SHORT).show();
                             }
 
                         })
-
 
 
                         .setNegativeButton("cancel", new DialogInterface.OnClickListener() {

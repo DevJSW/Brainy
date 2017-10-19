@@ -26,6 +26,8 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 public class ProfileEditActivity extends AppCompatActivity {
 
@@ -188,7 +190,23 @@ public class ProfileEditActivity extends AppCompatActivity {
         if(requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
 
             mImageUri = data.getData();
-            userImg.setImageURI(mImageUri);
+
+            CropImage.activity(mImageUri)
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .setCropShape(CropImageView.CropShape.OVAL)
+                    .setAspectRatio(1, 1)
+                    .start(ProfileEditActivity.this);
+
+            if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+                CropImage.ActivityResult result = CropImage.getActivityResult(data);
+                if (resultCode == RESULT_OK) {
+                    Uri resultUri = result.getUri();
+                    userImg.setImageURI(resultUri);
+                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                    Exception error = result.getError();
+                }
+            }
+
 
         }
     }

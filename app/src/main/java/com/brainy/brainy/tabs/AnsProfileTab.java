@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,21 +103,31 @@ public class AnsProfileTab extends Fragment {
         answerList.clear();
         LoadMessage();
 
-        if (answerList.size() > 0) {
-
-            noAns.setVisibility(View.GONE);
-
-        } else {
-
-            noAns.setVisibility(View.VISIBLE);
-        }
-
         return v;
     }
 
     private void LoadMessage() {
 
         Query quizQuery = mDatabaseAnswers.child(auth.getCurrentUser().getUid()).limitToLast(currentPage * TOTAL_ITEMS_TO_LOAD);
+        quizQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.getValue() == null) {
+
+                    noAns.setVisibility(View.VISIBLE);
+                } else {
+
+                    noAns.setVisibility(View.GONE);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         quizQuery.addChildEventListener(new ChildEventListener() {
             @Override

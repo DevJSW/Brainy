@@ -485,41 +485,7 @@ public class tab1Questions extends Fragment {
 
         Query quizQuery = mDatabase.orderByKey().startAt(mFirstKey).limitToLast(5);
 
-        quizQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                //questionList.clear();
-                Question message = dataSnapshot.getValue(Question.class);
-                String messageKey = dataSnapshot.getKey();
-
-                if (!mPrevKey.equals(messageKey)) {
-                    questionList.add(itemPos++,message);
-                } else {
-                    mPrevKey = mLastKey;
-                }
-
-                if (itemPos == 1) {
-
-                    mLastKey = messageKey;
-                }
-                questionList.add(itemPos++,message);
-                questionAdapter.notifyDataSetChanged();
-                questionAdapter.notifyItemInserted(0);
-
-                mSwipeRefreshLayout.setRefreshing(false);
-
-                mLinearlayout.scrollToPositionWithOffset(10, 0);
-                mQuestionsList.scrollToPosition(questionList.size()-1);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-       /* quizQuery.addChildEventListener(new ChildEventListener() {
+        quizQuery.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
@@ -567,7 +533,7 @@ public class tab1Questions extends Fragment {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });*/
+        });
     }
 
     @Override
@@ -589,7 +555,48 @@ public class tab1Questions extends Fragment {
 
         Query quizQuery = mDatabase.limitToLast(TOTAL_ITEMS_TO_LOAD);
 
-        quizQuery.addChildEventListener(new ChildEventListener() {
+        quizQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // load initial data set
+
+                for(DataSnapshot child : dataSnapshot.getChildren()) {
+                    Question message = child.getValue(Question.class);
+
+                    itemPos++;
+                    if (itemPos == 1) {
+
+                        String messageKey = child.getKey();
+                        mLastKey = messageKey;
+                        mPrevKey = messageKey;
+
+                    }
+
+                    if (itemPos == 0) {
+                        String messageKey = child.getKey();
+                        mFirstKey = messageKey;
+                    }
+
+                    questionList.add(message);
+                    questionAdapter.notifyDataSetChanged();
+                    questionAdapter.notifyItemInserted(0);
+
+                    mSwipeRefreshLayout.setRefreshing(false);
+
+                    mQuestionsList.scrollToPosition(questionList.size()-1);
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+
+        });
+
+       /* quizQuery.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
@@ -639,7 +646,7 @@ public class tab1Questions extends Fragment {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        });*/
 
     }
 
@@ -669,7 +676,6 @@ public class tab1Questions extends Fragment {
                     mLastKey = messageKey;
 
                 }
-
                 questionAdapter.notifyDataSetChanged();
                 questionAdapter.notifyItemInserted(0);
 

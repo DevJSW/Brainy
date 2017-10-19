@@ -27,6 +27,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.srx.widget.PullToLoadView;
 
 import java.util.ArrayList;
@@ -118,14 +119,6 @@ public class QuizProfileTab extends Fragment {
         LoadMessage();
 
         noAns = (TextView) v.findViewById(R.id.noAnsTxt);
-        if (questionList.size() > 0) {
-
-            noAns.setVisibility(View.GONE);
-
-        } else {
-
-            noAns.setVisibility(View.VISIBLE);
-        }
 
         return v;
     }
@@ -133,6 +126,25 @@ public class QuizProfileTab extends Fragment {
     private void LoadMessage() {
 
         Query quizQuery = mDatabase.child(mAuth.getCurrentUser().getUid()).limitToLast(currentPage * TOTAL_ITEMS_TO_LOAD);
+        quizQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.getValue() == null) {
+
+                    noAns.setVisibility(View.VISIBLE);
+                } else {
+
+                    noAns.setVisibility(View.GONE);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         quizQuery.addChildEventListener(new ChildEventListener() {
             @Override
