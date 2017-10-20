@@ -1,5 +1,6 @@
 package com.brainy.brainy.activity;
 
+import android.Manifest;
 import android.app.Dialog;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -7,6 +8,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -23,6 +25,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -102,6 +105,9 @@ public class MainActivity extends AppCompatActivity {
     String  personEmail = "";
     String  personId = "";
     Uri personPhoto = null;
+    String city = null;
+    String state = null;
+    String country = null;
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     String selectedTopic = null;
@@ -110,6 +116,9 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseUsersQuestions, mDatabaseInboxUsers;
     Context mContext;
     private FirebaseAuth auth;
+
+    private static final int REQUEST_CODE_PERMISSION = 1;
+    String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
 
     GPSTracker gps;
     Geocoder geocoder;
@@ -487,55 +496,65 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getUserLocation() {
-        geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
 
-        // create class object
-        gps = new GPSTracker(this);
-        // check if GPS enabled
-        if(gps.canGetLocation()){
-            double latitude = gps.getLatitude();
-            double longitude = gps.getLongitude();
-            // \n is for new line
-            // Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+        if(Build.VERSION.SDK_INT>= 23) {
 
-            mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("latitude").setValue(latitude);
-            mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("longitude").setValue(longitude);
-
-            try {
-                addresses = geocoder.getFromLocation(latitude, longitude, 1);
-
-                if (addresses.size() != 0) {
-                    String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                    String city = addresses.get(0).getLocality();
-                    String state = addresses.get(0).getAdminArea();
-                    String country = addresses.get(0).getCountryName();
-                    String postalCode = addresses.get(0).getPostalCode();
-                    String knownName = addresses.get(0).getFeatureName();
-
-                    mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("city").setValue(city);
-                    mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("country").setValue(country);
-                    mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("address").setValue(address);
-
-                    mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("address").setValue(address);
-                    mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("city").setValue(city);
-                    mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("state").setValue(state);
-                    mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("country").setValue(country);
-                    mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("postalCode").setValue(postalCode);
-                    mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("knownName").setValue(knownName);
-
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (checkSelfPermission(mPermission) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        new String[]{mPermission,
+                        },
+                        REQUEST_CODE_PERMISSION);
+                return;
             }
 
-        }else{
-            // can't get location
-            // GPS or Network is not enabled
-            // Ask user to enable GPS/network in settings
-            //gps.showSettingsAlert();
-        }
-    }
+            else
+            {
+                geocoder = new Geocoder(this, Locale.getDefault());
 
+                // create class object
+                gps = new GPSTracker(MainActivity.this);
+                // check if GPS enabled
+                if(gps.canGetLocation()){
+                    double latitude = gps.getLatitude();
+                    double longitude = gps.getLongitude();
+                    // \n is for new line
+                    // Toast.makeText(getApplicationContext(), "Your Location is - \nLat: " + latitude + "\nLong: " + longitude, Toast.LENGTH_LONG).show();
+
+                    mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("latitude").setValue(latitude);
+                    mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("longitude").setValue(longitude);
+
+                    try {
+                        addresses = geocoder.getFromLocation(latitude, longitude, 1);
+
+                        String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                        city = addresses.get(0).getLocality();
+                        state = addresses.get(0).getAdminArea();
+                        country = addresses.get(0).getCountryName();
+                        String postalCode = addresses.get(0).getPostalCode();
+                        String knownName = addresses.get(0).getFeatureName();
+
+                        mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("address").setValue(address);
+                        mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("city").setValue(city);
+                        mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("state").setValue(state);
+                        mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("country").setValue(country);
+                        mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("postalCode").setValue(postalCode);
+                        mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").child("knownName").setValue(knownName);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }else{
+                    // can't get location
+                    // GPS or Network is not enabled
+                    // Ask user to enable GPS/network in settings
+                    /*gps.showSettingsAlert();*/
+                }
+            }
+        }
+
+
+    }
 
     private void checkUserLoggedIn() {
 
@@ -660,6 +679,9 @@ public class MainActivity extends AppCompatActivity {
                             map.put("Unanswered", true);
                             map.put("sender_image", dataSnapshot.child("user_image").getValue());
                             map.put("posted_date", stringDate2);
+                            map.put("state", state);
+                            map.put("city", city);
+                            map.put("country", country);
                             map.put("tag", selectedTopic);
                             map.put("post_id", newPost.getKey());
                             newPost.setValue(map);
@@ -669,6 +691,9 @@ public class MainActivity extends AppCompatActivity {
                             map2.put("question_body", questionBodyTag);
                             map2.put("sender_uid", auth.getCurrentUser().getUid());
                             map2.put("sender_name", dataSnapshot.child("name").getValue());
+                            map2.put("state", state);
+                            map2.put("city", city);
+                            map2.put("country", country);
                             map2.put("Unanswered", true);
                             map2.put("sender_image", dataSnapshot.child("user_image").getValue());
                             map2.put("posted_date", stringDate2);

@@ -78,10 +78,14 @@
             android:theme="@style/Base.Theme.AppCompat" />
         <activity
             android:name=".activity.WelcomeActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.EditQuestionActivity"
             android:label=""
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.ViewUserProfileActivity"
+            android:label="@string/title_activity_view_user_profile"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

@@ -26,6 +26,8 @@ import android.widget.Toast;
 import com.brainy.brainy.R;
 import com.brainy.brainy.activity.ReadQuestionActivity;
 import com.brainy.brainy.data.Question;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -441,19 +443,12 @@ public class tab3Achievements extends Fragment {
 
             final CircleImageView civ = (CircleImageView) mView.findViewById(R.id.post_image);
 
-            Picasso.with(ctx).load(sender_image).networkPolicy(NetworkPolicy.OFFLINE).into(civ, new Callback() {
-                @Override
-                public void onSuccess() {
+            Glide.with(ctx)
+                    .load(sender_image)
+                    .placeholder(R.drawable.placeholder_image)
+                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                    .into(civ);
 
-                }
-
-                @Override
-                public void onError() {
-
-
-                    Picasso.with(ctx).load(sender_image).into(civ);
-                }
-            });
         }
 
     }

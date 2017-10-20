@@ -157,16 +157,6 @@
 
                         </LinearLayout>
 
-                        <com.brainy.brainy.data.MyFont
-                            android:id="@+id/post_location"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:visibility="gone"
-                            android:layout_marginTop="1dp"
-                            android:text="Location"
-                            android:textColor="@color/colorAccent"
-                            android:textSize="9dp" />
-
                     </LinearLayout>
 
                 </LinearLayout>

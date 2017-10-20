@@ -61,20 +61,21 @@
                 app:layout_scrollFlags="scroll|enterAlways"
                 android:src="@drawable/placeholder_image"/>-->
 
-            <com.brainy.brainy.data.MyFont
+            <com.brainy.brainy.data.MyBoldFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
                 android:id="@+id/username"
-                android:textSize="16dp"
-                android:layout_marginBottom="15dp"
-                android:text="username"
+                android:textSize="17dp"
+                android:layout_marginBottom="8dp"
                 android:layout_gravity="center_horizontal"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:visibility="gone"
+                android:id="@+id/location_liny"
+
                 android:orientation="horizontal">
 
                 <ImageView
@@ -82,15 +83,14 @@
                     android:layout_height="17dp"
                     android:padding="1dp"
                     android:layout_toLeftOf="@+id/location"
-                    android:src="@drawable/ic_location_grey"/>
+                    android:src="@drawable/ic_location"/>
 
                 <com.brainy.brainy.data.MyFont
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/location"
                     android:textSize="15dp"
-                    android:layout_marginBottom="5dp"
-                    android:text="Nairobi" />
+                    android:layout_marginBottom="5dp" />
 
                 <ImageView
                     android:layout_width="16dp"
@@ -103,7 +103,8 @@
             <com.brainy.brainy.data.CustomTablayout
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp">
 
                 <android.support.design.widget.TabItem
                     android:id="@+id/tabItem"

@@ -282,14 +282,14 @@
                 android:layout_marginRight="10dp"
                 android:layout_above="@+id/bottom_bar"/>
 
-            <com.brainy.brainy.data.MyFont
+            <com.brainy.brainy.data.MyBoldFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="No Answers"
-                android:textSize="15dp"
+                android:textSize="17dp"
                 android:layout_gravity="center_horizontal"
                 android:visibility="gone"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="50dp"
                 android:id="@+id/noAnsTxt"
                 android:textColor="@color/colorPrimary"/>
 
@@ -298,7 +298,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/scrollview"
                 android:id="@+id/mAnsList">
-
 
             </android.support.v7.widget.RecyclerView>
 
@@ -403,7 +402,6 @@
 
         </RelativeLayout>
     </LinearLayout>
-
 
 
 </RelativeLayout>

@@ -19,6 +19,7 @@ import com.brainy.brainy.R;
 import com.brainy.brainy.activity.DiscussForumActivity;
 import com.brainy.brainy.activity.EditQuestionActivity;
 import com.brainy.brainy.activity.ReadQuestionActivity;
+import com.brainy.brainy.activity.ViewUserProfileActivity;
 import com.brainy.brainy.data.Question;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -48,6 +49,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
     Context ctx;
 
     private DatabaseReference mDatabase;
+    private ImageView avator;
 
     FirebaseAuth mAuth;
 
@@ -74,6 +76,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
         public TextView post_name;
         public TextView post_body;
         public TextView post_date;
+        public ImageView avator;
         public ImageView civ;
         public TextView viewCounter, answersCounter, favouritesCounter;
         public DatabaseReference  mDatabase, mDatabaseProfileAns;
@@ -100,6 +103,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
             answersCounter = (TextView) mView.findViewById(R.id.answersCounter);
             favouritesCounter = (TextView) mView.findViewById(R.id.favouriteCounter);
             answer_rely = (RelativeLayout) mView.findViewById(R.id.anser_rely);
+            avator = (ImageView) mView.findViewById(R.id.post_image);
             mDatabaseProfileAns = FirebaseDatabase.getInstance().getReference().child("Users_answers");
 
         }
@@ -160,6 +164,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
         mDatabase.keepSynced(true);
 
         final String quiz_key = c.getPost_id();
+        final String user_id = c.getSender_uid();
 
         holder.post_title.setText(c.getQuestion_title());
         if (c.getQuestion_body() != null) {
@@ -170,6 +175,14 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
         holder.post_name.setText(c.getSender_name());
         holder.post_date.setText(c.getPosted_date());
 
+        holder.avator.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent openRead = new Intent(ctx, ViewUserProfileActivity.class);
+                openRead.putExtra("user_id", user_id );
+                ctx.startActivity(openRead);
+            }
+        });
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -189,7 +202,6 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
 
             @Override
             public boolean onLongClick(View v) {
-
 
                 // custom dialog
                 final Dialog dialog = new Dialog(ctx);

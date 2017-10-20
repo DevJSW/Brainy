@@ -82,6 +82,11 @@ public class ReadQuestionActivity extends AppCompatActivity {
     String  personId = null;
     Uri personPhoto = null;
     Boolean isPosting = false;
+
+    String city = null;
+    String state = null;
+    String country = null;
+
     private Button signIn;
     private DatabaseReference mDatabaseUserInbox;
     private static final String TAG = "tab2Inbox";
@@ -282,6 +287,23 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
 
         if (auth.getCurrentUser() != null) {
+
+           //////////////////////////////////////////////// //get user address//////////////////////////////////////////////////////////////////
+
+            mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("location").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    state = dataSnapshot.child("state").getValue().toString();
+                    city = dataSnapshot.child("city").getValue().toString();
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // always check if question is users favourite
             mDatabaseFavourite.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -387,6 +409,8 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                                 mapAns.put("sender_image", sender_image);
                                                 mapAns.put("posted_date", stringDate2);
                                                 mapAns.put("post_id", newPostAns.getKey());
+                                                mapAns.put("city", city);
+                                                mapAns.put("state", state);
                                                 newPostAns.setValue(mapAns);
 
 
@@ -397,6 +421,8 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                                 newPost2.child("question_key").setValue(QuizKey);
                                                 newPost2.child("posted_quiz_title").setValue(question_title);
                                                 newPost2.child("post_id").setValue(newPostAns.getKey());
+                                                newPost2.child("city").setValue(city);
+                                                newPost2.child("state").setValue(state);
 
                                             }
 

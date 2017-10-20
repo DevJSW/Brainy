@@ -33,12 +33,10 @@ import com.brainy.brainy.R;
 import com.brainy.brainy.tabs.AboutProfileTab;
 import com.brainy.brainy.tabs.AnsProfileTab;
 import com.brainy.brainy.tabs.QuizProfileTab;
-import com.brainy.brainy.tabs.tab1Questions;
-import com.brainy.brainy.tabs.tab2Inbox;
-import com.brainy.brainy.tabs.tab3Achievements;
-import com.brainy.brainy.tabs.tab4More;
+import com.brainy.brainy.tabs.ViewUserTabs.ViewAboutProfileTab;
+import com.brainy.brainy.tabs.ViewUserTabs.ViewAnsProfileTab;
+import com.brainy.brainy.tabs.ViewUserTabs.ViewQuizProfileTab;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -48,13 +46,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
 
-public class EditProfileActivity extends AppCompatActivity {
+public class ViewUserProfileActivity extends AppCompatActivity {
 
 
+    String UserId = null;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private DatabaseReference mDatabaseUsers, mDatabaseUsers2, mDatabase, mDatabaseLastSeen;
     private FirebaseAuth mAuth;
@@ -72,9 +68,9 @@ public class EditProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
-        Window window = EditProfileActivity.this.getWindow();
+        Window window = ViewUserProfileActivity.this.getWindow();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.setStatusBarColor(ContextCompat.getColor( EditProfileActivity.this,R.color.colorPrimaryDark));
+            window.setStatusBarColor(ContextCompat.getColor( ViewUserProfileActivity.this,R.color.colorPrimaryDark));
 
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -90,13 +86,15 @@ public class EditProfileActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
+        UserId = getIntent().getStringExtra("user_id");
+
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
         mAuth = FirebaseAuth.getInstance();
         mGroupIcon = (ImageView) findViewById(R.id.user_avator);
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
-        mDatabaseUsers2 = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
+        mDatabaseUsers2 = FirebaseDatabase.getInstance().getReference().child("Users").child(UserId);
         mProgress = new ProgressDialog(this);
         mStorage = FirebaseStorage.getInstance().getReference();
         mDatabaseUsers.keepSynced(true);
@@ -104,20 +102,19 @@ public class EditProfileActivity extends AppCompatActivity {
 
         username = (TextView) findViewById(R.id.username);
 
-        mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+        mDatabaseUsers.child(UserId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                /* if (dataSnapshot.hasChild("status") || dataSnapshot.hasChild("city") || dataSnapshot.hasChild("address")) {*/
 
-                String user_location = dataSnapshot.child("location").getValue().toString();
                 String name = dataSnapshot.child("name").getValue().toString();
                 String image = dataSnapshot.child("user_image").getValue().toString();
 
 
                 username.setText(name);
 
-                Glide.with(EditProfileActivity.this)
+                Glide.with(ViewUserProfileActivity.this)
                         .load(image)
                         .placeholder(R.drawable.placeholder_image)
                         .diskCacheStrategy(DiskCacheStrategy.RESULT)
@@ -133,31 +130,38 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
 
-        if (mAuth.getCurrentUser() != null) {
 
             awardBadge();
             initLocation();
-        }
+
 
     }
 
     private void initLocation() {
 
         mLocation = (TextView) findViewById(R.id.location);
-        mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("location").addValueEventListener(new ValueEventListener() {
+        mDatabaseUsers.child(UserId).child("location").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String state = dataSnapshot.child("state").getValue().toString();
-                String city = dataSnapshot.child("city").getValue().toString();
 
-                if (state != null || city != null) {
-                    if (state != null) {
-                        mLocation.setText(state);
-                    } else if (city != null) {
-                        mLocation.setText(city);
+                if (dataSnapshot.getValue() != null) {
+
+                    String state = dataSnapshot.child("state").getValue().toString();
+                    String city = dataSnapshot.child("city").getValue().toString();
+
+                    if (state != null || city != null) {
+                        if (state != null) {
+                            mLocation.setText(state);
+                        } else if (city != null) {
+                            mLocation.setText(city);
+                        }
+                    } else {
+
+                        LinearLayout loc_liny = (LinearLayout) findViewById(R.id.location_liny);
+                        loc_liny.setVisibility(View.GONE);
                     }
-                } else {
 
+                } else {
                     LinearLayout loc_liny = (LinearLayout) findViewById(R.id.location_liny);
                     loc_liny.setVisibility(View.GONE);
                 }
@@ -172,7 +176,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private void awardBadge() {
 
-        mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+        mDatabaseUsers.child(UserId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Long users_points = (Long) dataSnapshot.child("points_earned").getValue();
@@ -183,28 +187,28 @@ public class EditProfileActivity extends AppCompatActivity {
 
                 if (users_points < 100) {
 
-                    mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("reputation").setValue("Beginner");
+                    mDatabaseUsers.child(UserId).child("reputation").setValue("Beginner");
                     badge.setVisibility(View.GONE);
                     // PREVELAGE
 
                 } else if (users_points > 100 && users_points < 499) {
 
-                    mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("reputation").setValue("Smart");
+                    mDatabaseUsers.child(UserId).child("reputation").setValue("Smart");
                     badge.setImageResource(R.drawable.smart_badge);
 
                 } else if (users_points > 500 && users_points < 999) {
 
-                    mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("reputation").setValue("Intelligent");
+                    mDatabaseUsers.child(UserId).child("reputation").setValue("Intelligent");
                     badge.setImageResource(R.drawable.intelligent_badge);
 
                 }  else if (users_points > 1000 && users_points < 1999) {
 
-                    mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("reputation").setValue("Brainy");
+                    mDatabaseUsers.child(UserId).child("reputation").setValue("Brainy");
                     badge.setImageResource(R.drawable.brainy_badge);
 
                 } else if (users_points > 2000 ) {
 
-                    mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("reputation").setValue("Super Brainy");
+                    mDatabaseUsers.child(UserId).child("reputation").setValue("Super Brainy");
                     badge.setImageResource(R.drawable.super_brainy_badge);
 
 
@@ -234,14 +238,7 @@ public class EditProfileActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.ic_edit) {
 
-            Intent openRead = new Intent(EditProfileActivity.this, ProfileEditActivity.class);
-           /* openRead.putExtra("question_id", QuizKey );*/
-            startActivity(openRead);
-
-            return true;
-        }
         switch (item.getItemId()) {
 
             case android.R.id.home:
@@ -296,13 +293,22 @@ public class EditProfileActivity extends AppCompatActivity {
             //returning the current tabs
             switch (position) {
                 case 0:
-                    AboutProfileTab tab1 = new  AboutProfileTab();
+                    ViewAboutProfileTab tab1 = new  ViewAboutProfileTab();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("UserId", UserId);
+                    tab1.setArguments(bundle);
                     return tab1;
                 case 1:
-                    AnsProfileTab tab2 = new AnsProfileTab ();
+                    ViewAnsProfileTab tab2 = new ViewAnsProfileTab ();
+                    Bundle bundle2 = new Bundle();
+                    bundle2.putString("UserId", UserId);
+                    tab2.setArguments(bundle2);
                     return tab2;
                 case 2:
-                    QuizProfileTab tab3 = new QuizProfileTab();
+                    ViewQuizProfileTab tab3 = new ViewQuizProfileTab();
+                    Bundle bundle3 = new Bundle();
+                    bundle3.putString("UserId", UserId);
+                    tab3.setArguments(bundle3);
                     return tab3;
 
             }

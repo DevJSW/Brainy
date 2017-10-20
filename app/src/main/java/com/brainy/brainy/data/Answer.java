@@ -15,12 +15,14 @@ public class Answer {
     private String sender_uid;
     private String post_id;
     private String question_key;
+    private String state;
+    private String city;
 
     public Answer() {
 
     }
 
-    public Answer(String posted_date, String post_answered, String posted_quiz_title, String posted_reason, String sender_image, String sender_name, String sender_uid, String post_id, String question_key) {
+    public Answer(String posted_date, String post_answered, String posted_quiz_title, String posted_reason, String sender_image, String sender_name, String sender_uid, String post_id, String question_key, String city, String state) {
         this.posted_date = posted_date;
         this.posted_answer = post_answered;
         this.posted_quiz_title = posted_quiz_title;
@@ -30,6 +32,8 @@ public class Answer {
         this.sender_uid = sender_uid;
         this.post_id = post_id;
         this.question_key = question_key;
+        this.city = city;
+        this.state = state;
     }
 
     public String getSender_uid() {
@@ -105,6 +109,22 @@ public class Answer {
 
     public void setQuestion_key(String question_key) {
         this.question_key = question_key;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 
 }
