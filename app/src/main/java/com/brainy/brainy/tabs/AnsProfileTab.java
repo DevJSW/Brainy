@@ -75,6 +75,8 @@ public class AnsProfileTab extends Fragment {
         answersAdapter = new AnswersAdapter(getActivity(),answerList);
         mAnsList = (RecyclerView) v.findViewById(R.id.mAnsList);
         mLinearlayout = new LinearLayoutManager(getActivity());
+        mLinearlayout.setReverseLayout(true);
+        mLinearlayout.setStackFromEnd(true);
 
         mAnsList.setHasFixedSize(true);
         mAnsList.setLayoutManager(new LinearLayoutManager(getActivity()));

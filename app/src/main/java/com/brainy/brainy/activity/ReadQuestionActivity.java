@@ -35,6 +35,8 @@ import com.brainy.brainy.Adapters.AnswersAdapter;
 import com.brainy.brainy.Adapters.SolutionsAdapter;
 import com.brainy.brainy.R;
 import com.brainy.brainy.data.Answer;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -505,9 +507,13 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                 // load image on toolbar
                 CircleImageView userImgToolbar = (CircleImageView) findViewById(R.id.toolbarImg);
-                Picasso.with(ReadQuestionActivity.this)
+
+                Glide.with(ReadQuestionActivity.this)
                         .load(userimg)
                         .placeholder(R.drawable.placeholder_image)
+                        .thumbnail(0.5f)
+                        .crossFade()
+                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
                         .into(userImgToolbar);
 
                 // set username on toolbar

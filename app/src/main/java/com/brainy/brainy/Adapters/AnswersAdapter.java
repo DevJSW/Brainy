@@ -1,16 +1,25 @@
 package com.brainy.brainy.Adapters;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.brainy.brainy.R;
+import com.brainy.brainy.activity.DiscussForumActivity;
+import com.brainy.brainy.activity.EditQuestionActivity;
 import com.brainy.brainy.activity.ProfileEditActivity;
+import com.brainy.brainy.activity.ReadQuestionActivity;
 import com.brainy.brainy.data.Answer;
 import com.brainy.brainy.data.Question;
 import com.bumptech.glide.Glide;
@@ -42,9 +51,10 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
     private DatabaseReference mDatabase, mDatabaseProfileAns;
     FirebaseAuth mAuth;
 
-    public AnswersAdapter(Context c, List<Answer> mAnswersList)
+    public AnswersAdapter(Context ctx, List<Answer> mAnswersList)
     {
         this.mAnswersList = mAnswersList;
+        this.ctx = ctx;
     }
 
     @Override
@@ -75,6 +85,8 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
 
         public AnswersViewHolder(View itemView) {
             super(itemView);
+
+            mView = itemView;
 
             post_answer = (TextView) itemView.findViewById(R.id.posted_answer);
             post_quiz_title = (TextView) itemView.findViewById(R.id.post_quiz_title);
@@ -127,6 +139,7 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
 
             Glide.with(ctx)
                     .load(sender_image)
+                    .placeholder(R.drawable.placeholder_image)
                     .into(civ);
 
         }
@@ -151,6 +164,81 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
 
         final String answer_key = c.getPost_id();
         final String QuizKey = c.getQuestion_key();
+
+        holder.mView.setOnLongClickListener(new View.OnLongClickListener() {
+
+            @Override
+            public boolean onLongClick(View v) {
+
+
+                // custom dialog
+                final Dialog dialog = new Dialog(ctx);
+                dialog.setContentView(R.layout.ans_popup_dialog);
+                dialog.setTitle("Profile Options");
+
+                LinearLayout deleteLiny = (LinearLayout) dialog.findViewById(R.id.deleteLiny);
+                deleteLiny.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        AlertDialog diaBox = AskOption();
+                        diaBox.show();
+                        dialog.dismiss();
+                    }
+                });
+
+                LinearLayout editLiny = (LinearLayout) dialog.findViewById(R.id.editLiny);
+                editLiny.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Intent openRead = new Intent(ctx, EditQuestionActivity.class);
+                        openRead.putExtra("question_id", QuizKey );
+                        ctx.startActivity(openRead);
+                        dialog.dismiss();
+                    }
+                });
+
+                // if button is clicked, close the custom dialog
+
+                dialog.show();
+                return false;
+            }
+
+            private AlertDialog AskOption()
+            {
+
+                AlertDialog myQuittingDialogBox =new AlertDialog.Builder(ctx)
+                        //set message, title, and icon
+                        .setTitle("Remove Alert!")
+                        .setMessage("If you remove this question from your profile you will not be able to edit or easly monitor it!")
+
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                //your deleting code
+
+                                mDatabaseProfileAns.child(answer_key).removeValue();
+                                dialog.dismiss();
+                                Toast.makeText(ctx, "Message removed!",Toast.LENGTH_SHORT).show();
+                            }
+
+                        })
+
+
+                        .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                dialog.dismiss();
+
+                            }
+                        })
+                        .create();
+                return myQuittingDialogBox;
+
+            }
+
+        });
 
        /* //geting post id from main quiz
         mDatabase.child(QuizKey).addValueEventListener(new ValueEventListener() {

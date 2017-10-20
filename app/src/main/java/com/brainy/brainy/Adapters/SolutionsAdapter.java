@@ -22,6 +22,8 @@ import com.brainy.brainy.R;
 import com.brainy.brainy.activity.ReadQuestionActivity;
 import com.brainy.brainy.data.Answer;
 import com.brainy.brainy.data.brainy;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.client.DataSnapshot;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -121,27 +123,11 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
 
             final CircleImageView civ = (CircleImageView) mView.findViewById(R.id.post_image);
 
-            Picasso.with(ctx)
+            Glide.with(ctx)
                     .load(sender_image)
-                    .networkPolicy(NetworkPolicy.OFFLINE)
                     .placeholder(R.drawable.placeholder_image)
-                    .into(civ, new Callback() {
-                @Override
-                public void onSuccess() {
-                    Picasso.with(ctx)
-                            .load(sender_image)
-                            .into(civ);
-                }
+                    .into(civ);
 
-                @Override
-                public void onError() {
-
-                    Picasso.with(ctx)
-                            .load(sender_image)
-                            .placeholder(R.drawable.placeholder_image)
-                            .into(civ);
-                }
-            });
         }
     }
 
@@ -535,33 +521,15 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
                     }
 
                 }
-                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             }
         });
 
-
-
-        Picasso.with(ctx)
+        Glide.with(ctx)
                 .load(c.getSender_image())
                 .placeholder(R.drawable.placeholder_image)
-                .networkPolicy(NetworkPolicy.OFFLINE)
-                .into(holder.civ, new Callback() {
-            @Override
-            public void onSuccess() {
-
-            }
-
-            @Override
-            public void onError() {
-
-                Picasso.with(ctx)
-                        .load(c.getSender_image())
-                        .placeholder(R.drawable.placeholder_image)
-                        .networkPolicy(NetworkPolicy.OFFLINE)
-                        .into(holder.civ);
-            }
-        });
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .into(holder.civ);
     }
 
 }

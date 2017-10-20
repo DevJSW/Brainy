@@ -3,10 +3,15 @@ package com.brainy.brainy.activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -14,6 +19,7 @@ import android.widget.Toast;
 
 import com.brainy.brainy.R;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -38,6 +44,7 @@ public class ProfileEditActivity extends AppCompatActivity {
     private EditText inputName, inputBio;
     private Button saveBtn;
     private ProgressDialog mprogress;
+    private Uri resultUri = null;
     private Uri mImageUri = null;
     private static int GALLERY_REQUEST =1;
 
@@ -45,7 +52,19 @@ public class ProfileEditActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile_edit);
+
+        Window window = ProfileEditActivity.this.getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(ContextCompat.getColor( ProfileEditActivity.this,R.color.colorPrimaryDark));
+
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        }
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         mAuth = FirebaseAuth.getInstance();
         mStorage = FirebaseStorage.getInstance().getReference();
@@ -80,6 +99,8 @@ public class ProfileEditActivity extends AppCompatActivity {
 
                 Glide.with(ProfileEditActivity.this)
                         .load(image)
+                        .placeholder(R.drawable.placeholder_image)
+                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
                         .into(userImg);
 
               /*  } else {}*/
@@ -115,10 +136,10 @@ public class ProfileEditActivity extends AppCompatActivity {
             final String name = inputName.getText().toString();
             final String bio = inputBio.getText().toString();
 
-            if (mImageUri != null && mImageUri.getLastPathSegment() != null) {
-                StorageReference filepath = mStorage.child("Profile_images").child(mImageUri.getLastPathSegment());
+            if (resultUri != null && resultUri.getLastPathSegment() != null) {
+                StorageReference filepath = mStorage.child("Profile_images").child(resultUri.getLastPathSegment());
 
-                filepath.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                filepath.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
@@ -132,7 +153,11 @@ public class ProfileEditActivity extends AppCompatActivity {
                     }
                 });
 
-            } else if (name != null || bio != null){
+                mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("name").setValue(name);
+                if (bio != null)
+                mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("bio").setValue(bio);
+
+            } else if (bio != null){
 
                 mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("name").setValue(name);
                 mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("bio").setValue(bio);
@@ -141,24 +166,6 @@ public class ProfileEditActivity extends AppCompatActivity {
                 mprogress.dismiss();
 
                 Toast.makeText(ProfileEditActivity.this, "Saved successfully!", Toast.LENGTH_LONG).show();
-            } else if (mImageUri != null && mImageUri.getLastPathSegment() != null && name != null || bio != null) {
-
-                StorageReference filepath = mStorage.child("Profile_images").child(mImageUri.getLastPathSegment());
-
-                filepath.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                        final Uri downloadUrl = taskSnapshot.getDownloadUrl();
-
-                        mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("user_image").setValue(downloadUrl.toString());
-                        mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("name").setValue(name);
-                        mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("bio").setValue(bio);
-                        mprogress.dismiss();
-
-                        Toast.makeText(ProfileEditActivity.this, "Saved successfully!", Toast.LENGTH_LONG).show();
-                    }
-                });
             }
         }
     }
@@ -197,17 +204,16 @@ public class ProfileEditActivity extends AppCompatActivity {
                     .setAspectRatio(1, 1)
                     .start(ProfileEditActivity.this);
 
-            if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-                CropImage.ActivityResult result = CropImage.getActivityResult(data);
-                if (resultCode == RESULT_OK) {
-                    Uri resultUri = result.getUri();
-                    userImg.setImageURI(resultUri);
-                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                    Exception error = result.getError();
-                }
+        }
+
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                resultUri = result.getUri();
+                userImg.setImageURI(resultUri);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
             }
-
-
         }
     }
 }

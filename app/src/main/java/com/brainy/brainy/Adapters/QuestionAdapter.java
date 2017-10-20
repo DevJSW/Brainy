@@ -1,20 +1,27 @@
 package com.brainy.brainy.Adapters;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.brainy.brainy.R;
 import com.brainy.brainy.activity.DiscussForumActivity;
+import com.brainy.brainy.activity.EditQuestionActivity;
 import com.brainy.brainy.activity.ReadQuestionActivity;
 import com.brainy.brainy.data.Question;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -69,7 +76,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
         public TextView post_date;
         public ImageView civ;
         public TextView viewCounter, answersCounter, favouritesCounter;
-        public DatabaseReference  mDatabase;
+        public DatabaseReference  mDatabase, mDatabaseProfileAns;
         public  FirebaseAuth mAuth;
 
         RelativeLayout answer_rely;
@@ -93,6 +100,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
             answersCounter = (TextView) mView.findViewById(R.id.answersCounter);
             favouritesCounter = (TextView) mView.findViewById(R.id.favouriteCounter);
             answer_rely = (RelativeLayout) mView.findViewById(R.id.anser_rely);
+            mDatabaseProfileAns = FirebaseDatabase.getInstance().getReference().child("Users_answers");
 
         }
 
@@ -128,18 +136,11 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
 
             final CircleImageView civ = (CircleImageView) mView.findViewById(R.id.post_image);
 
-            Picasso.with(ctx).load(sender_image).networkPolicy(NetworkPolicy.OFFLINE).into(civ, new Callback() {
-                @Override
-                public void onSuccess() {
-
-                }
-
-                @Override
-                public void onError() {
-
-                    Picasso.with(ctx).load(sender_image).into(civ);
-                }
-            });
+            Glide.with(ctx)
+                    .load(sender_image)
+                    .placeholder(R.drawable.placeholder_image)
+                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                    .into(civ);
         }
     }
 
@@ -155,6 +156,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
         final Question c = mQuestionList.get(position);
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
         mAuth= FirebaseAuth.getInstance();
+        final DatabaseReference mDatabaseProfileAns = FirebaseDatabase.getInstance().getReference().child("Users_answers");
         mDatabase.keepSynced(true);
 
         final String quiz_key = c.getPost_id();
@@ -181,6 +183,82 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
                 ctx.startActivity(openRead);
 
             }
+        });
+
+        holder.mView.setOnLongClickListener(new View.OnLongClickListener() {
+
+            @Override
+            public boolean onLongClick(View v) {
+
+
+                // custom dialog
+                final Dialog dialog = new Dialog(ctx);
+                dialog.setContentView(R.layout.ans_popup_dialog);
+                dialog.setTitle("Profile Options");
+
+                LinearLayout deleteLiny = (LinearLayout) dialog.findViewById(R.id.deleteLiny);
+                deleteLiny.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        AlertDialog diaBox = AskOption();
+                        diaBox.show();
+                        dialog.dismiss();
+                    }
+                });
+
+                LinearLayout editLiny = (LinearLayout) dialog.findViewById(R.id.editLiny);
+                editLiny.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        Intent openRead = new Intent(ctx, EditQuestionActivity.class);
+                        openRead.putExtra("question_id", quiz_key );
+                        ctx.startActivity(openRead);
+                        dialog.dismiss();
+                    }
+                });
+
+                // if button is clicked, close the custom dialog
+
+                dialog.show();
+                return false;
+            }
+
+            private AlertDialog AskOption()
+            {
+
+                AlertDialog myQuittingDialogBox =new AlertDialog.Builder(ctx)
+                        //set message, title, and icon
+                        .setTitle("Remove Alert!")
+                        .setMessage("If you remove this question from your profile you will not be able to edit or easly monitor it!")
+
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                //your deleting code
+
+                                 if (mAuth.getCurrentUser() != null)
+                                mDatabaseProfileAns.child(mAuth.getCurrentUser().getUid()).child(quiz_key).removeValue();
+                                dialog.dismiss();
+                                Toast.makeText(ctx, "Message removed!",Toast.LENGTH_SHORT).show();
+                            }
+
+                        })
+
+
+                        .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                dialog.dismiss();
+
+                            }
+                        })
+                        .create();
+                return myQuittingDialogBox;
+
+            }
+
         });
 
         holder.answer_rely.setOnClickListener(new View.OnClickListener() {
@@ -251,6 +329,8 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
 
         Glide.with(ctx)
                 .load(c.getSender_image())
+                .placeholder(R.drawable.placeholder_image)
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .into(holder.civ);
 
     }

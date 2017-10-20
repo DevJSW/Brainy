@@ -21,6 +21,8 @@ import com.brainy.brainy.activity.DiscussForumActivity;
 import com.brainy.brainy.activity.ReadQuestionActivity;
 import com.brainy.brainy.data.Answer;
 import com.brainy.brainy.data.Question;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -130,18 +132,11 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.QuestionView
 
             final CircleImageView civ = (CircleImageView) mView.findViewById(R.id.post_image);
 
-            Picasso.with(ctx).load(sender_image).networkPolicy(NetworkPolicy.OFFLINE).into(civ, new Callback() {
-                @Override
-                public void onSuccess() {
-
-                }
-
-                @Override
-                public void onError() {
-
-                    Picasso.with(ctx).load(sender_image).into(civ);
-                }
-            });
+            Glide.with(ctx)
+                    .load(sender_image)
+                    .placeholder(R.drawable.placeholder_image)
+                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                    .into(civ);
         }
     }
 
@@ -280,28 +275,11 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.QuestionView
 
         });
 
-        Picasso
-                .with(ctx)
+        Glide.with(ctx)
                 .load(c.getSender_image())
                 .placeholder(R.drawable.placeholder_image)
-                .networkPolicy(NetworkPolicy.OFFLINE)
-                .into(holder.civ, new Callback() {
-            @Override
-            public void onSuccess() {
-
-            }
-
-            @Override
-            public void onError() {
-
-                Picasso.with(ctx)
-                        .load(c.getSender_image())
-                        .placeholder(R.drawable.placeholder_image)
-                        .networkPolicy(NetworkPolicy.OFFLINE)
-                        .into(holder.civ);
-            }
-        });
-
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .into(holder.civ);
 
     }
 

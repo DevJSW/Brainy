@@ -6,24 +6,21 @@
     android:layout_height="match_parent"
     tools:context="com.brainy.brainy.activity.ProfileEditActivity">
 
-    <include layout="@layout/edit_profile_toolbar"
+    <include layout="@layout/edit_quiz_toolbar"
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         app:layout_scrollFlags="scroll|enterAlways"
-        />
+       />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar"
+        android:layout_margin="10dp"
         android:orientation="vertical">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp">
 
             <!--<de.hdodenhof.circleimageview.CircleImageView
                 android:layout_width="70dp"
@@ -33,31 +30,6 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="10dp"/>-->
 
-            <RelativeLayout
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:layout_margin="15dp"
-                android:id="@+id/rely"
-                android:layout_gravity="center_horizontal"
-                android:orientation="vertical">
-
-
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:layout_width="70dp"
-                    android:layout_height="70dp"
-                    android:id="@+id/userimg"
-                    android:src="@drawable/placeholder_image"
-                    android:layout_gravity="center_horizontal" />
-
-                <ImageView
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:src="@drawable/edit_photo"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentBottom="true"/>
-
-
-            </RelativeLayout>
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -65,18 +37,20 @@
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@+id/rely"
                 android:layout_marginRight="20dp"
+                android:layout_marginLeft="20dp"
                 android:layout_marginBottom="5dp"
                 android:layout_gravity="center_horizontal">
 
                 <com.brainy.brainy.data.CustomEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/input_name"
+                    android:id="@+id/quiz_title"
+                    android:textColor="@color/colorAccent"
                     android:text="name"
-                    android:hint="Edit Name"/>
+                    android:hint="Edit Title"/>
 
             </android.support.design.widget.TextInputLayout>
-        </RelativeLayout>
+
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -90,11 +64,12 @@
             <com.brainy.brainy.data.CustomEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/input_bio"
+                android:id="@+id/quiz_body"
                 android:layout_marginBottom="5dp"
+                android:textColor="@color/colorPrimary"
                 android:maxLength="135"
                 android:text="bio"
-                android:hint="Edit Bio"/>
+                android:hint="Edit Body"/>
 
         </android.support.design.widget.TextInputLayout>
     </LinearLayout>
@@ -103,7 +78,7 @@
     <com.brainy.brainy.data.MyButton
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:text="Update"
+        android:text="Save Changes"
         android:id="@+id/save_btn"
         android:layout_margin="5dp"
         android:textColor="#ffff"

@@ -596,58 +596,6 @@ public class tab1Questions extends Fragment {
 
         });
 
-       /* quizQuery.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-                //questionList.clear();
-                Question message = dataSnapshot.getValue(Question.class);
-
-                itemPos++;
-                if (itemPos == 1) {
-
-                    String messageKey = dataSnapshot.getKey();
-                    mLastKey = messageKey;
-                    mPrevKey = messageKey;
-
-                }
-
-                if (itemPos == 0) {
-                    String messageKey = dataSnapshot.getKey();
-                    mFirstKey = messageKey;
-                }
-
-                questionList.add(message);
-                questionAdapter.notifyDataSetChanged();
-                questionAdapter.notifyItemInserted(0);
-
-                mSwipeRefreshLayout.setRefreshing(false);
-
-                mQuestionsList.scrollToPosition(questionList.size()-1);
-
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
-
     }
 
     private void LoadMoreMessage() {

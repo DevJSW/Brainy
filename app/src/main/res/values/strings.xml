@@ -35,4 +35,23 @@
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
     <string name="tab_text_3">Tab 3</string>
+
+    <string name="next">NEXT</string>
+    <string name="skip">SKIP</string>
+    <string name="start">GOT IT</string>
+
+    <string name="slide_1_title">Q &amp; A PLATFORM</string>
+    <string name="slide_1_desc">Brainy, We are a question and answer platform. users gain points when there answers/question get voted up. Remember, users with high points enjoy more privileges on the platform. </string>
+
+    <string name="slide_2_title">INFORMATION SHARING</string>
+    <string name="slide_2_desc">Brainy lets you get the satisfaction of helping other people with useful information and exchanging ideas. Remember, the more questions you answer the more votes you are likely to earn</string>
+
+    <string name="slide_3_title">FEEDBACK OPINION</string>
+    <string name="slide_3_desc">Brainy discussion forums lets you get more feedback on a specific subject through group chat and push notifications in your inbox when someone answers a question you posted.</string>
+
+    <string name="slide_4_title">FIND ANSWER</string>
+    <string name="slide_4_desc">You can easly find an answer by searching for it because chances of it being asked before is high. Remember to vote up a question/answer if you find it useful! &amp; have fun gaining knowledge.</string>
+
+    <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
+    <string name="play_again">Play Again</string>
 </resources>

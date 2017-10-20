@@ -38,6 +38,7 @@ import com.brainy.brainy.tabs.tab3Achievements;
 import com.brainy.brainy.tabs.tab4More;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -115,16 +116,11 @@ public class EditProfileActivity extends AppCompatActivity {
 
                 username.setText(name);
 
-               /* Glide.with(EditProfileActivity.this)
+                Glide.with(EditProfileActivity.this)
                         .load(image)
-                        .priority(Priority.IMMEDIATE)
-                        .into(mGroupIcon);*/
-
-               Glide.with(EditProfileActivity.this)
-                       .load(image)
-                       .into(mGroupIcon);
-
-
+                        .placeholder(R.drawable.placeholder_image)
+                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                        .into(mGroupIcon);
 
               /*  } else {}*/
 
