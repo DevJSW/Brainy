@@ -10,6 +10,7 @@ android {
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -30,6 +31,8 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     // compile 'hani.momanii.supernova_emoji_library:supernova-emoji-library:0.0.2'
+    compile 'com.facebook.android:facebook-android-sdk:4.19.0'
+    compile 'com.android.support:multidex:1.0.0'
     compile 'com.android.support:appcompat-v7:26.0.0-alpha1'
     compile 'com.android.support:design:26.0.0-alpha1'
     compile 'com.android.support:support-v4:26.0.0-alpha1'
@@ -57,7 +60,7 @@ dependencies {
     compile 'com.google.android.gms:play-services:11.0.2'
 
     compile 'com.github.pwittchen:infinitescroll:0.0.1'
-    compile 'com.theartofdev.edmodo:android-image-cropper:2.5.+'
+    compile 'com.theartofdev.edmodo:android-image-cropper:2.5.1'
     testCompile 'junit:junit:4.12'
 }
 apply plugin: 'com.google.gms.google-services'

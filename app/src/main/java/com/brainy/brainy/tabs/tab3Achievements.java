@@ -25,6 +25,7 @@ import android.widget.Toast;
 
 import com.brainy.brainy.R;
 import com.brainy.brainy.activity.ReadQuestionActivity;
+import com.brainy.brainy.activity.SigninActivity;
 import com.brainy.brainy.data.Question;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -193,7 +194,18 @@ public class tab3Achievements extends Fragment {
         dialog.setTitle("Let's get started...");
         dialog.show();
 
-        Button googleBtn = (Button) dialog.findViewById(R.id.googleBtn);
+        Button signBtn = (Button) dialog.findViewById(R.id.sign_in);
+        signBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent openRead = new Intent(getActivity(), SigninActivity.class);
+                startActivity(openRead);
+                dialog.dismiss();
+            }
+        });
+
+        RelativeLayout googleBtn = (RelativeLayout) dialog.findViewById(R.id.googleBtn);
         googleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

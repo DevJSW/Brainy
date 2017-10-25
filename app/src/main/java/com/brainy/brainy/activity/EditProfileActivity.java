@@ -2,11 +2,14 @@ package com.brainy.brainy.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -40,6 +43,7 @@ import com.brainy.brainy.tabs.tab4More;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -117,11 +121,20 @@ public class EditProfileActivity extends AppCompatActivity {
 
                 username.setText(name);
 
-                Glide.with(EditProfileActivity.this)
-                        .load(image)
+                Glide.with(getApplicationContext())
+                        .load(image).asBitmap()
                         .placeholder(R.drawable.placeholder_image)
                         .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                        .into(mGroupIcon);
+                        .centerCrop()
+                        .into(new BitmapImageViewTarget(mGroupIcon) {
+                    @Override
+                    protected void setResource(Bitmap resource) {
+                        RoundedBitmapDrawable circularBitmapDrawable =
+                                RoundedBitmapDrawableFactory.create(getApplicationContext().getResources(), resource);
+                        circularBitmapDrawable.setCircular(true);
+                        mGroupIcon.setImageDrawable(circularBitmapDrawable);
+                    }
+                });
 
               /*  } else {}*/
 
@@ -147,20 +160,27 @@ public class EditProfileActivity extends AppCompatActivity {
         mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("location").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String state = dataSnapshot.child("state").getValue().toString();
-                String city = dataSnapshot.child("city").getValue().toString();
 
-                if (state != null || city != null) {
-                    if (state != null) {
-                        mLocation.setText(state);
-                    } else if (city != null) {
-                        mLocation.setText(city);
+                if (dataSnapshot.hasChild("state")) {
+                    String state = dataSnapshot.child("state").getValue().toString();
+                    String city = dataSnapshot.child("city").getValue().toString();
+                    if (state != null || city != null) {
+                        if (state != null) {
+                            mLocation.setText(state);
+                        } else if (city != null) {
+                            mLocation.setText(city);
+                        }
+                    } else {
+
+                        LinearLayout loc_liny = (LinearLayout) findViewById(R.id.location_liny);
+                        loc_liny.setVisibility(View.GONE);
                     }
                 } else {
-
                     LinearLayout loc_liny = (LinearLayout) findViewById(R.id.location_liny);
                     loc_liny.setVisibility(View.GONE);
                 }
+
+
             }
 
             @Override

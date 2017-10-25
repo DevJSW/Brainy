@@ -92,7 +92,7 @@ public class tab1Questions extends Fragment {
     private ProgressBar progressBar;
 
     //PAGINATION
-    private static int TOTAL_ITEMS_TO_LOAD = 5;
+    private static int TOTAL_ITEMS_TO_LOAD = 10;
     private int currentPage = 1;
     private int previousTotal = 9;
     private int itemPos = 0;
@@ -600,9 +600,7 @@ public class tab1Questions extends Fragment {
 
     private void LoadMoreMessage() {
 
-        Query quizQuery = mDatabase.orderByKey().endAt(mLastKey).limitToLast(5);
-        Toast.makeText(getActivity(), mLastKey,
-                Toast.LENGTH_LONG).show();
+        Query quizQuery = mDatabase.orderByKey().endAt(mLastKey).limitToLast(10);
 
         quizQuery.addChildEventListener(new ChildEventListener() {
             @Override

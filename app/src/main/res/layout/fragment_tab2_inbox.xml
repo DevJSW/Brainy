@@ -26,7 +26,7 @@
         <com.brainy.brainy.data.MyBoldFont
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="You inbox is empty.
+            android:text="Your inbox is empty.
 
 
 "
@@ -57,7 +57,7 @@
         <com.brainy.brainy.data.MyFont
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="This inbox is where you receieve notifications when someone answers one of you questions or comments on one of your posts."
+            android:text="All your notifications when someone answers or comments on your posts will be collected here!"
             android:textSize="17dp"
             android:layout_above="@+id/signIn"
             android:layout_centerHorizontal="true"
@@ -67,12 +67,13 @@
             android:layout_marginTop="10dp"
             android:id="@+id/noPostTxt"
             android:textColor="@color/colorPrimary"/>
-        <Button
+        <com.brainy.brainy.data.MyButton
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:padding="5dp"
             android:id="@+id/signIn"
             android:layout_marginTop="5dp"
+            android:textAllCaps="true"
             android:background="@drawable/button_bg"
             android:textColor="@color/colorAccent"
             android:text="Sign in"

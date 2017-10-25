@@ -26,6 +26,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -75,7 +76,7 @@ public class DiscussForumActivity extends AppCompatActivity {
     private ProgressBar progressBar;
 
     private RecyclerView mAnsList;
-    private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseDiscussForum;
+    private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseDiscussForum, mDatabaseForumParticipants;
     private FirebaseAuth auth;
     String QuizKey = null;
 
@@ -110,6 +111,7 @@ public class DiscussForumActivity extends AppCompatActivity {
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseQuestions = FirebaseDatabase.getInstance().getReference().child("Questions");
         mDatabaseDiscussForum = FirebaseDatabase.getInstance().getReference().child("Discuss_forum");
+        mDatabaseForumParticipants = FirebaseDatabase.getInstance().getReference().child("Users_forums");
 
         LinearLayoutManager layoutManager
                 = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -118,6 +120,7 @@ public class DiscussForumActivity extends AppCompatActivity {
 
         // SYNC DATABASE
         mDatabaseQuestions.keepSynced(true);
+        mDatabaseForumParticipants.keepSynced(true);
         mDatabaseUsers.keepSynced(true);
         mDatabaseDiscussForum.keepSynced(true);
 
@@ -168,6 +171,7 @@ public class DiscussForumActivity extends AppCompatActivity {
                             } else {
 
                                 final DatabaseReference newPost = mDatabaseDiscussForum.child(QuizKey).push();
+                                final DatabaseReference newPost2 = mDatabaseForumParticipants.child(auth.getCurrentUser().getUid()).child(QuizKey).push();
 
                                 mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                                     @Override
@@ -185,6 +189,15 @@ public class DiscussForumActivity extends AppCompatActivity {
                                         map.put("posted_date", stringDate2);
                                         map.put("post_id", newPost.getKey());
                                         newPost.setValue(map);
+
+                                        Map<String, Object> map_participants = new HashMap<>();
+                                        map_participants.put("message", questionBodyTag);
+                                        map_participants.put("sender_uid", auth.getCurrentUser().getUid());
+                                        map_participants.put("sender_name", dataSnapshot.child("name").getValue());
+                                        map_participants.put("sender_image", dataSnapshot.child("user_image").getValue());
+                                        map_participants.put("posted_date", stringDate2);
+                                        map_participants.put("post_id", newPost.getKey());
+                                        newPost2.setValue(map_participants);
 
                                     }
 
@@ -278,7 +291,18 @@ public class DiscussForumActivity extends AppCompatActivity {
         dialog.setTitle("Let's get started...");
         dialog.show();
 
-        Button googleBtn = (Button) dialog.findViewById(R.id.googleBtn);
+        Button signBtn = (Button) dialog.findViewById(R.id.sign_in);
+        signBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent openRead = new Intent(getApplicationContext(), SigninActivity.class);
+                startActivity(openRead);
+                dialog.dismiss();
+            }
+        });
+
+        RelativeLayout googleBtn = (RelativeLayout) dialog.findViewById(R.id.googleBtn);
         googleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

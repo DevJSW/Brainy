@@ -20,6 +20,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +28,7 @@ import com.brainy.brainy.R;
 import com.brainy.brainy.activity.EditProfileActivity;
 import com.brainy.brainy.activity.ProfileActivity;
 import com.brainy.brainy.activity.ProfileEditActivity;
+import com.brainy.brainy.activity.SigninActivity;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -169,7 +171,18 @@ public class tab4More extends Fragment {
         dialog.setTitle("Let's get started...");
         dialog.show();
 
-        Button googleBtn = (Button) dialog.findViewById(R.id.googleBtn);
+        Button signBtn = (Button) dialog.findViewById(R.id.sign_in);
+        signBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent openRead = new Intent(getActivity(), SigninActivity.class);
+                startActivity(openRead);
+                dialog.dismiss();
+            }
+        });
+
+        RelativeLayout googleBtn = (RelativeLayout) dialog.findViewById(R.id.googleBtn);
         googleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

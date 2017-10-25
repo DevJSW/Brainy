@@ -57,6 +57,8 @@ public class EditQuestionActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         QuizKey = getIntent().getStringExtra("question_id");
+        Toast.makeText(getApplicationContext(), QuizKey,
+                Toast.LENGTH_SHORT).show();
         mDatabaseUsersQuiz = FirebaseDatabase.getInstance().getReference().child("Users_questions");
         mDatabaseQuestions = FirebaseDatabase.getInstance().getReference().child("Questions");
         mprogress = new ProgressDialog(this);
@@ -65,11 +67,14 @@ public class EditQuestionActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         saveBtn = (Button) findViewById(R.id.save_btn);
 
-        mDatabaseUsersQuiz.child(auth.getCurrentUser().getUid()).child(QuizKey).addValueEventListener(new ValueEventListener() {
+        mDatabaseUsersQuiz.child(auth.getCurrentUser().getUid()).orderByChild("post_id").equalTo(QuizKey).addValueEventListener(new ValueEventListener() {
+      /*  mDatabaseUsersQuiz.child(auth.getCurrentUser().getUid()).child(QuizKey).addValueEventListener(new ValueEventListener() {*/
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                QuizBody = dataSnapshot.child("question_body").getValue().toString();
+                if (dataSnapshot.hasChild("question_body")) {
+                    QuizBody = dataSnapshot.child("question_body").getValue().toString();
+                }
                 QuizTitle = dataSnapshot.child("question_title").getValue().toString();
 
                 mTitle.setText(QuizTitle);

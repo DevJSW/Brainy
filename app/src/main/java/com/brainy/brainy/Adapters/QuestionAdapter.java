@@ -5,6 +5,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +26,7 @@ import com.brainy.brainy.activity.ViewUserProfileActivity;
 import com.brainy.brainy.data.Question;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -48,7 +52,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
     private List<Question>  mQuestionList;
     Context ctx;
 
-    private DatabaseReference mDatabase;
+    private DatabaseReference mDatabase, mDatabaseAnswers;
     private ImageView avator;
 
     FirebaseAuth mAuth;
@@ -141,10 +145,20 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
             final CircleImageView civ = (CircleImageView) mView.findViewById(R.id.post_image);
 
             Glide.with(ctx)
-                    .load(sender_image)
+                    .load(sender_image).asBitmap()
                     .placeholder(R.drawable.placeholder_image)
                     .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                    .into(civ);
+                    .centerCrop()
+                    .into(new BitmapImageViewTarget(civ) {
+                        @Override
+                        protected void setResource(Bitmap resource) {
+                            RoundedBitmapDrawable circularBitmapDrawable =
+                                    RoundedBitmapDrawableFactory.create(ctx.getResources(), resource);
+                            circularBitmapDrawable.setCircular(true);
+                            civ.setImageDrawable(circularBitmapDrawable);
+                        }
+                    });
+
         }
     }
 
@@ -161,7 +175,9 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
         mAuth= FirebaseAuth.getInstance();
         final DatabaseReference mDatabaseProfileAns = FirebaseDatabase.getInstance().getReference().child("Users_answers");
+        mDatabaseAnswers = FirebaseDatabase.getInstance().getReference().child("Answers");
         mDatabase.keepSynced(true);
+        mDatabaseAnswers.keepSynced(true);
 
         final String quiz_key = c.getPost_id();
         final String user_id = c.getSender_uid();
@@ -223,6 +239,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
                 editLiny.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
 
                         Intent openRead = new Intent(ctx, EditQuestionActivity.class);
                         openRead.putExtra("question_id", quiz_key );
@@ -303,9 +320,8 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
         }
         // count number of answers
         if (quiz_key != null) {
-            mDatabase
+            mDatabaseAnswers
                     .child(quiz_key)
-                    .child("Answers")
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -339,11 +355,22 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
             });
         }
 
+
         Glide.with(ctx)
-                .load(c.getSender_image())
+                .load(c.getSender_image()).asBitmap()
                 .placeholder(R.drawable.placeholder_image)
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                .into(holder.civ);
+                .centerCrop()
+                .into(new BitmapImageViewTarget(holder.civ) {
+                    @Override
+                    protected void setResource(Bitmap resource) {
+                        RoundedBitmapDrawable circularBitmapDrawable =
+                                RoundedBitmapDrawableFactory.create(ctx.getResources(), resource);
+                        circularBitmapDrawable.setCircular(true);
+                        holder.civ.setImageDrawable(circularBitmapDrawable);
+                    }
+                });
+
 
     }
 

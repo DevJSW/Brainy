@@ -32,7 +32,7 @@
         <com.brainy.brainy.data.MyBoldFont
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="You have no favourite questions.
+            android:text="You have no favourite's.
 
 
 "
@@ -71,12 +71,13 @@
         android:layout_marginTop="10dp"
         android:id="@+id/noPostTxt"
         android:textColor="@color/colorPrimary"/>
-    <Button
+    <com.brainy.brainy.data.MyButton
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:padding="5dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:id="@+id/signIn"
+        android:textAllCaps="true"
         android:background="@drawable/button_bg"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"

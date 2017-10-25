@@ -11,7 +11,7 @@
         android:layout_height="wrap_content">
 
 
-        <com.brainy.brainy.data.MyButton
+      <!--  <com.brainy.brainy.data.MyButton
            android:layout_width="match_parent"
            android:layout_height="match_parent"
            android:id="@+id/googleBtn"
@@ -19,39 +19,120 @@
            android:textColor="#e11111"
            android:background="@drawable/button_bg"
            android:textSize="15dp"
-           android:text="Sign in with google"/>
+           android:text="Sign in with google"/>-->
 
-        <com.brainy.brainy.data.MyButton
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textAllCaps="false"
-            android:textColor="#1c0c86"
-            android:layout_marginTop="10dp"
-            android:textSize="15dp"
-            android:background="@drawable/button_bg"
-            android:text="Sign in with facebook"/>
+            android:layout_height="49dp"
+            android:layout_margin="5dp"
+            android:id="@+id/googleBtn"
+            android:background="@drawable/button_bg">
 
-        <com.brainy.brainy.data.MyFont
-            android:layout_width="wrap_content"
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginLeft="7dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/google_icon"/>
+
+            <com.brainy.brainy.data.MyFont
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sign in with Google"
+                android:textAllCaps="true"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                android:textColor="#fff"/>
+
+        </RelativeLayout>
+
+        <FrameLayout
+            android:id="@+id/FrameLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+
+            <com.facebook.login.widget.LoginButton
+                android:id="@+id/login_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="49dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:id="@+id/fbBtn"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/button_bg">
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="7dp"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/fb_icon"/>
+
+                <com.brainy.brainy.data.MyFont
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sign in with Facebook"
+                    android:textAllCaps="true"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:textStyle="bold"
+                    android:layout_gravity="center_horizontal"
+                    android:textColor="#fff"/>
+
+            </RelativeLayout>
+        </FrameLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_margin="10dp"
-            android:text="or"
-            android:textStyle="bold"/>
+            android:layout_margin="10dp">
+
+            <com.brainy.brainy.data.MyBoldFont
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/or"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="or"
+                android:layout_margin="12dp"
+                android:textColor="#bd1d1717"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/or"
+                android:background="@color/colorPrimary" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/or"
+                android:background="@color/colorPrimary" />
+
+        </RelativeLayout>
 
         <com.brainy.brainy.data.MyButton
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:textAllCaps="false"
+            android:id="@+id/sign_in"
+            android:textAllCaps="true"
             android:background="@drawable/button_bg"
             android:textSize="15dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:textColor="#fff"
             android:text="Sign up"/>
 
     </LinearLayout>
-
-
-
-
 
 
 </RelativeLayout>

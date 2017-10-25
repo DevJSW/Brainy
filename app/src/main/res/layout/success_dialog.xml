@@ -41,10 +41,10 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <ImageView
-                android:layout_width="60dp"
-                android:layout_height="62dp"
+                android:layout_width="58dp"
+                android:layout_height="60dp"
                 android:layout_marginTop="16dp"
-                android:src="@drawable/award"/>
+                android:src="@drawable/done2"/>
 
             <com.brainy.brainy.data.MyFont
                 android:layout_width="wrap_content"

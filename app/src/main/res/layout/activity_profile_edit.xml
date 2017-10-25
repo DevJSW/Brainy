@@ -93,7 +93,6 @@
                 android:id="@+id/input_bio"
                 android:layout_marginBottom="5dp"
                 android:maxLength="135"
-                android:text="bio"
                 android:hint="Edit Bio"/>
 
         </android.support.design.widget.TextInputLayout>

@@ -3,6 +3,7 @@ package com.brainy.brainy.activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
@@ -10,6 +11,8 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -37,6 +40,7 @@ import com.brainy.brainy.R;
 import com.brainy.brainy.data.Answer;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -138,7 +142,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseQuestions = FirebaseDatabase.getInstance().getReference().child("Questions");
         mDatabaseAnswers = FirebaseDatabase.getInstance().getReference().child("Answers");
-        mDatabaseVotes = FirebaseDatabase.getInstance().getReference().child("Votes");
+        mDatabaseVotes = FirebaseDatabase.getInstance().getReference().child("Question_votes");
 
         parent_view = findViewById(android.R.id.content);
         quizVoteDown = (ImageView) findViewById(R.id.quiz_vote_down);
@@ -370,8 +374,6 @@ public class ReadQuestionActivity extends AppCompatActivity {
                             final String stringDate = DateFormat.getDateTimeInstance().format(date);
                             final String stringDate2 = DateFormat.getDateInstance().format(date);
 
-                            final DatabaseReference newPost2 = mDatabaseUsersAns.child(auth.getCurrentUser().getUid()).push();
-
 
                             final String questionBodyTag = questionBodyInput.getText().toString().trim();
                             if (TextUtils.isEmpty(questionBodyTag)) {
@@ -393,7 +395,9 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                                                 String question_title = dataSnapshot.child("question_title").getValue().toString();
                                                 String sender_uid = dataSnapshot.child("sender_uid").getValue().toString();
+
                                                 final DatabaseReference newPostAns = mDatabaseAnswers.child(QuizKey).push();
+                                                final DatabaseReference newPost2 = mDatabaseUsersAns.child(auth.getCurrentUser().getUid()).child(newPostAns.getKey());
 
                                                 //DELETE UNANSERED CHILD FROM DATABASE
                                                 if (dataSnapshot.hasChild("Unanswered")) {
@@ -532,15 +536,22 @@ public class ReadQuestionActivity extends AppCompatActivity {
                 final TextView name = (TextView) findViewById(R.id.post_name);
 
                 // load image on toolbar
-                CircleImageView userImgToolbar = (CircleImageView) findViewById(R.id.toolbarImg);
+                final CircleImageView userImgToolbar = (CircleImageView) findViewById(R.id.toolbarImg);
 
-                Glide.with(ReadQuestionActivity.this)
-                        .load(userimg)
+                Glide.with(getApplicationContext())
+                        .load(userimg).asBitmap()
                         .placeholder(R.drawable.placeholder_image)
-                        .thumbnail(0.5f)
-                        .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                        .into(userImgToolbar);
+                        .centerCrop()
+                        .into(new BitmapImageViewTarget(userImgToolbar) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable =
+                                        RoundedBitmapDrawableFactory.create(getApplicationContext().getResources(), resource);
+                                circularBitmapDrawable.setCircular(true);
+                                userImgToolbar.setImageDrawable(circularBitmapDrawable);
+                            }
+                        });
 
                 // set username on toolbar
                 TextView toolbar_username = (TextView) findViewById(R.id.toolbar_username);
@@ -722,7 +733,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                             dialog.dismiss();
                             mProcessApproval = true;
 
-                            mDatabaseQuestions.child(QuizKey).child("Quiz_votes").addValueEventListener(new ValueEventListener() {
+                            mDatabaseVotes.child(QuizKey).addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -744,8 +755,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                                             snackbar.show();
 
-                                            //add user uid to points database
-                                            mDatabaseQuestions.child(QuizKey).child("Quiz_votes").child("up_votes").addListenerForSingleValueEvent(new ValueEventListener() {
+                                            mDatabaseVotes.child(QuizKey).child("up_votes").addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -763,7 +773,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                                         } else {
 
-                                                    mDatabaseQuestions.child(QuizKey).child("Quiz_votes").child("up_votes").child(auth.getCurrentUser().getUid()).setValue("iVote");
+                                                    mDatabaseVotes.child(QuizKey).child("up_votes").child(auth.getCurrentUser().getUid()).setValue("iVote");
 
                                                     // CHECK IF USER HAS VOTED AND ADD 5 POINTS TO THE USER WHO POSTED THE QUESTION.....................
 
@@ -802,7 +812,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                                                     });
 
-                                                    mDatabaseQuestions.child(QuizKey).child("Quiz_votes").child("up_votes").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    mDatabaseVotes.child(QuizKey).child("up_votes").addListenerForSingleValueEvent(new ValueEventListener() {
                                                         @Override
                                                         public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -884,7 +894,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                             dialog.dismiss();
                             mProcessApproval = true;
 
-                            mDatabaseQuestions.child(QuizKey).child("Quiz_votes").addValueEventListener(new ValueEventListener() {
+                            mDatabaseVotes.child(QuizKey).addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -899,7 +909,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                             snackbar.show();
 
                                             //add user uid to points database
-                                            mDatabaseQuestions.child(QuizKey).child("Quiz_votes").child("down_votes").addListenerForSingleValueEvent(new ValueEventListener() {
+                                            mDatabaseVotes.child(QuizKey).child("down_votes").addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -916,7 +926,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                                         } else {
 
-                                            mDatabaseQuestions.child(QuizKey).child("Quiz_votes").child("down_votes").child(auth.getCurrentUser().getUid()).setValue("iVote");
+                                            mDatabaseVotes.child(QuizKey).child("down_votes").child(auth.getCurrentUser().getUid()).setValue("iVote");
 
                                             // CHECK IF USER HAS VOTED AND ADD 5 POINTS TO THE USER WHO POSTED THE QUESTION.....................
 
@@ -975,7 +985,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                             });
 
 
-                                            mDatabaseQuestions.child(QuizKey).child("Quiz_votes").child("down_votes").addListenerForSingleValueEvent(new ValueEventListener() {
+                                            mDatabaseVotes.child(QuizKey).child("down_votes").addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -1029,7 +1039,18 @@ public class ReadQuestionActivity extends AppCompatActivity {
         dialog.setTitle("Let's get started...");
         dialog.show();
 
-        Button googleBtn = (Button) dialog.findViewById(R.id.googleBtn);
+        Button signBtn = (Button) dialog.findViewById(R.id.sign_in);
+        signBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent openRead = new Intent(getApplicationContext(), SigninActivity.class);
+                startActivity(openRead);
+                dialog.dismiss();
+            }
+        });
+
+        RelativeLayout googleBtn = (RelativeLayout) dialog.findViewById(R.id.googleBtn);
         googleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

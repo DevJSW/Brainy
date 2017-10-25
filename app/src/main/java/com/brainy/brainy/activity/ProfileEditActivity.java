@@ -2,9 +2,12 @@ package com.brainy.brainy.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -20,6 +23,7 @@ import android.widget.Toast;
 import com.brainy.brainy.R;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -90,18 +94,35 @@ public class ProfileEditActivity extends AppCompatActivity {
 
                /* if (dataSnapshot.hasChild("status") || dataSnapshot.hasChild("city") || dataSnapshot.hasChild("address")) {*/
 
-                String bio = dataSnapshot.child("bio").getValue().toString();
+               if (dataSnapshot.hasChild("bio")) {
+                   String bio = dataSnapshot.child("bio").getValue().toString();
+                   inputBio.setText(bio);
+               }
                 String name = dataSnapshot.child("name").getValue().toString();
                 String image = dataSnapshot.child("user_image").getValue().toString();
 
                 inputName.setText(name);
-                inputBio.setText(bio);
 
-                Glide.with(ProfileEditActivity.this)
+               /* Glide.with(getApplicationContext())
                         .load(image)
                         .placeholder(R.drawable.placeholder_image)
                         .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                        .into(userImg);
+                        .into(userImg);*/
+
+                Glide.with(getApplicationContext())
+                        .load(image).asBitmap()
+                        .placeholder(R.drawable.placeholder_image)
+                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                        .centerCrop()
+                        .into(new BitmapImageViewTarget(userImg) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable =
+                                        RoundedBitmapDrawableFactory.create(getApplicationContext().getResources(), resource);
+                                circularBitmapDrawable.setCircular(true);
+                                userImg.setImageDrawable(circularBitmapDrawable);
+                            }
+                        });
 
               /*  } else {}*/
 
@@ -136,7 +157,10 @@ public class ProfileEditActivity extends AppCompatActivity {
             final String name = inputName.getText().toString();
             final String bio = inputBio.getText().toString();
 
-            if (resultUri != null && resultUri.getLastPathSegment() != null) {
+            if (name.equals("")) {
+                Toast.makeText(ProfileEditActivity.this, "Enter name!", Toast.LENGTH_LONG).show();
+            }
+            else if (resultUri != null && resultUri.getLastPathSegment() != null) {
                 StorageReference filepath = mStorage.child("Profile_images").child(resultUri.getLastPathSegment());
 
                 filepath.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {

@@ -72,7 +72,7 @@ public class QuizProfileTab extends Fragment {
         mAuth = FirebaseAuth.getInstance();
 
         // database channels
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("Users_Questions");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("Users_questions");
         mDatabaseChatroom = FirebaseDatabase.getInstance().getReference().child("Chatrooms");
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
 

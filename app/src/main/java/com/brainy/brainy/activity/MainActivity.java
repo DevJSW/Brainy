@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -53,6 +54,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -201,6 +203,7 @@ public class MainActivity extends AppCompatActivity {
                     sendQuestion();
                 } else {
                     Snackbar snackbar = Snackbar
+
                             .make(view, "You need to sign in first to be able to post a question!", Snackbar.LENGTH_LONG)
                             .setAction("SIGN IN", new View.OnClickListener() {
                                 @Override
@@ -208,8 +211,6 @@ public class MainActivity extends AppCompatActivity {
                                     showSignInDialog();
                                 }
                             });
-
-                    snackbar.show();
                 }
             }
         });
@@ -235,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
         dialog.setTitle("Let's get started...");
         dialog.show();
 
-        Button googleBtn = (Button) dialog.findViewById(R.id.googleBtn);
+        RelativeLayout googleBtn = (RelativeLayout) dialog.findViewById(R.id.googleBtn);
         googleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -339,7 +340,6 @@ public class MainActivity extends AppCompatActivity {
                             postUserInfoToDB();
                             Toast.makeText(MainActivity.this, "Sign in success!.",
                                     Toast.LENGTH_LONG).show();
-
 
                         }
 

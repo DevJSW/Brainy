@@ -2,11 +2,14 @@ package com.brainy.brainy.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -38,6 +41,7 @@ import com.brainy.brainy.tabs.ViewUserTabs.ViewAnsProfileTab;
 import com.brainy.brainy.tabs.ViewUserTabs.ViewQuizProfileTab;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -52,7 +56,7 @@ public class ViewUserProfileActivity extends AppCompatActivity {
 
     String UserId = null;
     private SectionsPagerAdapter mSectionsPagerAdapter;
-    private DatabaseReference mDatabaseUsers, mDatabaseUsers2, mDatabase, mDatabaseLastSeen;
+    private DatabaseReference mDatabaseUsers, mDatabaseUsers2, mDatabase, mDatabaseLastSeen, mDatabaseProfileViews;
     private FirebaseAuth mAuth;
     private StorageReference mStorage;
     private ImageView mGroupIcon;
@@ -94,13 +98,20 @@ public class ViewUserProfileActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mGroupIcon = (ImageView) findViewById(R.id.user_avator);
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+        mDatabaseProfileViews = FirebaseDatabase.getInstance().getReference().child("Profile_views");
         mDatabaseUsers2 = FirebaseDatabase.getInstance().getReference().child("Users").child(UserId);
         mProgress = new ProgressDialog(this);
         mStorage = FirebaseStorage.getInstance().getReference();
         mDatabaseUsers.keepSynced(true);
+        mDatabaseProfileViews.keepSynced(true);
         mDatabaseUsers2.keepSynced(true);
 
         username = (TextView) findViewById(R.id.username);
+
+        //ADD USER ID TO PROFILE VIES
+        if (mAuth.getCurrentUser() != null) {
+            mDatabaseProfileViews.child(UserId).child(mAuth.getCurrentUser().getUid()).setValue("iView");
+        }
 
         mDatabaseUsers.child(UserId).addValueEventListener(new ValueEventListener() {
             @Override
@@ -114,11 +125,20 @@ public class ViewUserProfileActivity extends AppCompatActivity {
 
                 username.setText(name);
 
-                Glide.with(ViewUserProfileActivity.this)
-                        .load(image)
+                Glide.with(getApplicationContext())
+                        .load(image).asBitmap()
                         .placeholder(R.drawable.placeholder_image)
                         .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                        .into(mGroupIcon);
+                        .centerCrop()
+                        .into(new BitmapImageViewTarget(mGroupIcon) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable =
+                                        RoundedBitmapDrawableFactory.create(getApplicationContext().getResources(), resource);
+                                circularBitmapDrawable.setCircular(true);
+                                mGroupIcon.setImageDrawable(circularBitmapDrawable);
+                            }
+                        });
 
               /*  } else {}*/
 
@@ -257,6 +277,7 @@ public class ViewUserProfileActivity extends AppCompatActivity {
         private static final String ARG_SECTION_NUMBER = "section_number";
 
         public PlaceholderFragment() {
+
         }
 
         public static PlaceholderFragment newInstance(int sectionNumber) {

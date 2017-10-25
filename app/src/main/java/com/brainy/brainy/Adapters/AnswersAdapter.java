@@ -5,6 +5,9 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +26,8 @@ import com.brainy.brainy.activity.ReadQuestionActivity;
 import com.brainy.brainy.data.Answer;
 import com.brainy.brainy.data.Question;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -48,7 +53,7 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
     Context ctx;
     String postID = null;
 
-    private DatabaseReference mDatabase, mDatabaseProfileAns;
+    private DatabaseReference mDatabase, mDatabaseProfileAns, mDatabaseUsersAns;
     FirebaseAuth mAuth;
 
     public AnswersAdapter(Context ctx, List<Answer> mAnswersList)
@@ -97,9 +102,11 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
             voteCount = (TextView) itemView.findViewById(R.id.voteCount);
             mAuth = FirebaseAuth.getInstance();
             mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
-            mDatabaseProfileAns = FirebaseDatabase.getInstance().getReference().child("Users_answers").child(mAuth.getCurrentUser().getUid());
-            mDatabase.keepSynced(true);
-            mDatabaseProfileAns.keepSynced(true);
+            if (mAuth.getCurrentUser() != null) {
+                mDatabaseProfileAns = FirebaseDatabase.getInstance().getReference().child("Users_answers").child(mAuth.getCurrentUser().getUid());
+                mDatabase.keepSynced(true);
+                mDatabaseProfileAns.keepSynced(true);
+            }
 
         }
 
@@ -138,9 +145,19 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
             final CircleImageView civ = (CircleImageView) mView.findViewById(R.id.post_image);
 
             Glide.with(ctx)
-                    .load(sender_image)
+                    .load(sender_image).asBitmap()
                     .placeholder(R.drawable.placeholder_image)
-                    .into(civ);
+                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                    .centerCrop()
+                    .into(new BitmapImageViewTarget(civ) {
+                        @Override
+                        protected void setResource(Bitmap resource) {
+                            RoundedBitmapDrawable circularBitmapDrawable =
+                                    RoundedBitmapDrawableFactory.create(ctx.getResources(), resource);
+                            circularBitmapDrawable.setCircular(true);
+                            civ.setImageDrawable(circularBitmapDrawable);
+                        }
+                    });
 
         }
     }
@@ -156,7 +173,7 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
         final Answer c = mAnswersList.get(position);
       /*  String quiz_key = getRef(position).getKey();*/
 
-
+        mDatabaseUsersAns = FirebaseDatabase.getInstance().getReference().child("Users_answers");
        /* holder.post_name.setText(c.getSender_name());*/
         holder.post_answer.setText(c.getPosted_answer());
         holder.post_date.setText(c.getPosted_date());
@@ -273,24 +290,25 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
         });*/
 
         //COUNT NUMBER OF VOTE ON ANSWERS
-        if (answer_key != null) {
-            mDatabase
-                    .child(QuizKey)
-                    .child("Answers")
-                    .child(answer_key)
-                    .child("votes")
-                    .addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            holder.voteCount.setText(dataSnapshot.getChildrenCount() + "");
-                        }
+        if (mAuth.getCurrentUser() != null) {
+            if (answer_key != null) {
+                mDatabaseUsersAns
+                        .child(mAuth.getCurrentUser().getUid())
+                        .child(answer_key)
+                        .child("votes")
+                        .addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                holder.voteCount.setText(dataSnapshot.getChildrenCount() + "");
+                            }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
 
-                        }
-                    });
+                            }
+                        });
 
+            }
         }
 
        /* //COUNT PROFILE USER ANSWERS

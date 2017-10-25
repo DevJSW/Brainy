@@ -30,11 +30,22 @@ import android.widget.Toast;
 import com.brainy.brainy.Adapters.InboxAdapter;
 import com.brainy.brainy.Adapters.QuestionAdapter;
 import com.brainy.brainy.R;
+import com.brainy.brainy.activity.EditProfileActivity;
 import com.brainy.brainy.activity.MainActivity;
 import com.brainy.brainy.activity.ProfileEditActivity;
 import com.brainy.brainy.activity.ReadQuestionActivity;
+import com.brainy.brainy.activity.SigninActivity;
+import com.brainy.brainy.activity.SignupActivity;
 import com.brainy.brainy.data.Answer;
 import com.brainy.brainy.data.Question;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -63,6 +74,11 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.srx.widget.PullToLoadView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -79,7 +95,10 @@ public class tab2Inbox extends Fragment {
     String  personName = null;
     String  personEmail = null;
     String  personId = null;
+    String  personGender = null;
+    String  personBirthday = null;
     Uri personPhoto = null;
+    URL personPhoto2 = null;
     private Button signIn;
     private DatabaseReference mDatabaseUserInbox;
     private static final String TAG = "tab2Inbox";
@@ -92,6 +111,8 @@ public class tab2Inbox extends Fragment {
     private RecyclerView mInboxList;
 
     SwipeRefreshLayout mSwipeRefreshLayout;
+    LoginButton login_button;
+    CallbackManager callbackManager;
 
     InboxAdapter inboxAdapter;
     private final List<Answer> questionList = new ArrayList<>();
@@ -111,10 +132,14 @@ public class tab2Inbox extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        FacebookSdk.sdkInitialize(this.getActivity());
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_tab2_inbox, container, false);
 
+        callbackManager = CallbackManager.Factory.create();
+
+        login_button = (LoginButton) view.findViewById(R.id.login_button);
+        initFb();
 
         // Database channels
         mDatabaseUserInbox = FirebaseDatabase.getInstance().getReference().child("Users_inbox");
@@ -124,13 +149,6 @@ public class tab2Inbox extends Fragment {
         mDatabaseUserInbox.keepSynced(true);
         mDatabaseUsers.keepSynced(true);
 
-       /* //RECYCLERVIEW
-        LinearLayoutManager layoutManager
-                = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
-*/
-       /* mInboxList = (RecyclerView) view.findViewById(R.id.Inbox_list);
-        mInboxList.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mInboxList.setHasFixedSize(true);*/
 
         //auth
         auth = FirebaseAuth.getInstance();
@@ -199,6 +217,12 @@ public class tab2Inbox extends Fragment {
         initSignIn();
 
         return view;
+    }
+
+    private void initFb() {
+
+
+
     }
 
     private void LoadMoreMessage() {
@@ -324,7 +348,7 @@ public class tab2Inbox extends Fragment {
         dialog.setTitle("Let's get started...");
         dialog.show();
 
-        Button googleBtn = (Button) dialog.findViewById(R.id.googleBtn);
+        RelativeLayout googleBtn = (RelativeLayout) dialog.findViewById(R.id.googleBtn);
         googleBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -334,8 +358,123 @@ public class tab2Inbox extends Fragment {
             }
         });
 
+        Button signBtn = (Button) dialog.findViewById(R.id.sign_in);
+        signBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent openRead = new Intent(getActivity(), SigninActivity.class);
+                startActivity(openRead);
+                dialog.dismiss();
+            }
+        });
+
+        RelativeLayout fbBtn = (RelativeLayout) dialog.findViewById(R.id.fbBtn);
+        fbBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                initfBSignIn();
+                dialog.dismiss();
+
+            }
+
+            private void initfBSignIn() {
+
+                callbackManager = CallbackManager.Factory.create();
+                LoginButton loginButton = (LoginButton) dialog.findViewById(R.id.login_button);
+                loginButton.performClick();
+                loginButton.registerCallback(callbackManager,
+                        new FacebookCallback< LoginResult >() {@Override
+                        public void onSuccess(LoginResult loginResult) {
+
+                            System.out.println("onSuccess");
+
+                            String accessToken = loginResult.getAccessToken()
+                                    .getToken();
+                            Log.i("accessToken", accessToken);
+
+                            GraphRequest request = GraphRequest.newMeRequest(
+                                    loginResult.getAccessToken(),
+                                    new GraphRequest.GraphJSONObjectCallback() {@Override
+                                    public void onCompleted(JSONObject object,
+                                                            GraphResponse response) {
+
+                                        Log.i("LoginActivity",
+                                                response.toString());
+                                        try {
+                                            personId = object.getString("id");
+                                            try {
+                                                personPhoto2 = new URL(
+                                                        "http://graph.facebook.com/" + personId + "/picture?type=large");
+                                                Log.i("profile_pic",
+                                                        personPhoto + "");
+
+                                            } catch (MalformedURLException e) {
+                                                e.printStackTrace();
+                                            }
+
+                                            personName = object.getString("name");
+                                            personEmail = object.getString("email");
+                                            personGender = object.getString("gender");
+                                            personBirthday = object.getString("birthday");
+
+                                            postFbUserInfoToDB();
+
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    });
+                            Bundle parameters = new Bundle();
+                            parameters.putString("fields",
+                                    "personId,personName,personEmail,personGender, personBirthday");
+                            request.setParameters(parameters);
+                            request.executeAsync();
+                        }
+
+                            @Override
+                            public void onCancel() {
+                                System.out.println("onCancel");
+                            }
+
+                            @Override
+                            public void onError(FacebookException exception) {
+                                System.out.println("onError");
+                                Log.v("LoginActivity", exception.getCause().toString());
+                            }
+                        });
+            }
+
+
+        });
+
 
     }
+
+
+    private void postFbUserInfoToDB() {
+
+        Date date = new Date();
+        final String stringDate = DateFormat.getDateInstance().format(date);
+        String deviceToken = FirebaseInstanceId.getInstance().getToken();
+
+        final DatabaseReference newPost = mDatabaseUsers;
+
+        newPost.child(auth.getCurrentUser().getUid()).child("name").setValue(personName);
+        newPost.child(auth.getCurrentUser().getUid()).child("status").setValue("");
+        newPost.child(auth.getCurrentUser().getUid()).child("user_image").setValue(personPhoto2.toString());
+        newPost.child(auth.getCurrentUser().getUid()).child("joined_date").setValue(stringDate);
+        newPost.child(auth.getCurrentUser().getUid()).child("personId").setValue(personId);
+        newPost.child(auth.getCurrentUser().getUid()).child("uid").setValue(auth.getCurrentUser().getUid());
+        newPost.child(auth.getCurrentUser().getUid()).child("user_gmail").setValue(personEmail);
+        newPost.child(auth.getCurrentUser().getUid()).child("sign_in_type").setValue("facebook_signIn");
+        newPost.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Beginner");
+        newPost.child(auth.getCurrentUser().getUid()).child("points_earned").setValue(10);
+        newPost.child(auth.getCurrentUser().getUid()).child("device_token").setValue(deviceToken);
+
+    }
+
 
     private void initGoogleSignIn() {
 
@@ -372,6 +511,7 @@ public class tab2Inbox extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
 
         progressBar.setVisibility(View.VISIBLE);
 
