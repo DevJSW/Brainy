@@ -63,7 +63,7 @@
                 android:layout_height="48dp"
                 android:textAllCaps="true"
                 android:layout_margin="8dp"
-                android:background="@drawable/button_bg2"
+                android:background="@drawable/button_bg3"
                 android:text="Sign in"
                 android:textColor="#ffff"
                 android:textStyle="bold" />
@@ -95,7 +95,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@null"
-                    android:text="forgot password?"
+                    android:text="Forgot password?"
                     android:textAllCaps="false"
                     android:textColor="#5c5a5a"
                     android:layout_weight="1"

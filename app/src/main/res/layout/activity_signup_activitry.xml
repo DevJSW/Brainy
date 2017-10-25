@@ -103,7 +103,7 @@
             android:layout_height="48dp"
             android:textAllCaps="true"
             android:layout_margin="8dp"
-            android:background="@drawable/button_bg2"
+            android:background="@drawable/button_bg3"
             android:text="Sign up"
             android:textColor="#ffff"
             android:textStyle="bold" />

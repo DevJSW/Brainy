@@ -82,6 +82,7 @@ public class SignupActivity extends AppCompatActivity {
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
 
         mprogress = new ProgressDialog(this);
+        btnSignUp = (Button) findViewById(R.id.btn_signup);
         btnSignIn = (Button) findViewById(R.id.btn_login);
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,12 +91,28 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
 
+        btnSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent cardonClick = new Intent(SignupActivity.this, SigninActivity.class);
+                cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(cardonClick);
+            }
+        });
         inputEmail = (EditText) findViewById(R.id.email);
         inputPassword = (EditText) findViewById(R.id.password);
         inputRePassword = (EditText) findViewById(R.id.re_password);
         inputName = (EditText) findViewById(R.id.name);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         btnResetPassword = (Button) findViewById(R.id.btn_reset_password);
+        btnResetPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent cardonClick = new Intent(SignupActivity.this, ForgotPassActivity.class);
+                cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(cardonClick);
+            }
+        });
 
     }
 
