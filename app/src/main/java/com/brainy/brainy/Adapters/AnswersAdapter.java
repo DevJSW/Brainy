@@ -83,6 +83,7 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
         public TextView post_date;
         public ImageView civ;
         public TextView  voteCount;
+        public TextView  downVoteCount;
         public TextView viewCounter, answersCounter, favouritesCounter;
 
         RelativeLayout answer_rely;
@@ -100,6 +101,7 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
             post_name = (TextView) itemView.findViewById(R.id.post_name);
             post_date = (TextView) itemView.findViewById(R.id.post_date);
             voteCount = (TextView) itemView.findViewById(R.id.voteCount);
+            downVoteCount = (TextView) itemView.findViewById(R.id.downVoteCount);
             mAuth = FirebaseAuth.getInstance();
             mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
             if (mAuth.getCurrentUser() != null) {
@@ -289,17 +291,41 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
             }
         });*/
 
-        //COUNT NUMBER OF VOTE ON ANSWERS
+        //COUNT NUMBER OF UP-VOTE ON ANSWERS
         if (mAuth.getCurrentUser() != null) {
             if (answer_key != null) {
                 mDatabaseUsersAns
                         .child(mAuth.getCurrentUser().getUid())
                         .child(answer_key)
                         .child("votes")
+                        .child("up_votes")
                         .addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 holder.voteCount.setText(dataSnapshot.getChildrenCount() + "");
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
+            }
+        }
+
+        //COUNT NUMBER OF DOWN-VOTE ON ANSWERS
+        if (mAuth.getCurrentUser() != null) {
+            if (answer_key != null) {
+                mDatabaseUsersAns
+                        .child(mAuth.getCurrentUser().getUid())
+                        .child(answer_key)
+                        .child("votes")
+                        .child("down_votes")
+                        .addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                holder.downVoteCount.setText(dataSnapshot.getChildrenCount() + "");
                             }
 
                             @Override

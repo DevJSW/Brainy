@@ -46,7 +46,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:id="@+id/view2"
-                android:background="#eeee"
+                android:background="#eeccc8c8"
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
@@ -60,23 +60,15 @@
                 <LinearLayout
                     android:layout_width="40dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="19dp"
+                    android:layout_marginTop="13dp"
                     android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:layout_gravity="center_horizontal"
-                        android:layout_weight="1"
-                        android:id="@+id/quiz_vote_up"
-                        android:src="@drawable/up_vote_line"/>
 
                     <com.brainy.brainy.data.MyFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:textColor="@color/colorAccent"
-                        android:textSize="13dp"
+                        android:textSize="14dp"
                         android:text="0"
                         android:id="@+id/vote_up_counter"/>
 
@@ -85,8 +77,26 @@
                         android:layout_height="20dp"
                         android:layout_gravity="center_horizontal"
                         android:layout_weight="1"
+                        android:layout_marginBottom="4dp"
+                        android:id="@+id/quiz_vote_up"
+                        android:src="@drawable/up_vote_line"/>
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_weight="1"
                         android:id="@+id/quiz_vote_down"
                         android:src="@drawable/down_vote_line"/>
+
+                    <com.brainy.brainy.data.MyFont
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="14dp"
+                        android:text="0"
+                        android:id="@+id/vote_down_counter"/>
 
 
                 </LinearLayout>
@@ -122,7 +132,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:id="@+id/view1"
-                android:background="#eed4d1d1"
+                android:background="#eeccc8c8"
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
@@ -241,7 +251,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:id="@+id/view4"
-                android:background="#eed4d1d1"
+                android:background="#eeccc8c8"
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
@@ -276,7 +286,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:id="@+id/view5"
-                android:background="#eed4d1d1"
+                android:background="#eeccc8c8"
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
@@ -316,7 +326,7 @@
         android:layout_height="1dp"
         android:id="@+id/view"
         android:visibility="gone"
-        android:background="#eed4d1d1"
+        android:background="#eeccc8c8"
         android:layout_above="@+id/bottom_bar2"/>
 
     <LinearLayout

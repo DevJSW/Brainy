@@ -125,6 +125,7 @@ public class tab1Questions extends Fragment {
                 "Select a topic...",
                 "Math",
                 "Art & Design",
+                "Agriculture",
                 "Computer science & ICT",
                 "Business & Economics",
                 "Law",
@@ -242,7 +243,6 @@ public class tab1Questions extends Fragment {
             }
 
         });
-
 
         // Initializing an ArrayAdapter2
         final ArrayAdapter<String> spinnerArrayAdapter2 = new ArrayAdapter<String>(

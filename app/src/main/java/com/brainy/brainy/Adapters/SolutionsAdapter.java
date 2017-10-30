@@ -87,6 +87,7 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
         public ImageView avator;
         public ImageView civ;
         public TextView  voteCount;
+        public TextView  downVoteCount;
         public ImageView upVote, downVote;
         public Boolean mProcessApproval = false;
         RelativeLayout answer_rely;
@@ -101,6 +102,7 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
             post_name = (TextView) itemView.findViewById(R.id.post_name);
             post_date = (TextView) itemView.findViewById(R.id.post_date);
             voteCount = (TextView) itemView.findViewById(R.id.voteCount);
+            downVoteCount = (TextView) itemView.findViewById(R.id.downVoteCount);
             upVote = (ImageView) itemView.findViewById(R.id.approve);
             downVote = (ImageView) itemView.findViewById(R.id.downvote);
 
@@ -212,6 +214,26 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
                     });
         }
 
+        //COUNT NUMBER OF DOWN VOTE ON ANSWERS
+
+        if (answer_key != null) {
+            mDatabaseVotes
+                    .child(answer_key)
+                    .child("down_votes")
+                    .addListenerForSingleValueEvent(new com.google.firebase.database.ValueEventListener() {
+                        @Override
+                        public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
+                            holder.downVoteCount.setText(dataSnapshot.getChildrenCount() + "");
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+        }
+
+
        /* if (answer_key != null) {
             mDatabase
                     .child(QuizKey)
@@ -289,9 +311,8 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
                                             mDatabaseVotes.child(answer_key).child("up_votes").child(mAuth.getCurrentUser().getUid()).setValue("iVote");
 
                                             //PROFILE USER ANSWERS
-
                                            /* mDatabaseUsersAns.child(mAuth.getCurrentUser().getUid()).child(answer_key).child("votes").setValue("iVote");*/
-                                            mDatabaseUsersAns2.child(mAuth.getCurrentUser().getUid()).child(answer_key).child("votes").child(mAuth.getCurrentUser().getUid()).setValue("iVote");
+                                            mDatabaseUsersAns2.child(user_id).child(answer_key).child("votes").child("up_votes").child(mAuth.getCurrentUser().getUid()).setValue("iVote");
 
                                             // CHECK IF USER HAS VOTED AND ADD 10 POINTS TO THE USER WHO POSTED THE ANSWER.....................
 
@@ -438,7 +459,7 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
 
                                             } else {
                                                 mDatabaseVotes.child(answer_key).child("down_votes").child(mAuth.getCurrentUser().getUid()).setValue("iVote");
-                                                mDatabaseUsersAns2.child(mAuth.getCurrentUser().getUid()).child(answer_key).child("down_votes").child(mAuth.getCurrentUser().getUid()).setValue("iVote");
+                                                mDatabaseUsersAns2.child(user_id).child(answer_key).child("votes").child("down_votes").child(mAuth.getCurrentUser().getUid()).setValue("iVote");
 
                                                 // CHECK IF USER HAS DOWN VOTED AND DEDUCT 2 POINTS TO THE USER WHO POSTED THE ANSWER.....................
 
@@ -487,11 +508,10 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
                                                             }
 
                                                         });
-
                                                         mDatabaseVotes.child(answer_key).child("down_votes").addValueEventListener(new ValueEventListener() {
                                                             @Override
                                                             public void onDataChange(com.google.firebase.database.DataSnapshot dataSnapshot) {
-                                                                holder.voteCount.setText(dataSnapshot.getChildrenCount() + "");
+                                                                holder.downVoteCount.setText(dataSnapshot.getChildrenCount() + "");
                                                             }
 
                                                             @Override

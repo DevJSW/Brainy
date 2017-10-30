@@ -16,7 +16,7 @@
     <application
         android:name=".data.brainy"
         android:allowBackup="true"
-        android:icon="@drawable/brainy_round"
+        android:icon="@drawable/icon_brainy"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -98,7 +98,12 @@
             android:name=".activity.SigninActivity"
             android:label=""
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activity.ForgotPassActivity"
+        <activity
+            android:name=".activity.ForgotPassActivity"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.CompleteRegActivity"
             android:label=""
             android:theme="@style/AppTheme.NoActionBar"/>
     </application>

@@ -138,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
             "Tag your question...",
             "Math",
             "Art & Design",
+            "Agriculture",
             "Computer science & ICT",
             "Business & Economics",
             "Law",
@@ -157,6 +158,29 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        auth = FirebaseAuth.getInstance();
+        mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+        mDatabaseUsers.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if (auth.getCurrentUser() != null) {
+                    if (!dataSnapshot.hasChild(auth.getCurrentUser().getUid())) {
+
+                        Intent cardonClick = new Intent(MainActivity.this, CompleteRegActivity.class);
+                        cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(cardonClick);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         setContentView(R.layout.activity_main);
 
         Window window = MainActivity.this.getWindow();
@@ -168,7 +192,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -182,10 +205,9 @@ public class MainActivity extends AppCompatActivity {
 
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mDatabaseQuestions = FirebaseDatabase.getInstance().getReference().child("Questions");
         auth = FirebaseAuth.getInstance();
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
-        mDatabaseQuestions = FirebaseDatabase.getInstance().getReference().child("Questions");
-
         mDatabaseInboxUsers = FirebaseDatabase.getInstance().getReference().child("Users_inbox");
         mDatabaseQuestions.keepSynced(true);
         mDatabaseInboxUsers.keepSynced(true);
@@ -211,6 +233,7 @@ public class MainActivity extends AppCompatActivity {
                                     showSignInDialog();
                                 }
                             });
+                    snackbar.show();
                 }
             }
         });
@@ -224,6 +247,31 @@ public class MainActivity extends AppCompatActivity {
           awardReputation();
           getUserLocation();
       }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        mDatabaseUsers.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if (auth.getCurrentUser() != null) {
+                    if (!dataSnapshot.hasChild(auth.getCurrentUser().getUid())) {
+
+                        Intent cardonClick = new Intent(MainActivity.this, CompleteRegActivity.class);
+                        cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(cardonClick);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void showSignInDialog() {

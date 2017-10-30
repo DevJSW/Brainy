@@ -1,8 +1,10 @@
 package com.brainy.brainy.data;
 
 import android.app.Application;
+import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
+import android.support.multidex.MultiDex;
 
 import com.brainy.brainy.Services.GPSTracker;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,7 +32,6 @@ public class brainy extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
        // getCacheDir();
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         Picasso.Builder builder = new Picasso.Builder(this);
@@ -44,6 +45,12 @@ public class brainy extends Application {
         auth = FirebaseAuth.getInstance();
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
 
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 
 }

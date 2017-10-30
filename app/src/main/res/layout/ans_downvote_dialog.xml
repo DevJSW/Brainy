@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="#ef0f1b"
                 android:textSize="18dp"
-                android:text="Vote"/>
+                android:text="Down Vote alert!"/>
 
         </android.support.design.widget.TextInputLayout>
 

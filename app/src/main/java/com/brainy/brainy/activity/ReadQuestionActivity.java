@@ -622,12 +622,29 @@ public class ReadQuestionActivity extends AppCompatActivity {
             }
         });
 
+
         //DISPLAY NUMBER OF UP VOTES A QUIZ HAS.....
         mDatabaseVotes.child(QuizKey).child("up_votes").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 TextView voteUpCount = (TextView) findViewById(R.id.vote_up_counter);
+                voteUpCount.setText(dataSnapshot.getChildrenCount() + "");
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        //DISPLAY NUMBER OF DOWN VOTES A QUIZ HAS.....
+        mDatabaseVotes.child(QuizKey).child("down_votes").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                TextView voteUpCount = (TextView) findViewById(R.id.vote_down_counter);
                 voteUpCount.setText(dataSnapshot.getChildrenCount() + "");
 
             }

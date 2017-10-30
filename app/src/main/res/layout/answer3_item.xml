@@ -16,25 +16,27 @@
         <LinearLayout
             android:layout_width="40dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="8dp"
             android:orientation="vertical">
 
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="1"
-                android:id="@+id/approve"
-                android:src="@drawable/up_vote_line"/>
 
             <com.brainy.brainy.data.MyFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:textColor="@color/colorAccent"
-                android:textSize="13dp"
+                android:textSize="14dp"
                 android:text="0"
                 android:id="@+id/voteCount"/>
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="1"
+                android:layout_marginBottom="4dp"
+                android:id="@+id/approve"
+                android:src="@drawable/up_vote_line"/>
 
             <ImageView
                 android:layout_width="20dp"
@@ -44,6 +46,14 @@
                 android:id="@+id/downvote"
                 android:src="@drawable/down_vote_line"/>
 
+            <com.brainy.brainy.data.MyFont
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@color/colorAccent"
+                android:textSize="14dp"
+                android:text="0"
+                android:id="@+id/downVoteCount"/>
 
 
 
