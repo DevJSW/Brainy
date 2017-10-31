@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.brainy.brainy.activity.CompleteRegActivity">
+
+    <include layout="@layout/complete_reg_toolbar"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:layout_scrollFlags="scroll|enterAlways"
+        />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:orientation="vertical"
+        android:padding="@dimen/activity_horizontal_margin">
+
+
+       <!-- <com.brainy.brainy.data.MyFont
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin ="10dp"
+            android:gravity="center_horizontal"
+            android:padding="@dimen/activity_horizontal_margin"
+            android:text="Hello, this normally does not happen but we need your name to completely finish the sign up process!"
+            android:textColor="@color/colorPrimary"
+            android:textSize="14dp" />-->
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.brainy.brainy.data.CustomEditText
+                android:id="@+id/name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter name"
+                android:inputType="textPersonName"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColorHint="#121111"
+                android:textColor="#121111" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <com.brainy.brainy.data.MyButton
+            android:id="@+id/btn_login"
+            style="?android:textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:textAllCaps="true"
+            android:layout_margin="8dp"
+            android:background="@drawable/button_bg3"
+            android:text="Save"
+            android:textColor="#ffff"
+            android:textStyle="bold" />
+
+
+    </LinearLayout>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="20dp"
+        android:visibility="gone" />
+
+</RelativeLayout>
