@@ -157,7 +157,6 @@ public class ReadQuestionActivity extends AppCompatActivity {
 */
         auth = FirebaseAuth.getInstance();
 
-
         answersAdapter = new SolutionsAdapter(ReadQuestionActivity.this,answerList);
         mAnsList = (RecyclerView) findViewById(R.id.mAnsList);
         mLinearlayout = new LinearLayoutManager(ReadQuestionActivity.this);
@@ -308,6 +307,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
             });
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
             // always check if question is users favourite
             mDatabaseFavourite.addValueEventListener(new ValueEventListener() {
                 @Override

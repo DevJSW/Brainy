@@ -31,6 +31,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.brainy.brainy.Adapters.QuestionAdapter;
+import com.brainy.brainy.activity.EditQuestionActivity;
+import com.brainy.brainy.activity.FilterResultsActivity;
 import com.brainy.brainy.activity.MainActivity;
 import com.brainy.brainy.activity.SearchActivity;
 import com.brainy.brainy.data.OnLoadMoreListener;
@@ -124,19 +126,16 @@ public class tab1Questions extends Fragment {
         String[] topics = new String[]{
                 "Select a topic...",
                 "Math",
-                "Art & Design",
                 "Agriculture",
                 "Computer science & ICT",
                 "Business & Economics",
                 "Law",
                 "Languages",
                 "Geography & Geology",
-                "Social Studies",
                 "History and Government",
                 "Physics & Electronics",
                 "Chemistry & Chemical science",
-                "Aviation",
-                "Medicine & Health Science",
+                "Medical & Health Science",
                 "Others"
         };
 
@@ -212,7 +211,14 @@ public class tab1Questions extends Fragment {
                             (getActivity(), "Selected : " + selectedTopic, Toast.LENGTH_SHORT)
                             .show();*/
 
-                    mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.refresh);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("selected_topic", selectedTopic );
+
+                    Intent openRead = new Intent(getActivity(), FilterResultsActivity.class);
+                    openRead.putExtras(bundle);
+                    startActivity(openRead);
+
+                   /* mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.refresh);
                     mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                         @Override
                         public void onRefresh() {
@@ -232,7 +238,7 @@ public class tab1Questions extends Fragment {
                         }
                     });
                     questionList.clear();
-                    topicFilterMessage();
+                    topicFilterMessage();*/
 
                 }
             }

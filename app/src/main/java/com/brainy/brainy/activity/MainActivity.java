@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
@@ -33,8 +34,13 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -53,6 +59,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -66,6 +73,9 @@ import com.brainy.brainy.tabs.tab1Questions;
 import com.brainy.brainy.tabs.tab2Inbox;
 import com.brainy.brainy.tabs.tab3Achievements;
 import com.brainy.brainy.tabs.tab4More;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -88,6 +98,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -101,7 +112,8 @@ import java.util.Map;
 
 import static com.brainy.brainy.R.layout.spinner_item;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener{
 
     String  personName = "";
     String  personEmail = "";
@@ -122,6 +134,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_PERMISSION = 1;
     String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
 
+    Context context;
+
     GPSTracker gps;
     Geocoder geocoder;
     List<Address> addresses;
@@ -136,20 +150,18 @@ public class MainActivity extends AppCompatActivity {
     // Initializing a String Array
     String[] topics = new String[]{
             "Tag your question...",
+            "Select a topic...",
             "Math",
-            "Art & Design",
             "Agriculture",
             "Computer science & ICT",
             "Business & Economics",
             "Law",
             "Languages",
             "Geography & Geology",
-            "Social Studies",
             "History and Government",
             "Physics & Electronics",
             "Chemistry & Chemical science",
-            "Aviation",
-            "Medicine & Health Science",
+            "Medical & Health Science",
             "Others"
     };
 
@@ -213,8 +225,17 @@ public class MainActivity extends AppCompatActivity {
         mDatabaseInboxUsers.keepSynced(true);
         mDatabaseUsers.keepSynced(true);
 
+        final int[] ICONS = new int[]{
+                R.drawable.tab_home_icon,
+                R.drawable.tab_inbox_icon,
+                R.drawable.tab_fav_icon};
+
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+        tabLayout.getTabAt(0).setIcon(ICONS[0]);
+        tabLayout.getTabAt(1).setIcon(ICONS[1]);
+        tabLayout.getTabAt(2).setIcon(ICONS[2]);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -247,6 +268,111 @@ public class MainActivity extends AppCompatActivity {
           awardReputation();
           getUserLocation();
       }
+
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String post_image = (String) dataSnapshot.child("user_image").getValue();
+                String post_name = (String) dataSnapshot.child("name").getValue();
+
+                NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+                View hView =  navigationView.getHeaderView(0);
+
+                final ImageView nav_user = (ImageView)hView.findViewById(R.id.nav_photo);
+                TextView nav_username = (TextView)hView.findViewById(R.id.nav_username);
+                TextView nav_email = (TextView)hView.findViewById(R.id.nav_email);
+
+                nav_username.setText(post_name);
+                nav_email.setText(auth.getCurrentUser().getEmail());
+
+                Glide.with(getApplicationContext())
+                        .load(post_image).asBitmap()
+                        .placeholder(R.drawable.placeholder_image)
+                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                        .centerCrop()
+                        .into(new BitmapImageViewTarget(nav_user) {
+                            @Override
+                            protected void setResource(Bitmap resource) {
+                                RoundedBitmapDrawable circularBitmapDrawable =
+                                        RoundedBitmapDrawableFactory.create(getApplicationContext().getResources(), resource);
+                                circularBitmapDrawable.setCircular(true);
+                                nav_user.setImageDrawable(circularBitmapDrawable);
+                            }
+                        });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_profile) {
+            if (auth.getCurrentUser() != null) {
+                startActivity(new Intent(new Intent(MainActivity.this, EditProfileActivity.class)));
+            } else {
+                /*Snackbar snackbar = Snackbar
+                        .make(context, "You need to be sign in!", Snackbar.LENGTH_LONG)
+                        .setAction("SIGN IN", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                showSignInDialog();
+                            }
+                        });
+
+                snackbar.show();*/
+            }
+        } else if (id == R.id.nav_settings) {
+
+        } else if (id == R.id.nav_slideshow) {
+
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
+
+            Intent myIntent = new Intent(Intent.ACTION_SEND);
+            myIntent.setType("text/plain");
+            String shareBody ="Download Brainy on google play store today";
+            String shareSub = "Dear ";
+            myIntent.putExtra(Intent.EXTRA_SUBJECT,shareBody);
+            myIntent.putExtra(Intent.EXTRA_TEXT,shareBody);
+            startActivity(Intent.createChooser(myIntent,"Invite a friend"));
+
+        } else if (id == R.id.nav_send) {
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     @Override
@@ -749,8 +875,6 @@ public class MainActivity extends AppCompatActivity {
                             map2.put("post_id", newPost.getKey());
                             newPost2.setValue(map2);
 
-
-
                             final Context context = MainActivity.this;
 
                             // custom dialog
@@ -874,9 +998,9 @@ public class MainActivity extends AppCompatActivity {
                 case 2:
                     tab3Achievements tab3 = new tab3Achievements();
                     return tab3;
-                case 3:
+              /*  case 3:
                     tab4More tab4 = new tab4More();
-                    return tab4;
+                    return tab4;*/
             }
             return null;
         }
@@ -884,20 +1008,20 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             // Show 4 total pages.
-            return 4;
+            return 3;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "QUESTIONS";
+                    return "";
                 case 1:
-                    return "INBOX";
+                    return "";
                 case 2:
-                    return "FAVOURITE";
-                case 3:
-                    return "MORE";
+                    return "";
+               /* case 3:
+                    return "MORE";*/
             }
             return null;
         }

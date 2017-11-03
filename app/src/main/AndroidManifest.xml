@@ -105,7 +105,11 @@
         <activity
             android:name=".activity.CompleteRegActivity"
             android:label=""
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.FilterResultsActivity"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
