@@ -109,6 +109,9 @@ public class tab1Questions extends Fragment {
     private int visibleThreshold = 5;
     private int visibleItemCount, totalItemCount, firstVisibleItem, lastVisibleItem;
 
+    List<String> topicList;
+    Spinner spinner;
+
     @SuppressLint("ResourceAsColor")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -116,7 +119,7 @@ public class tab1Questions extends Fragment {
         final View v = inflater.inflate(R.layout.fragment_tab1_questions, container, false);
 
         // Get reference of widgets from XML layout
-        final Spinner spinner = (Spinner) v.findViewById(R.id.spinner);
+        spinner = (Spinner) v.findViewById(R.id.spinner);
         final Spinner spinner2 = (Spinner) v.findViewById(R.id.spinner2);
 
         //auth
@@ -132,27 +135,10 @@ public class tab1Questions extends Fragment {
                 "Law",
                 "Languages",
                 "Geography & Geology",
-                "History and Government",
+                "History & Government",
                 "Physics & Electronics",
                 "Chemistry & Chemical science",
                 "Medical & Health Science",
-                "Others"
-        };
-
-        String[] law_topics = new String[]{
-                "Sub-topic...",
-                "ACCIDENTS & INJURIES",
-                "BANKRUPTCY & DEBT",
-                "CAR & MOTOR VEHICLE ACCIDENTS",
-                "CIVIL RIGHTS",
-                "DANGEROUS PRODUCTS",
-                "DIVORCE & FAMILY LAW",
-                "EMPLOYEES' RIGHTS",
-                "ESTATES & PROBATE",
-                "IMMIGRATION LAW",
-                "INTELLECTUAL PROPERTY",
-                "REAL ESTATE",
-                "SMALL BUSINESS",
                 "OTHERS"
         };
 
@@ -164,7 +150,7 @@ public class tab1Questions extends Fragment {
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.refresh);
 
-        final List<String> topicList = new ArrayList<>(Arrays.asList(topics));
+        topicList = new ArrayList<>(Arrays.asList(topics));
         final List<String> optionList = new ArrayList<>(Arrays.asList(options));
 
         // Initializing an ArrayAdapter
@@ -364,6 +350,8 @@ public class tab1Questions extends Fragment {
                             }
                             return view;
                         }
+
+
                     };
 
                     mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.refresh);
@@ -551,8 +539,44 @@ public class tab1Questions extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        initSpinner();
         questionList.clear();
         LoadMessage();
+    }
+
+    private void initSpinner() {
+
+        // Initializing an ArrayAdapter
+        final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
+                getActivity(), R.layout.spinner_item, topicList) {
+            @Override
+            public boolean isEnabled(int position) {
+                if (position == 0) {
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView,
+                                        ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+                if (position == 0) {
+                    // Set the hint text color gray
+                    tv.setTextColor(Color.GRAY);
+                } else {
+                    tv.setTextColor(Color.BLACK);
+                }
+                return view;
+            }
+        };
+
+        spinnerArrayAdapter.setDropDownViewResource(spinner_item);
+        spinner.setAdapter(spinnerArrayAdapter);
     }
 
     private void LoadMessage() {

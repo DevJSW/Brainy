@@ -14,12 +14,12 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <ImageView
-            android:layout_width="95dp"
-            android:layout_height="95dp"
+            android:layout_width="92dp"
+            android:layout_height="92dp"
             android:id="@+id/splash"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="25dp"
-            android:src="@drawable/brainy_round" />
+            android:src="@drawable/icon_brainy" />
 
     </LinearLayout>
 

@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_margin="8dp"
-    android:background="@drawable/button_bg">
+    android:background="@drawable/button_bg_dialogs">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -48,6 +48,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Enter more explanation if any"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="10dp"
                 android:layout_marginBottom="7dp"
                 android:maxLines="5"
                 android:textColorHint="#121111"
@@ -77,19 +79,22 @@
             android:layout_height="match_parent"
             />
 
-        <!--<View
+        <View
             android:layout_width="1dp"
+            android:id="@+id/spinnerDivider"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:visibility="gone"
             android:layout_marginBottom="8dp"
             android:background="#ee838080"/>
 
         <Spinner
             android:id="@+id/spinner2"
             android:layout_width="match_parent"
+            android:visibility="gone"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            />-->
+            />
 
     </LinearLayout>
 

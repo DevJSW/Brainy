@@ -21,7 +21,6 @@
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
-
         <com.brainy.brainy.data.CustomTablayout
             android:id="@+id/tabs"
             app:tabGravity="fill"

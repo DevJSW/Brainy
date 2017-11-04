@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -36,8 +36,8 @@
             android:layout_width="1dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
             android:visibility="gone"
+            android:layout_marginBottom="8dp"
             android:background="#ee838080"/>
 
         <Spinner
@@ -50,11 +50,20 @@
 
     </LinearLayout>
 
+
     <com.srx.widget.PullToLoadView
         android:id="@+id/pullToLoadView"
         android:layout_width="match_parent"
         android:visibility="gone"
         android:layout_height="match_parent"/>
+
+    <com.brainy.brainy.data.MyFont
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorAccent"
+        android:textSize="18dp"
+        android:id="@+id/empty"
+        android:layout_centerInParent="true" />
 
 
     <android.support.v4.widget.SwipeRefreshLayout
@@ -87,4 +96,4 @@
         android:layout_gravity="center_horizontal" />
 
 
-</LinearLayout>
+</RelativeLayout>

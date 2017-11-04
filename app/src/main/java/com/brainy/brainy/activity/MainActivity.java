@@ -45,6 +45,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.SpannableString;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -55,6 +57,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -69,6 +72,7 @@ import android.widget.Toast;
 import com.brainy.brainy.R;
 import com.brainy.brainy.Services.GPSTracker;
 import com.brainy.brainy.Services.GPSTracker2;
+import com.brainy.brainy.data.CustomTypefaceSpan;
 import com.brainy.brainy.tabs.tab1Questions;
 import com.brainy.brainy.tabs.tab2Inbox;
 import com.brainy.brainy.tabs.tab3Achievements;
@@ -122,6 +126,9 @@ public class MainActivity extends AppCompatActivity
     String city = null;
     String state = null;
     String country = null;
+    String stringDate2;
+    String questionTitlTag;
+    String questionBodyTag;
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
     String selectedTopic = null;
@@ -135,15 +142,26 @@ public class MainActivity extends AppCompatActivity
     String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
 
     Context context;
+    View view;
 
     GPSTracker gps;
     Geocoder geocoder;
     List<Address> addresses;
+    Spinner spinner2;
+    View spinnerDivider;
+    String selectedSubTopic;
+    List<String> subTopicList;
+    String[] sub_topic;
 
     private static final String TAG = "MainActivity";
     private GoogleApiClient mGoogleApiClient;
     private static int RC_SIGN_IN = 1;
     private ProgressBar progressBar;
+
+    final int[] ICONS = new int[]{
+            R.drawable.tab_home_icon,
+            R.drawable.tab_inbox_icon,
+            R.drawable.tab_fav_icon};
 
     // Get reference of widgets from XML layout
 
@@ -158,7 +176,7 @@ public class MainActivity extends AppCompatActivity
             "Law",
             "Languages",
             "Geography & Geology",
-            "History and Government",
+            "History & Government",
             "Physics & Electronics",
             "Chemistry & Chemical science",
             "Medical & Health Science",
@@ -225,11 +243,6 @@ public class MainActivity extends AppCompatActivity
         mDatabaseInboxUsers.keepSynced(true);
         mDatabaseUsers.keepSynced(true);
 
-        final int[] ICONS = new int[]{
-                R.drawable.tab_home_icon,
-                R.drawable.tab_inbox_icon,
-                R.drawable.tab_fav_icon};
-
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
@@ -279,44 +292,53 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String post_image = (String) dataSnapshot.child("user_image").getValue();
-                String post_name = (String) dataSnapshot.child("name").getValue();
+        if (auth.getCurrentUser() != null) {
+            mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    String post_image = (String) dataSnapshot.child("user_image").getValue();
+                    String post_name = (String) dataSnapshot.child("name").getValue();
 
-                NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-                View hView =  navigationView.getHeaderView(0);
+                    NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+                    View hView = navigationView.getHeaderView(0);
 
-                final ImageView nav_user = (ImageView)hView.findViewById(R.id.nav_photo);
-                TextView nav_username = (TextView)hView.findViewById(R.id.nav_username);
-                TextView nav_email = (TextView)hView.findViewById(R.id.nav_email);
+                    final ImageView nav_user = (ImageView) hView.findViewById(R.id.nav_photo);
+                    TextView nav_username = (TextView) hView.findViewById(R.id.nav_username);
+                    TextView nav_email = (TextView) hView.findViewById(R.id.nav_email);
 
-                nav_username.setText(post_name);
-                nav_email.setText(auth.getCurrentUser().getEmail());
+                    nav_username.setText(post_name);
+                    nav_email.setText(auth.getCurrentUser().getEmail());
 
-                Glide.with(getApplicationContext())
-                        .load(post_image).asBitmap()
-                        .placeholder(R.drawable.placeholder_image)
-                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                        .centerCrop()
-                        .into(new BitmapImageViewTarget(nav_user) {
-                            @Override
-                            protected void setResource(Bitmap resource) {
-                                RoundedBitmapDrawable circularBitmapDrawable =
-                                        RoundedBitmapDrawableFactory.create(getApplicationContext().getResources(), resource);
-                                circularBitmapDrawable.setCircular(true);
-                                nav_user.setImageDrawable(circularBitmapDrawable);
-                            }
-                        });
-            }
+                    Glide.with(getApplicationContext())
+                            .load(post_image).asBitmap()
+                            .placeholder(R.drawable.placeholder_image)
+                            .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                            .centerCrop()
+                            .into(new BitmapImageViewTarget(nav_user) {
+                                @Override
+                                protected void setResource(Bitmap resource) {
+                                    RoundedBitmapDrawable circularBitmapDrawable =
+                                            RoundedBitmapDrawableFactory.create(getApplicationContext().getResources(), resource);
+                                    circularBitmapDrawable.setCircular(true);
+                                    nav_user.setImageDrawable(circularBitmapDrawable);
+                                }
+                            });
+                }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
+                }
+            });
+        }
 
+    }
+
+    private void applyFontToMenuItem(MenuItem mi) {
+        Typeface font = Typeface.createFromAsset(getAssets(), "ds_digi_b.TTF");
+        SpannableString mNewTitle = new SpannableString(mi.getTitle());
+        mNewTitle.setSpan(new CustomTypefaceSpan("" , font), 0 , mNewTitle.length(),  Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+        mi.setTitle(mNewTitle);
     }
 
     @Override
@@ -339,8 +361,9 @@ public class MainActivity extends AppCompatActivity
             if (auth.getCurrentUser() != null) {
                 startActivity(new Intent(new Intent(MainActivity.this, EditProfileActivity.class)));
             } else {
-                /*Snackbar snackbar = Snackbar
-                        .make(context, "You need to be sign in!", Snackbar.LENGTH_LONG)
+
+                Snackbar snackbar = Snackbar
+                        .make(getWindow().getDecorView().getRootView(), "You need to be sign in!", Snackbar.LENGTH_LONG)
                         .setAction("SIGN IN", new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -348,7 +371,7 @@ public class MainActivity extends AppCompatActivity
                             }
                         });
 
-                snackbar.show();*/
+                snackbar.show();
             }
         } else if (id == R.id.nav_settings) {
 
@@ -409,6 +432,17 @@ public class MainActivity extends AppCompatActivity
         dialog.setContentView(R.layout.sign_in_dialog);
         dialog.setTitle("Let's get started...");
         dialog.show();
+
+        Button signBtn = (Button) dialog.findViewById(R.id.sign_in);
+        signBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent openRead = new Intent(MainActivity.this, SigninActivity.class);
+                startActivity(openRead);
+                dialog.dismiss();
+            }
+        });
 
         RelativeLayout googleBtn = (RelativeLayout) dialog.findViewById(R.id.googleBtn);
         googleBtn.setOnClickListener(new View.OnClickListener() {
@@ -620,7 +654,7 @@ public class MainActivity extends AppCompatActivity
                             .setContentTitle("Brainy")
                             .setTicker("Inbox alert!")
                             .setContentText(name + " answered a question you posted - " + message)
-                            .setSmallIcon(R.drawable.ic_brainy_tech_noty)
+                            .setSmallIcon(R.drawable.ic_brainy_noty)
                             .setContentIntent(pIntent).getNotification();
 
 
@@ -758,6 +792,8 @@ public class MainActivity extends AppCompatActivity
         });
 
         final Spinner spinner = (Spinner) dialog.findViewById(R.id.spinner);
+        spinner2 = (Spinner) dialog.findViewById(R.id.spinner2);
+        spinnerDivider = (View) dialog.findViewById(R.id.spinnerDivider);
         // Initializing an ArrayAdapter
         final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
                 MainActivity.this, R.layout.spinner_dialog_item,topicList){
@@ -802,6 +838,7 @@ public class MainActivity extends AppCompatActivity
                 if(position > 0){
                     selectedTopic = (String) parent.getItemAtPosition(position);
                 }
+                checkIfTopicSelected();
             }
 
             @Override
@@ -810,6 +847,8 @@ public class MainActivity extends AppCompatActivity
             }
 
         });
+
+                checkIfTopicSelected();
 
         Button create = (Button) dialog.findViewById(R.id.create);
         create.setOnClickListener(new View.OnClickListener() {
@@ -823,91 +862,386 @@ public class MainActivity extends AppCompatActivity
 
                 Date date = new Date();
                 final String stringDate = DateFormat.getDateTimeInstance().format(date);
-                final String stringDate2 = DateFormat.getDateInstance().format(date);
+                stringDate2 = DateFormat.getDateInstance().format(date);
 
-                final String questionTitlTag = questionTitleInput.getText().toString().trim();
-                final String questionBodyTag = questionBodyInput.getText().toString().trim();
+                questionTitlTag = questionTitleInput.getText().toString().trim();
+                questionBodyTag = questionBodyInput.getText().toString().trim();
                 if (TextUtils.isEmpty(questionTitlTag)) {
 
-                    Toast.makeText(MainActivity.this, "Question title CANNOT be empty!",Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "Question title CANNOT be empty!", Toast.LENGTH_LONG).show();
 
                 } else if (selectedTopic == null) {
 
-                    Toast.makeText(MainActivity.this, "Please tag your question!",Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "Please TAG your question!", Toast.LENGTH_LONG).show();
+                } else if (selectedSubTopic == null) {
+
+                    Toast.makeText(MainActivity.this, "Please a SUB-TAG your question!", Toast.LENGTH_LONG).show();
+
                 } else {
-
                     dialog.dismiss();
-
-                    final DatabaseReference newPost = mDatabaseQuestions.push();
-                    final DatabaseReference newPost2 = mDatabaseUsersQuestions.push();
-
-                    mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-
-                            Map<String, Object> map = new HashMap<>();
-                            map.put("question_title", questionTitlTag);
-                            map.put("question_body", questionBodyTag);
-                            map.put("sender_uid", auth.getCurrentUser().getUid());
-                            map.put("sender_name", dataSnapshot.child("name").getValue());
-                            map.put("Unanswered", true);
-                            map.put("sender_image", dataSnapshot.child("user_image").getValue());
-                            map.put("posted_date", stringDate2);
-                            map.put("state", state);
-                            map.put("city", city);
-                            map.put("country", country);
-                            map.put("tag", selectedTopic);
-                            map.put("post_id", newPost.getKey());
-                            newPost.setValue(map);
-
-                            Map<String, Object> map2 = new HashMap<>();
-                            map2.put("question_title", questionTitlTag);
-                            map2.put("question_body", questionBodyTag);
-                            map2.put("sender_uid", auth.getCurrentUser().getUid());
-                            map2.put("sender_name", dataSnapshot.child("name").getValue());
-                            map2.put("state", state);
-                            map2.put("city", city);
-                            map2.put("country", country);
-                            map2.put("Unanswered", true);
-                            map2.put("sender_image", dataSnapshot.child("user_image").getValue());
-                            map2.put("posted_date", stringDate2);
-                            map2.put("tag", selectedTopic);
-                            map2.put("post_id", newPost.getKey());
-                            newPost2.setValue(map2);
-
-                            final Context context = MainActivity.this;
-
-                            // custom dialog
-                            final Dialog dialog = new Dialog(context);
-                            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                            dialog.setContentView(R.layout.success_dialog);
-                            dialog.setCancelable(false);
-                            /*dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));*/
-                            dialog.show();
-
-                            Button create = (Button) dialog.findViewById(R.id.create);
-                            create.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(final View v) {
-
-                                    dialog.dismiss();
-                                }
-
-                            });
-
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-
+                    completePosting();
                 }
 
             }
         });
+    }
 
+    private void completePosting() {
+
+        final DatabaseReference newPost = mDatabaseQuestions.push();
+        final DatabaseReference newPost2 = mDatabaseUsersQuestions.push();
+
+        mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                Map<String, Object> map = new HashMap<>();
+                map.put("question_title", questionTitlTag);
+                map.put("question_body", questionBodyTag);
+                map.put("sender_uid", auth.getCurrentUser().getUid());
+                map.put("sender_name", dataSnapshot.child("name").getValue());
+                map.put("Unanswered", true);
+                map.put("sender_image", dataSnapshot.child("user_image").getValue());
+                map.put("posted_date", stringDate2);
+                map.put("state", state);
+                map.put("city", city);
+                map.put("country", country);
+                map.put("tag", selectedTopic);
+                map.put("sub_tag", selectedSubTopic);
+                map.put("post_id", newPost.getKey());
+                newPost.setValue(map);
+
+                Map<String, Object> map2 = new HashMap<>();
+                map2.put("question_title", questionTitlTag);
+                map2.put("question_body", questionBodyTag);
+                map2.put("sender_uid", auth.getCurrentUser().getUid());
+                map2.put("sender_name", dataSnapshot.child("name").getValue());
+                map2.put("state", state);
+                map2.put("city", city);
+                map2.put("country", country);
+                map2.put("Unanswered", true);
+                map2.put("sender_image", dataSnapshot.child("user_image").getValue());
+                map2.put("posted_date", stringDate2);
+                map2.put("tag", selectedTopic);
+                map2.put("sub_tag", selectedSubTopic);
+                map2.put("post_id", newPost.getKey());
+                newPost2.setValue(map2);
+
+                final Context context = MainActivity.this;
+
+                // custom dialog
+                final Dialog dialog = new Dialog(context);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.success_dialog);
+                dialog.setCancelable(false);
+                            /*dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));*/
+                dialog.show();
+
+                Button create = (Button) dialog.findViewById(R.id.create);
+                create.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View v) {
+
+                        dialog.dismiss();
+                    }
+
+                });
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+    }
+
+    private void checkIfTopicSelected() {
+
+        if (selectedTopic != null) {
+
+            initSpinner2();
+            spinner2.setVisibility(View.VISIBLE);
+            spinnerDivider.setVisibility(View.VISIBLE);
+        } else {
+            spinner2.setVisibility(View.GONE);
+            spinnerDivider.setVisibility(View.GONE);
+        }
+    }
+
+    private void initSpinner2() {
+
+        if (selectedTopic.equals("Law")) {
+            sub_topic = new String[]{
+                    " Sub-tag",
+                    "Accidents & Injuries",
+                    "Bankruptcy & Debt",
+                    "Car & Motor accidents",
+                    "Civil rights",
+                    "Dangerous products",
+                    "Divorce & family law",
+                    "Employees' rights",
+                    "Estate & probate",
+                    "Immigration law",
+                    "Intellectual property",
+                    "Real estate",
+                    "Small business",
+                    "OTHERS"
+            };
+
+            subTopicList = new ArrayList<>(Arrays.asList(sub_topic));
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        if (selectedTopic.equals("Math")) {
+            sub_topic = new String[]{
+                    " Sub-tag",
+                    "Algebra",
+                    "Calculus & Analysis",
+                    "Geometry & Topology",
+                    "Combinatorics",
+                    "Logic",
+                    "Number theory",
+                    "Dynamical systems & differential equations",
+                    "Mathematical physics",
+                    "Computation",
+                    "Information theory & signal processing",
+                    "Probability & statistics",
+                    "Game theory",
+                    "OTHERS"
+            };
+
+            subTopicList = new ArrayList<>(Arrays.asList(sub_topic));
+        }
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        if (selectedTopic.equals("Agriculture")) {
+            sub_topic = new String[]{
+                    " Sub-tag",
+                    "Soil science",
+                    "Animal science & Animal production",
+                    "Animal breeding & Genetics",
+                    "Agricultural extension & Rural development",
+                    "Agricultural Economics",
+                    "Agric Metereology & Water management",
+                    "Agric Business & Financial management",
+                    "Plant science & Crop production",
+                    "Horticulture",
+                    "Home economics",
+                    "Forestry & Environmental management",
+                    "Forestry & Wood technology",
+                    "Fisheries & Aquaculture",
+                    "Farm management",
+                    "Eco-tourism & wildlife management",
+                    "Information theory & signal processing",
+                    "OTHERS"
+            };
+
+            subTopicList = new ArrayList<>(Arrays.asList(sub_topic));
+        }
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        if (selectedTopic.equals("Medical & Health Science")) {
+            sub_topic = new String[]{
+                    " Sub-tag",
+                    "Atrial Fibrillation",
+                    "Bipolar Disorder",
+                    "Breast Cancer",
+                    "Chronic Dry Eye Relief",
+                    "Colorectal Cancer",
+                    "Conquering Crohn’s Disease & Crohn's Disease",
+                    "Diabetes Mine",
+                    "Diagnosing Carcinoid Syndrome",
+                    "Eating Disorders",
+                    "Emergency Contraception",
+                    "Exocrine Pancreatic Insufficiency",
+                    "Eye Health",
+                    "FDA",
+                    "Fertility",
+                    "First Aid",
+                    "Fitness & Exercise",
+                    "Food & Nutrition",
+                    "Headache",
+                    "Healthy Sex",
+                    "Hereditary Angioedema",
+                    "High Cholesterol",
+                    "HIV Prevention",
+                    "HIV/AIDS",
+                    "Hypothyroidism",
+                    "Insomnia",
+                    "Irritable Bowel Syndrome",
+                    "Kidney Health",
+                    "Lice",
+                    "Lung Cancer",
+                    "Myeloma",
+                    "Osteoporosis",
+                    "Oral Cancer",
+                    "Probiotics and Digestive Health",
+                    "Psoriatic Arthritis",
+                    "Pulmonary Arterial Hypertension",
+                    "Rheumatoid Arthritis",
+                    "Skin Cancer",
+                    "Smoking Cessation",
+                    "Ulcerative Colitis",
+                    "Vaccinations",
+                    "Vaginal Health",
+                    "OTHERS"
+            };
+
+            subTopicList = new ArrayList<>(Arrays.asList(sub_topic));
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        if (selectedTopic.equals("Physics & Electronics")) {
+            sub_topic = new String[]{
+                    " Sub-tag",
+                    "Atomic, Nuclear and Particle Physics",
+                    "Laws of nature",
+                    "Units & dimensions",
+                    "Metric system",
+                    "Scientic notation",
+                    "Trigonometry",
+                    "Vectors",
+                    "Motion - Mechanics/Kinematics/Dynamics",
+                    "Work, Power, and Energy",
+                    "Gravity",
+                    "Angular Velocity",
+                    "Centripetal acceleration",
+                    "Center of mass",
+                    "Torque and Angular Acceleration",
+                    "Moment of Inertia",
+                    "Hydrostatics: Fluids at Rest",
+                    "Hydrodynamics: Fluids in Motion",
+                    "Thermodynamics",
+                    "Electricity and Magnetism",
+                    "Oscillations and Waves",
+                    "Hydrodynamics: Fluids in Motion",
+                    "OTHERS"
+            };
+
+            subTopicList = new ArrayList<>(Arrays.asList(sub_topic));
+        }
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        if (selectedTopic.equals("Geography & Geology")) {
+            sub_topic = new String[]{
+                    " Sub-tag",
+                    "Physical geography ",
+                    "Geomorphology",
+                    "Hydrology",
+                    "Glaciology",
+                    "Oceanography",
+                    "Biogeography",
+                    "Climatology",
+                    "Meteorology",
+                    "Pedology",
+                    "Palaeogeography",
+                    "Coastal geography",
+                    "Quaternary science",
+                    "Landscape ecology",
+                    "OTHERS"
+            };
+
+            subTopicList = new ArrayList<>(Arrays.asList(sub_topic));
+        }
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        if (selectedTopic.equals("Computer science & ICT")) {
+            sub_topic = new String[]{
+                    " Sub-tag",
+                    "Machine learning",
+                    "Principles and techniques",
+                    "Visual recognition",
+                    "Mining massive data sets",
+                    "Cryptography",
+                    "Social information & network analysis",
+                    "Deep learning for natural language processing",
+                    "Computer vision",
+                    "OTHERS"
+            };
+
+            subTopicList = new ArrayList<>(Arrays.asList(sub_topic));
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        if (selectedTopic.equals("Business & Economics")) {
+            sub_topic = new String[]{
+                    " Sub-tag",
+                    "Business Ethics",
+                    "Types of organizations",
+                    "Areas of management application",
+                    "Business strategy",
+                    "Business management education",
+                    "Management Theory",
+                    "Advertising Issues",
+                    "Human Resource Issues",
+                    "International Business",
+                    "Consumer Behavior",
+                    "Marketing",
+                    "Technical Writing Samples",
+                    "World economy ",
+                    "Economic stimulus approaches",
+                    "Econometrics",
+                    "Currency manipulation",
+                    "Interest rates",
+                    "Consumerism",
+                    "OTHERS"
+            };
+
+            subTopicList = new ArrayList<>(Arrays.asList(sub_topic));
+        }
+
+
+        // Initializing an ArrayAdapter2
+        final ArrayAdapter<String> spinnerArrayAdapter2 = new ArrayAdapter<String>(
+                this, R.layout.spinner_item, subTopicList) {
+
+            @Override
+            public View getDropDownView(int position, View convertView,
+                                        ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+
+                tv.setTextColor(Color.BLACK);
+                return view;
+            }
+        };
+
+        spinnerArrayAdapter2.setDropDownViewResource(spinner_item);
+        spinner2.setAdapter(spinnerArrayAdapter2);
+
+        spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                // If user change the default selection
+                // First item is disable and it is used for hint
+                if (position > 0) {
+                    selectedSubTopic = (String) parent.getItemAtPosition(position);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+
+        });
     }
 
     private void initPageChanger() {
@@ -1011,15 +1345,19 @@ public class MainActivity extends AppCompatActivity
             return 3;
         }
 
+        public int getPageIconResId(int position) {
+            return ICONS[position];
+        }
+
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "";
+                    return "QUESTIONS";
                 case 1:
-                    return "";
+                    return "INBOX";
                 case 2:
-                    return "";
+                    return "FAVOURITES";
                /* case 3:
                     return "MORE";*/
             }

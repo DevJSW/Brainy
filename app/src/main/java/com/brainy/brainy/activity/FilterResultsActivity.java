@@ -57,7 +57,7 @@ public class FilterResultsActivity extends AppCompatActivity {
     String myCurrentChats = null;
     String selectedTopic = null;
     String selectedOption = null;
-    private TextView mNoPostTxt, tvFilterTopic;
+    private TextView mNoPostTxt, tvFilterTopic, tvEmpty;
     private ImageView mNoPostImg;
     SwipeRefreshLayout mSwipeRefreshLayout;
     private DatabaseReference mDatabaseUsers, mDatabaseFavourite;
@@ -84,7 +84,7 @@ public class FilterResultsActivity extends AppCompatActivity {
     private ProgressBar progressBar;
 
     //PAGINATION
-    private static int TOTAL_ITEMS_TO_LOAD = 20;
+    private static int TOTAL_ITEMS_TO_LOAD = 30;
     private int currentPage = 1;
     private int previousTotal = 9;
     private int itemPos = 0;
@@ -121,6 +121,16 @@ public class FilterResultsActivity extends AppCompatActivity {
 
         selectedTopic = getIntent().getStringExtra("selected_topic");
 
+
+
+        if (selectedTopic.equals("")) {
+            sub_topic = new String[]{};
+            topicList = new ArrayList<>(Arrays.asList(sub_topic));
+            //HIDE FILTER
+            LinearLayout rl = (LinearLayout) findViewById(R.id.rl);
+            rl.setVisibility(View.GONE);
+
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -330,6 +340,111 @@ public class FilterResultsActivity extends AppCompatActivity {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 
+        if (selectedTopic.equals("Languages")) {
+            sub_topic = new String[]{
+                   /* "Choose sub-topic...",
+                    "Machine learning",
+                    "Principles and techniques",
+                    "Visual recognition",
+                    "Mining massive data sets",
+                    "Cryptography",
+                    "Social information & network analysis",
+                    "Deep learning for natural language processing",
+                    "Computer vision",
+                    "OTHERS"*/
+            };
+            //HIDE FILTER
+            LinearLayout rl = (LinearLayout) findViewById(R.id.rl);
+            rl.setVisibility(View.GONE);
+            topicList = new ArrayList<>(Arrays.asList(sub_topic));
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        if (selectedTopic.equals("Languages")) {
+            sub_topic = new String[]{
+                   /* "Choose sub-topic...",
+                    "Machine learning",
+                    "Principles and techniques",
+                    "Visual recognition",
+                    "Mining massive data sets",
+                    "Cryptography",
+                    "Social information & network analysis",
+                    "Deep learning for natural language processing",
+                    "Computer vision",
+                    "OTHERS"*/
+            };
+            //HIDE FILTER
+            LinearLayout rl = (LinearLayout) findViewById(R.id.rl);
+            rl.setVisibility(View.GONE);
+            topicList = new ArrayList<>(Arrays.asList(sub_topic));
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        if (selectedTopic.equals("History & Government")) {
+            sub_topic = new String[]{
+                   /* "Choose sub-topic...",
+                    "Machine learning",
+                    "Principles and techniques",
+                    "Visual recognition",
+                    "Mining massive data sets",
+                    "Cryptography",
+                    "Social information & network analysis",
+                    "Deep learning for natural language processing",
+                    "Computer vision",
+                    "OTHERS"*/
+            };
+            //HIDE FILTER
+            LinearLayout rl = (LinearLayout) findViewById(R.id.rl);
+            rl.setVisibility(View.GONE);
+            topicList = new ArrayList<>(Arrays.asList(sub_topic));
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        if (selectedTopic.equals("Chemistry & Chemical science")) {
+            sub_topic = new String[]{
+                   /* "Choose sub-topic...",
+                    "Machine learning",
+                    "Principles and techniques",
+                    "Visual recognition",
+                    "Mining massive data sets",
+                    "Cryptography",
+                    "Social information & network analysis",
+                    "Deep learning for natural language processing",
+                    "Computer vision",
+                    "OTHERS"*/
+            };
+            //HIDE FILTER
+            LinearLayout rl = (LinearLayout) findViewById(R.id.rl);
+            rl.setVisibility(View.GONE);
+            topicList = new ArrayList<>(Arrays.asList(sub_topic));
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        if (selectedTopic.equals("OTHERS")) {
+            sub_topic = new String[]{
+                   /* "Choose sub-topic...",
+                    "Machine learning",
+                    "Principles and techniques",
+                    "Visual recognition",
+                    "Mining massive data sets",
+                    "Cryptography",
+                    "Social information & network analysis",
+                    "Deep learning for natural language processing",
+                    "Computer vision",
+                    "OTHERS"*/
+            };
+            //HIDE FILTER
+            LinearLayout rl = (LinearLayout) findViewById(R.id.rl);
+            rl.setVisibility(View.GONE);
+            topicList = new ArrayList<>(Arrays.asList(sub_topic));
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
         if (selectedTopic.equals("Business & Economics")) {
             sub_topic = new String[]{
                     "Choose sub-topic...",
@@ -357,7 +472,124 @@ public class FilterResultsActivity extends AppCompatActivity {
             topicList = new ArrayList<>(Arrays.asList(sub_topic));
         }
 
+        /////////////////////////////////////////////////////////////////////////////////
 
+        // Initializing a String Array
+        String[] options = new String[]{
+                "All",
+                "Answered",
+                "Unanswered"
+        };
+
+          // Initializing an ArrayAdapter2
+        final List<String> optionList = new ArrayList<>(Arrays.asList(options));
+        final ArrayAdapter<String> spinnerArrayAdapter2 = new ArrayAdapter<String>(
+                getApplicationContext(), R.layout.spinner_item, optionList) {
+
+            @Override
+            public View getDropDownView(int position, View convertView,
+                                        ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+
+                tv.setTextColor(Color.BLACK);
+                return view;
+            }
+        };
+
+        spinnerArrayAdapter2.setDropDownViewResource(spinner_item);
+        spinner2.setAdapter(spinnerArrayAdapter2);
+        spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                selectedOption = (String) parent.getItemAtPosition(position);
+                // If user change the default selection
+                // First item is disable and it is used for hint
+                // Notify the selected item text
+
+                //LOAD LATEST UNANSWERED QUESTIONS
+                if (selectedOption == "Unanswered") {
+
+                    //DISABLE THE FIRST SPINNER
+                    final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
+                            getApplicationContext(), R.layout.spinner_item, topicList) {
+                        @Override
+                        public boolean isEnabled(int position) {
+                            if (position == 0) {
+                                // Disable the first item from Spinner
+                                // First item will be use for hint
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        }
+
+                        @Override
+                        public View getDropDownView(int position, View convertView,
+                                                    ViewGroup parent) {
+                            View view = super.getDropDownView(position, convertView, parent);
+                            TextView tv = (TextView) view;
+                            if (position == 0) {
+                                // Set the hint text color gray
+                                tv.setTextColor(Color.GRAY);
+                            } else {
+                                tv.setTextColor(Color.BLACK);
+                            }
+                            return view;
+                        }
+                    };
+
+
+                    //LOAD ANSWERED QUESTIONS
+                } else if (selectedOption == "Answered") {
+
+                    //DISABLE THE FIRST SPINNER
+                    final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
+                            getApplicationContext(), R.layout.spinner_item, topicList) {
+                        @Override
+                        public boolean isEnabled(int position) {
+                            if (position == 0) {
+                                // Disable the first item from Spinner
+                                // First item will be use for hint
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        }
+
+                        @Override
+                        public View getDropDownView(int position, View convertView,
+                                                    ViewGroup parent) {
+                            View view = super.getDropDownView(position, convertView, parent);
+                            TextView tv = (TextView) view;
+                            if (position == 0) {
+                                // Set the hint text color gray
+                                tv.setTextColor(Color.GRAY);
+                            } else {
+                                tv.setTextColor(Color.BLACK);
+                            }
+                            return view;
+                        }
+
+
+                    };
+
+                    questionList.clear();
+                    LoadMessage();
+
+                }
+
+
+                }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+            ///////////////////////////////////////////////////////////////////////////////
 
         if (!selectedTopic.equals("")) {
             // Initializing an ArrayAdapter
@@ -399,32 +631,9 @@ public class FilterResultsActivity extends AppCompatActivity {
                     // If user change the default selection
                     // First item is disable and it is used for hint
                     if (position > 0) {
-                        // Notify the selected item text
-                   /* Toast.makeText
-                            (getActivity(), "Selected : " + selectedTopic, Toast.LENGTH_SHORT)
-                            .show();*/
 
-                   /* mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.refresh);
-                    mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                        @Override
-                        public void onRefresh() {
-
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-
-                                    currentPage++;
-                                    questionList.clear();
-                                    topicFilterMessage();
-
-
-                                }
-                            }, 3000);
-
-                        }
-                    });
-                    questionList.clear();
-                    topicFilterMessage();*/
+                        questionList.clear();
+                        topicFilterMessage();
 
                     }
                 }
@@ -454,6 +663,7 @@ public class FilterResultsActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mNoPostTxt = (TextView) findViewById(R.id.noPostTxt);
         tvFilterTopic = (TextView) findViewById(R.id.filter_title);
+        tvEmpty = (TextView) findViewById(R.id.empty);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
 
         tvFilterTopic.setText(selectedTopic);
@@ -484,46 +694,78 @@ public class FilterResultsActivity extends AppCompatActivity {
                     @Override
                     public void run() {
 
-                        itemPos++;
+                        /*itemPos++;
                         currentPage++;
                         questionList.clear();
                         LoadMessage();
-
-
+*/
+                        mSwipeRefreshLayout.setRefreshing(false);
                     }
                 }, 3000);
 
+
+
             }
         });
 
-     /*   mQuestionsList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+    }
+
+    private void topicFilterMessage() {
+
+        Query filterQuery = mDatabase.orderByChild("sub_tag").equalTo(selectedTopic).limitToLast(30);
+        filterQuery.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
+            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                if (!recyclerView.canScrollVertically(1)) {
+                if (dataSnapshot.getValue() == null || dataSnapshot.equals("")) {
 
-                    progressBar.setVisibility(View.VISIBLE);
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-
-                            currentPage++;
-                            itemPos = 0;
-                            LoadMoreMessage();
-                            progressBar.setVisibility(View.GONE);
-
-                        }
-                    }, 3000);
-
-
+                    tvEmpty.setVisibility(View.VISIBLE);
+                    tvEmpty.setText("Sorry! this tag is empty");
                 } else {
 
-                    progressBar.setVisibility(View.GONE);
+                    tvEmpty.setVisibility(View.GONE);
                 }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
-*/
+
+        filterQuery.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                Question message = dataSnapshot.getValue(Question.class);
+
+                questionList.add(message);
+                questionAdapter.notifyDataSetChanged();
+                mSwipeRefreshLayout.setRefreshing(false);
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
     }
 
@@ -595,6 +837,26 @@ public class FilterResultsActivity extends AppCompatActivity {
         isLoading = true;
 
         Query filterQuery = mDatabase.orderByChild("tag").equalTo(selectedTopic).limitToLast(currentPage * TOTAL_ITEMS_TO_LOAD);
+        filterQuery.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.getValue() == null || dataSnapshot.equals("")) {
+
+                    tvEmpty.setVisibility(View.VISIBLE);
+                    tvEmpty.setText("Sorry! this topic is empty");
+                } else {
+
+                    tvEmpty.setVisibility(View.GONE);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         filterQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -620,7 +882,7 @@ public class FilterResultsActivity extends AppCompatActivity {
 
                     questionList.add(message);
                     questionAdapter.notifyDataSetChanged();
-                    questionAdapter.notifyItemInserted(0);
+                    //questionAdapter.notifyItemInserted(0);
 
                     mSwipeRefreshLayout.setRefreshing(false);
 
