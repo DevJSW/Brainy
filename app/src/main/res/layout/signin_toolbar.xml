@@ -8,7 +8,7 @@
 
 
 
-        <com.brainy.brainy.data.MyBoldFont
+        <com.brainy.erevu.data.MyBoldFont
             android:layout_width="match_parent"
             android:textColor="#fff"
             android:gravity="center_horizontal"

@@ -53,7 +53,7 @@
                     android:layout_gravity="center_vertical"
                     android:orientation="vertical">
 
-                    <com.brainy.brainy.data.MyFont
+                    <com.brainy.erevu.data.MyFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/post_name"
@@ -62,21 +62,23 @@
                         android:textStyle="bold"
                         android:text="username"/>
 
-                    <com.brainy.brainy.data.MyFont
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="12dp"
-                        android:layout_marginTop="1dp"
-                        android:singleLine="true"
-                        android:id="@+id/post_date"
-                        android:text="date"/>
+
+                        <com.github.curioustechizen.ago.RelativeTimeTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="12dp"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginTop="1dp"
+                            android:singleLine="true"
+                            android:text="time"
+                            android:id="@+id/post_date" />
 
 
                 </LinearLayout>
 
             </LinearLayout>
 
-            <com.brainy.brainy.data.MyFont
+            <com.brainy.erevu.data.MyFont
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="12dp"
@@ -88,7 +90,7 @@
                 android:textColor="@color/colorAccent"
                 android:layout_marginBottom="10dp"
                 android:text="Title"/>
-            <com.brainy.brainy.data.MyFont
+            <com.brainy.erevu.data.MyFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/post_quiz_body"
@@ -133,7 +135,7 @@
                 android:layout_gravity="left" >
 
 
-                    <com.brainy.brainy.data.MyFont
+                    <com.brainy.erevu.data.MyFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/favouriteCounter"
@@ -142,7 +144,7 @@
                         android:textSize="25dp"
                         android:text="0"/>
 
-                    <com.brainy.brainy.data.MyFont
+                    <com.brainy.erevu.data.MyFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/favourites"
@@ -163,7 +165,7 @@
                 android:layout_weight="1"
                 android:layout_gravity="center" >
 
-                <com.brainy.brainy.data.MyFont
+                <com.brainy.erevu.data.MyFont
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/answersCounter"
@@ -172,7 +174,7 @@
                     android:layout_centerHorizontal="true"
                     android:text="0"/>
 
-                <com.brainy.brainy.data.MyFont
+                <com.brainy.erevu.data.MyFont
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
@@ -194,7 +196,7 @@
                 android:layout_weight="1"
                 android:layout_gravity="right" >
 
-                <com.brainy.brainy.data.MyFont
+                <com.brainy.erevu.data.MyFont
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/viewsCounter"
@@ -203,7 +205,7 @@
                     android:layout_centerHorizontal="true"
                     android:text="0"/>
 
-                <com.brainy.brainy.data.MyFont
+                <com.brainy.erevu.data.MyFont
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/views"

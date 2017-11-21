@@ -19,7 +19,7 @@
         android:id="@+id/open_view"
         android:orientation="vertical">
 
-        <com.brainy.brainy.data.MyFont
+        <com.brainy.erevu.data.MyFont
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="15dp"
@@ -35,14 +35,13 @@
             android:orientation="horizontal">
 
 
-            <com.brainy.brainy.data.MyFont
+            <com.github.curioustechizen.ago.RelativeTimeTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="12dp"
                 android:maxLines="1"
                 android:text="time"
                 android:ellipsize="marquee"
-                app:relative_time_prefix="Last Active "
                 android:id="@+id/toolbar_last_seen_date"/>
 
 

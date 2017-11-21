@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="com.brainy.erevu.activity.PostAnswerActivity">
+
+    <include layout="@layout/write_toolbar"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:layout_scrollFlags="scroll|enterAlways"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        >
+        <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+            android:id="@+id/title"
+                android:layout_margin="10dp">
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.brainy.erevu.data.CustomEditText
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/questionTitleInput"
+                        android:text=""
+                        android:hint="Type your answer"
+                        android:textColorHint="@color/colorPrimary"
+                        android:textColor="@color/colorPrimary"/>
+
+                </android.support.design.widget.TextInputLayout>
+
+            </RelativeLayout>
+
+
+            <com.brainy.erevu.data.MyButton
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:text="Post"
+                android:id="@+id/send_btn"
+                android:layout_alignParentRight="true"
+                android:textColor="#ffff"
+                android:layout_margin="10dp"
+                android:background="@drawable/button_bg"
+                android:layout_alignParentBottom="true"
+                />
+
+    </RelativeLayout>
+
+</RelativeLayout>

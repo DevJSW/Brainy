@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.brainy.brainy.activity.MainActivity">
+    tools:context="com.brainy.erevu.activity.MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
@@ -21,7 +21,8 @@
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay"/>
 
-        <com.brainy.brainy.data.CustomTablayout
+
+        <com.brainy.erevu.data.CustomTablayout
             android:id="@+id/tabs"
             app:tabGravity="fill"
             app:tabMode="fixed"
@@ -29,6 +30,7 @@
             android:layout_height="wrap_content" />
 
     </android.support.design.widget.AppBarLayout>
+
 
     <include layout="@layout/content_main" />
 

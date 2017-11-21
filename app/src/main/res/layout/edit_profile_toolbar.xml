@@ -13,7 +13,7 @@
         android:id="@+id/open_view"
         android:orientation="vertical">
 
-        <com.brainy.brainy.data.MyBoldFont
+        <com.brainy.erevu.data.MyBoldFont
             android:layout_width="wrap_content"
             android:textColor="#fff"
             android:layout_height="wrap_content"

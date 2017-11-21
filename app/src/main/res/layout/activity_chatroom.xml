@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/chat_wallpaper"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.brainy.erevu.activity.ChatroomActivity">
+
+    <include layout="@layout/forum_toolbar"
+        android:id="@+id/mCustomToolbarHash"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.brainy.erevu.data.MyBoldFont
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Empty"
+            android:textSize="17dp"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="15dp"
+            android:id="@+id/noAnsTxt"
+            android:textColor="@color/colorPrimary"/>
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/toolbar"
+            android:layout_above="@+id/typing_bar"
+            android:id="@+id/refresh">
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:id="@+id/Chat_list"
+                >
+
+            </android.support.v7.widget.RecyclerView>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:id="@+id/typing_bar"
+            android:layout_alignParentBottom="true"
+            android:background="#fff">
+
+            <com.brainy.erevu.data.CustomEditText
+                android:id="@+id/input_message"
+                android:layout_width="match_parent"
+                android:layout_height="43dp"
+                android:layout_marginBottom="3dp"
+                android:background="#00ffffff"
+                android:hint="Type a message"
+                android:layout_marginLeft="13dp"
+                android:layout_marginRight="8dp"
+                android:layout_toLeftOf="@+id/sendBtn"
+                android:padding="3dp"
+                android:layout_alignParentBottom="true" />
+
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="35dp"
+                android:id="@+id/quickShot"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/cameraShot"
+                android:visibility="gone"
+                android:layout_marginRight="20dp"
+                android:scaleType="fitXY"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/link"/>
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="31dp"
+                android:id="@+id/cameraShot"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/sendBtn"
+                android:visibility="gone"
+                android:layout_marginRight="18dp"
+                android:scaleType="fitXY"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_gallery_cam"/>
+
+
+            <ImageView
+                android:layout_width="29dp"
+                android:layout_height="29dp"
+                android:layout_centerVertical="true"
+                android:id="@+id/sendBtn"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="18dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_send"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

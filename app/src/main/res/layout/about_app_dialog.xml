@@ -16,7 +16,7 @@
             android:orientation="vertical"
             android:layout_height="wrap_content">
 
-            <com.brainy.brainy.data.MyFont
+            <com.brainy.erevu.data.MyFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorAccent"
@@ -36,7 +36,7 @@
                 android:layout_gravity="center_horizontal"
                 android:src="@drawable/ic_brainy"/>
 
-            <com.brainy.brainy.data.MyFont
+            <com.brainy.erevu.data.MyFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorPrimary"
@@ -44,7 +44,7 @@
                 android:textSize="18dp"
                 android:text="brainy"/>
 
-            <com.brainy.brainy.data.MyFont
+            <com.brainy.erevu.data.MyFont
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="16dp"
@@ -58,7 +58,7 @@
                 android:background="#8b8787"
                 android:layout_above="@+id/liny" />
 
-            <com.brainy.brainy.data.MyFont
+            <com.brainy.erevu.data.MyFont
                 android:id="@+id/cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

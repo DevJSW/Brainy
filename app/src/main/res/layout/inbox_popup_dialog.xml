@@ -18,7 +18,7 @@
             android:layout_margin="10dp"
             android:orientation="horizontal">
 
-            <com.brainy.brainy.data.MyFont
+            <com.brainy.erevu.data.MyFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"

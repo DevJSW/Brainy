@@ -35,7 +35,7 @@
                 android:layout_centerVertical="true"
                 android:src="@drawable/google_icon"/>
 
-            <com.brainy.brainy.data.MyBoldFont
+            <com.brainy.erevu.data.MyBoldFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Sign in with Google"
@@ -75,7 +75,7 @@
                     android:layout_centerVertical="true"
                     android:src="@drawable/fb_icon"/>
 
-                <com.brainy.brainy.data.MyBoldFont
+                <com.brainy.erevu.data.MyBoldFont
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Sign in with Facebook"
@@ -94,7 +94,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp">
 
-            <com.brainy.brainy.data.MyBoldFont
+            <com.brainy.erevu.data.MyBoldFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/or"
@@ -120,7 +120,7 @@
 
         </RelativeLayout>
 
-        <com.brainy.brainy.data.MyButton
+        <com.brainy.erevu.data.MyButton
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/sign_in"

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.brainy.brainy.tabs.AboutProfileTab">
+    tools:context="com.brainy.erevu.tabs.AboutProfileTab">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/relyBio">
 
-                   <com.brainy.brainy.data.MyBoldFont
+                   <com.brainy.erevu.data.MyBoldFont
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:id="@+id/bio"
@@ -39,7 +39,7 @@
                         android:layout_below="@+id/bio"
                         app:cardElevation="1dp">
 
-                        <com.brainy.brainy.data.MyFont
+                        <com.brainy.erevu.data.MyFont
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:lineSpacingExtra="2sp"
@@ -52,7 +52,7 @@
 
         </RelativeLayout>
 
-        <com.brainy.brainy.data.MyBoldFont
+        <com.brainy.erevu.data.MyBoldFont
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Achievements"
@@ -76,7 +76,7 @@
                             android:layout_margin="15dp"
                             android:layout_marginTop="15dp">
 
-                            <com.brainy.brainy.data.MyFont
+                            <com.brainy.erevu.data.MyFont
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/colorPrimary"
@@ -84,7 +84,7 @@
                                 android:text="Points Earned:"
                                 />
 
-                            <com.brainy.brainy.data.MyFont
+                            <com.brainy.erevu.data.MyFont
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/colorAccent"
@@ -102,7 +102,7 @@
                             android:layout_margin="15dp"
                             android:layout_marginBottom="20dp">
 
-                        <com.brainy.brainy.data.MyFont
+                        <com.brainy.erevu.data.MyFont
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/colorPrimary"
@@ -110,7 +110,7 @@
                             android:text="Reputation:"
                             />
 
-                                <com.brainy.brainy.data.MyFont
+                                <com.brainy.erevu.data.MyFont
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:textColor="@color/colorAccent"
@@ -128,7 +128,7 @@
                             android:layout_margin="15dp"
                             android:layout_marginBottom="20dp">
 
-                            <com.brainy.brainy.data.MyFont
+                            <com.brainy.erevu.data.MyFont
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/colorPrimary"
@@ -136,7 +136,7 @@
                                 android:text="Profile views:"
                                 />
 
-                            <com.brainy.brainy.data.MyFont
+                            <com.brainy.erevu.data.MyFont
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/colorAccent"
@@ -154,7 +154,7 @@
                             android:layout_margin="15dp"
                             android:layout_marginBottom="20dp">
 
-                            <com.brainy.brainy.data.MyFont
+                            <com.brainy.erevu.data.MyFont
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/colorPrimary"
@@ -162,7 +162,7 @@
                                 android:text="Questions:"
                                 />
 
-                            <com.brainy.brainy.data.MyFont
+                            <com.brainy.erevu.data.MyFont
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/colorAccent"
@@ -180,7 +180,7 @@
                             android:layout_margin="15dp"
                             android:layout_marginBottom="30dp">
 
-                            <com.brainy.brainy.data.MyFont
+                            <com.brainy.erevu.data.MyFont
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/colorPrimary"
@@ -188,7 +188,7 @@
                                 android:text="Answers:"
                                 />
 
-                            <com.brainy.brainy.data.MyFont
+                            <com.brainy.erevu.data.MyFont
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/colorAccent"

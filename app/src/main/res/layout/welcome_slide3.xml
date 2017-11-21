@@ -17,7 +17,7 @@
             android:layout_marginBottom="20dp"
             android:src="@drawable/slider_feedback_opinion"/>
 
-        <com.brainy.brainy.data.MyBoldFont
+        <com.brainy.erevu.data.MyBoldFont
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="FEEDBACK OPINION"
@@ -25,7 +25,7 @@
             android:textColor="@color/colorAccent"
             android:textStyle="bold" />
 
-        <com.brainy.brainy.data.MyFont
+        <com.brainy.erevu.data.MyFont
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="25dp"

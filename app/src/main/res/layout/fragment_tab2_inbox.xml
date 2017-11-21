@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.brainy.brainy.activity.MainActivity$PlaceholderFragment">
+    tools:context="com.brainy.erevu.activity.MainActivity$PlaceholderFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -23,7 +23,7 @@
             </android.support.v7.widget.RecyclerView>
 
 
-        <com.brainy.brainy.data.MyBoldFont
+        <com.brainy.erevu.data.MyBoldFont
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Your inbox is empty.
@@ -54,7 +54,7 @@
         android:visibility="gone" />
 
 
-        <com.brainy.brainy.data.MyFont
+        <com.brainy.erevu.data.MyFont
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="All your notifications when someone answers or comments on your posts will be collected here!"
@@ -67,7 +67,7 @@
             android:layout_marginTop="10dp"
             android:id="@+id/noPostTxt"
             android:textColor="@color/colorPrimary"/>
-        <com.brainy.brainy.data.MyButton
+        <com.brainy.erevu.data.MyButton
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:padding="5dp"

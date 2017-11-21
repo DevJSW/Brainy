@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context="com.brainy.brainy.tabs.tab1Questions">
+    tools:context="com.brainy.erevu.tabs.tab1Questions">
 
     <include layout="@layout/filter_result_toolbar"
         android:id="@+id/toolbar"
@@ -57,7 +57,7 @@
         android:visibility="gone"
         android:layout_height="match_parent"/>
 
-    <com.brainy.brainy.data.MyFont
+    <com.brainy.erevu.data.MyFont
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/colorAccent"

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.brainy.brainy.activity.ForgotPassActivity">
+    tools:context="com.brainy.erevu.activity.ForgotPassActivity">
 
     <include layout="@layout/forgot_pass_toolbar"
         android:id="@+id/toolbar"
@@ -22,7 +22,7 @@
         android:orientation="vertical"
         android:padding="@dimen/activity_horizontal_margin">
 
-        <com.brainy.brainy.data.MyBoldFont
+        <com.brainy.erevu.data.MyBoldFont
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -31,7 +31,7 @@
             android:textColor="@color/colorAccent"
             android:textSize="20dp" />
 
-        <com.brainy.brainy.data.MyFont
+        <com.brainy.erevu.data.MyFont
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
@@ -45,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.brainy.brainy.data.CustomEditText
+            <com.brainy.erevu.data.CustomEditText
                 android:id="@+id/email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -59,7 +59,7 @@
 
         <!-- Login Button -->
 
-        <com.brainy.brainy.data.MyButton
+        <com.brainy.erevu.data.MyButton
             android:id="@+id/btn_reset_password"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -68,7 +68,7 @@
             android:text="Reset"
             android:textColor="#ffffff" />
 
-        <com.brainy.brainy.data.MyButton
+        <com.brainy.erevu.data.MyButton
             android:id="@+id/btn_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

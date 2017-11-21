@@ -20,7 +20,7 @@
             android:orientation="vertical">
 
 
-            <com.brainy.brainy.data.MyFont
+            <com.brainy.erevu.data.MyFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -46,7 +46,7 @@
                 android:id="@+id/downvote"
                 android:src="@drawable/down_vote_line"/>
 
-            <com.brainy.brainy.data.MyFont
+            <com.brainy.erevu.data.MyFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -74,7 +74,7 @@
                 android:layout_marginRight="5dp"
                 android:orientation="vertical">
 
-                <com.brainy.brainy.data.MyFont
+                <com.github.curioustechizen.ago.RelativeTimeTextView
                     android:id="@+id/post_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
                     android:textColor="#fff"
                     android:textSize="9dp" />
 
-                <com.brainy.brainy.data.MyBoldFont
+                <com.brainy.erevu.data.MyBoldFont
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="title"
@@ -98,7 +98,7 @@
                     android:textColor="@color/colorAccent"/>
 
 
-                <com.brainy.brainy.data.MyFont
+                <com.brainy.erevu.data.MyFont
                     android:id="@+id/posted_answer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

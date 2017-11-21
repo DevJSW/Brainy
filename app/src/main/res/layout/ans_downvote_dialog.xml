@@ -21,7 +21,7 @@
             android:layout_marginRight="10dp"
             android:layout_gravity="center_horizontal">
 
-            <com.brainy.brainy.data.MyBoldFont
+            <com.brainy.erevu.data.MyBoldFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#ef0f1b"
@@ -45,7 +45,7 @@
             android:layout_marginRight="10dp"
             android:layout_gravity="center_horizontal">
 
-            <com.brainy.brainy.data.MyFont
+            <com.brainy.erevu.data.MyFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16dp"
@@ -74,7 +74,7 @@
         <!-- Link to Login Screen -->
 
 
-        <com.brainy.brainy.data.MyButton
+        <com.brainy.erevu.data.MyButton
             android:id="@+id/cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -92,7 +92,7 @@
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"/>
 
-        <com.brainy.brainy.data.MyButton
+        <com.brainy.erevu.data.MyButton
             android:id="@+id/create"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

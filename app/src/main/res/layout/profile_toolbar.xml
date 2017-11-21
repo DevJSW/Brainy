@@ -6,7 +6,7 @@
     android:background="@color/colorPrimary"
     app:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-        <com.brainy.brainy.data.MyBoldFont
+        <com.brainy.erevu.data.MyBoldFont
             android:layout_width="match_parent"
             android:textColor="#fff"
             android:layout_height="wrap_content"

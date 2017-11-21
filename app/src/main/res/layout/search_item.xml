@@ -7,7 +7,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
-   <com.brainy.brainy.data.MyBoldFont
+   <com.brainy.erevu.data.MyBoldFont
        android:layout_width="wrap_content"
        android:layout_height="wrap_content"
        android:text="topic"
@@ -21,7 +21,7 @@
        android:textColor="@color/colorAccent"
        android:id="@+id/post_quiz_title"/>
 
-    <com.brainy.brainy.data.MyFont
+    <com.brainy.erevu.data.MyFont
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="topic"

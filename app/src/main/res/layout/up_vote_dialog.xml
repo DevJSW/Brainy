@@ -21,7 +21,7 @@
             android:layout_marginRight="10dp"
             android:layout_gravity="center_horizontal">
 
-            <com.brainy.brainy.data.MyBoldFont
+            <com.brainy.erevu.data.MyBoldFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="#529fe2"
@@ -45,7 +45,7 @@
             android:layout_marginRight="10dp"
             android:layout_gravity="center_horizontal">
 
-            <com.brainy.brainy.data.MyFont
+            <com.brainy.erevu.data.MyFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16dp"

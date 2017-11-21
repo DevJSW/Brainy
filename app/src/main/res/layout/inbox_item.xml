@@ -45,7 +45,7 @@
                 android:paddingTop="1dp"
                 android:orientation="vertical">
 -->
-                <com.brainy.brainy.data.MyFont
+                <com.brainy.erevu.data.MyFont
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Name"
@@ -86,19 +86,19 @@
                                 android:textSize="9dp"
                                />-->
 
-                            <com.brainy.brainy.data.MyFont
+                            <com.github.curioustechizen.ago.RelativeTimeTextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginLeft="2dp"
                                 android:text="date"
                                 android:layout_marginRight="5dp"
                                 android:layout_alignParentRight="true"
-                                android:textSize="9dp"
+                                android:textSize="11dp"
                                 android:layout_gravity="right"
                                 android:id="@+id/post_date" />
                         </LinearLayout>
 
-                        <com.brainy.brainy.data.MyFont
+                        <com.brainy.erevu.data.MyFont
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/posted_reason"
@@ -106,7 +106,7 @@
                             android:layout_marginLeft="5dp"
                             android:textSize="11dp"
                             android:text="reason"/>
-                        <com.brainy.brainy.data.MyFont
+                        <com.brainy.erevu.data.MyFont
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceMedium"
@@ -178,7 +178,7 @@
                             android:layout_marginBottom="2dp"
                             android:src="@drawable/placeholder_image"/>
 
-                        <com.brainy.brainy.data.MyFont
+                        <com.brainy.erevu.data.MyFont
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"

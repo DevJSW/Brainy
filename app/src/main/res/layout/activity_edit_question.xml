@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.brainy.brainy.activity.ProfileEditActivity">
+    tools:context="com.brainy.erevu.activity.ProfileEditActivity">
 
     <include layout="@layout/edit_quiz_toolbar"
         android:id="@+id/toolbar"
@@ -41,7 +41,7 @@
                 android:layout_marginBottom="5dp"
                 android:layout_gravity="center_horizontal">
 
-                <com.brainy.brainy.data.CustomEditText
+                <com.brainy.erevu.data.CustomEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/quiz_title"
@@ -61,7 +61,7 @@
             android:layout_marginRight="25dp"
             android:layout_gravity="center_horizontal">
 
-            <com.brainy.brainy.data.CustomEditText
+            <com.brainy.erevu.data.CustomEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/quiz_body"
@@ -75,7 +75,7 @@
     </LinearLayout>
 
 
-    <com.brainy.brainy.data.MyButton
+    <com.brainy.erevu.data.MyButton
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:text="Save Changes"

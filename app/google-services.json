@@ -1,43 +1,27 @@
 {
   "project_info": {
-    "project_number": "965079808395",
-    "firebase_url": "https://brainy-4be07.firebaseio.com",
-    "project_id": "brainy-4be07",
-    "storage_bucket": "brainy-4be07.appspot.com"
+    "project_number": "1059752600529",
+    "firebase_url": "https://erevu-d7b6e.firebaseio.com",
+    "project_id": "erevu-d7b6e",
+    "storage_bucket": "erevu-d7b6e.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:965079808395:android:e214ca132f32b33f",
+        "mobilesdk_app_id": "1:1059752600529:android:6beeeb5d46a1c14e",
         "android_client_info": {
-          "package_name": "com.brainy.brainy"
+          "package_name": "com.erevu.erevu"
         }
       },
       "oauth_client": [
         {
-          "client_id": "965079808395-3io08tq0s7ihnpg0j2op952dlger0cd0.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.brainy.brainy",
-            "certificate_hash": "5e6e6ef7ca35dfeebbe11997f7965a1b59379b51"
-          }
-        },
-        {
-          "client_id": "965079808395-p2hat8eueto2v023li5kvvu7khsb6bcc.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.brainy.brainy",
-            "certificate_hash": "a19f1b15f4f8f50c5dd85dfceb0488d32f939bcb"
-          }
-        },
-        {
-          "client_id": "965079808395-lgc5sqhdqhiuom6jrjh55etvuqhk5c2b.apps.googleusercontent.com",
+          "client_id": "1059752600529-ugiau897fobn70pgrtkaph1igns26gli.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBpuP8-thRPNAbz_BaZQiocsLap7Qhn7C8"
+          "current_key": "AIzaSyCf211l7AxbtzDohS5wBt8xAsIiyUyY62M"
         }
       ],
       "services": {
@@ -45,13 +29,8 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "965079808395-lgc5sqhdqhiuom6jrjh55etvuqhk5c2b.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2

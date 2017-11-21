@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_margin="8dp"
-    android:background="@drawable/button_bg">
+    android:background="@drawable/button_bg_dialogs">
 
     <LinearLayout
         android:layout_width="match_parent"

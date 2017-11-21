@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context="com.brainy.brainy.activity.MainActivity">
+    tools:context="com.brainy.erevu.activity.MainActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -47,7 +47,7 @@
                     android:layout_toRightOf="@+id/post_image"
                     android:orientation="vertical">
 
-                    <com.brainy.brainy.data.MyFont
+                    <com.brainy.erevu.data.MyFont
                         android:id="@+id/meBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -98,7 +98,7 @@
                     android:layout_toRightOf="@+id/post_image"
                     android:orientation="vertical">
 
-                    <com.brainy.brainy.data.MyFont
+                    <com.brainy.erevu.data.MyFont
                         android:id="@+id/settingsBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -148,7 +148,7 @@
                     android:layout_toRightOf="@+id/post_image"
                     android:orientation="vertical">
 
-                    <com.brainy.brainy.data.MyFont
+                    <com.brainy.erevu.data.MyFont
                         android:id="@+id/notificationBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -188,7 +188,7 @@
                     android:layout_toRightOf="@+id/post_image"
                     android:orientation="vertical">
 
-                    <com.brainy.brainy.data.MyFont
+                    <com.brainy.erevu.data.MyFont
                         android:id="@+id/shareBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -241,7 +241,7 @@
                     android:layout_toRightOf="@+id/post_image2"
                     android:orientation="vertical">
 
-                    <com.brainy.brainy.data.MyFont
+                    <com.brainy.erevu.data.MyFont
                         android:id="@+id/privacyBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp">
 
-            <com.brainy.brainy.data.CustomEditText
+            <com.brainy.erevu.data.CustomEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:hint="Search a question..."

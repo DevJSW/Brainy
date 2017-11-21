@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Brainy</string>
+    <string name="app_name">Erevu</string>
     <string name="facebook_app_id">182331315660749</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
@@ -50,13 +50,13 @@
     <string name="forgot_password_msg">We just need your registered Email Id to send you password reset instructions.</string>
 
     <string name="slide_1_title">Q &amp; A PLATFORM</string>
-    <string name="slide_1_desc">Brainy, We are a question and answer platform. users gain points when there answers/question get voted up. Remember, users with high points enjoy more privileges on the platform. </string>
+    <string name="slide_1_desc">Erevu, We are a question and answer platform. users gain points when there answers/question get voted up. Remember, users with high points enjoy more privileges on the platform. </string>
 
     <string name="slide_2_title">INFORMATION SHARING</string>
-    <string name="slide_2_desc">Brainy lets you get the satisfaction of helping other people with useful information and exchanging ideas. Remember, the more questions you answer the more votes you are likely to earn</string>
+    <string name="slide_2_desc">Erevu lets you get the satisfaction of helping other people with useful information and exchanging ideas. Remember, the more questions you answer the more votes you are likely to earn</string>
 
     <string name="slide_3_title">FEEDBACK OPINION</string>
-    <string name="slide_3_desc">Brainy discussion forums lets you get more feedback on a specific subject through group chat and push notifications in your inbox when someone answers a question you posted.</string>
+    <string name="slide_3_desc">Erevu discussion forums lets you get more feedback on a specific subject through group chat and push notifications in your inbox when someone answers a question you posted.</string>
 
     <string name="slide_4_title">FIND ANSWER</string>
     <string name="slide_4_desc">You can easly find an answer by searching for it because chances of it being asked before is high. Remember to vote up a question/answer if you find it useful! &amp; have fun gaining knowledge.</string>
@@ -64,4 +64,11 @@
     <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
     <string name="play_again">Play Again</string>
     <string name="title_activity_view_user_profile">ViewUserProfileActivity</string>
+    <string name="hint_email">New Email</string>
+    <string name="hint_new_email">New Password</string>
+    <string name="new_pass">New Password</string>
+    <string name="btn_change">Change Email</string>
+    <string name="btn_change_pass">Change Password</string>
+    <string name="btn_send">Send Password Reset Email</string>
+    <string name="btn_remove">Remove User</string>
 </resources>

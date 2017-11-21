@@ -53,21 +53,22 @@
                     android:layout_marginRight="5dp"
                     android:orientation="vertical">
 
-                    <com.brainy.brainy.data.MyFont
+                    <com.brainy.erevu.data.MyFont
                         android:id="@+id/post_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="username"
                         android:textColor="#59a7e7"
-                        android:layout_marginTop="3dp"
-                        android:textSize="11dp"
+                        android:layout_marginTop="8dp"
+                        android:textSize="13dp"
                         android:textStyle="bold" />
 
-                    <com.brainy.brainy.data.MyFont
+                    <com.brainy.erevu.data.MyFont
                         android:id="@+id/post_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="1dp"
+                        android:visibility="gone"
                         android:text="date"
                         android:textColor="@color/colorAccent"
                         android:textSize="9dp" />
@@ -79,7 +80,7 @@
 
         </LinearLayout>
 
-            <com.brainy.brainy.data.MyFont
+            <com.brainy.erevu.data.MyFont
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
@@ -93,7 +94,7 @@
                 android:layout_marginBottom="5dp"
                 android:text="Title"/>
 
-            <com.brainy.brainy.data.MyFont
+            <com.brainy.erevu.data.MyFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/post_quiz_body"

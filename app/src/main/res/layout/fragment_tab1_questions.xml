@@ -5,7 +5,7 @@
     android:id="@+id/mView"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    tools:context="com.brainy.brainy.tabs.tab1Questions">
+    tools:context="com.brainy.erevu.tabs.tab1Questions">
 
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"

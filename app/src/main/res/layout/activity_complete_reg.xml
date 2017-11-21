@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.brainy.brainy.activity.CompleteRegActivity">
+    tools:context="com.brainy.erevu.activity.CompleteRegActivity">
 
     <include layout="@layout/complete_reg_toolbar"
         android:id="@+id/toolbar"
@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.brainy.brainy.data.CustomEditText
+            <com.brainy.erevu.data.CustomEditText
                 android:id="@+id/name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
 
         </android.support.design.widget.TextInputLayout>
 
-        <com.brainy.brainy.data.MyButton
+        <com.brainy.erevu.data.MyButton
             android:id="@+id/btn_login"
             style="?android:textAppearanceSmall"
             android:layout_width="match_parent"

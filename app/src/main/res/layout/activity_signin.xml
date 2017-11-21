@@ -23,7 +23,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <com.brainy.brainy.data.CustomEditText
+                <com.brainy.erevu.data.CustomEditText
                     android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp">
 
-                <com.brainy.brainy.data.CustomEditText
+                <com.brainy.erevu.data.CustomEditText
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -56,7 +56,7 @@
 
             </android.support.design.widget.TextInputLayout>
 
-            <com.brainy.brainy.data.MyButton
+            <com.brainy.erevu.data.MyButton
                 android:id="@+id/btn_login"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
@@ -78,7 +78,7 @@
 
                 <!-- Link to Login Screen -->
 
-                <com.brainy.brainy.data.MyButton
+                <com.brainy.erevu.data.MyButton
                     android:id="@+id/btn_signup"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -90,7 +90,7 @@
                     android:layout_weight="1"
                     android:layout_gravity="left" />
 
-                <com.brainy.brainy.data.MyButton
+                <com.brainy.erevu.data.MyButton
                     android:id="@+id/btn_reset_password"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
