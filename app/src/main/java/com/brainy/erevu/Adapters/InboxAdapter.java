@@ -119,11 +119,7 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.QuestionView
             post_name.setText(sender_name);
         }
 
-        public void setQuestion_body(String question_body) {
 
-            TextView post_body = (TextView) mView.findViewById(R.id.post_quiz_body);
-            post_body.setText(question_body);
-        }
 
         public void setQuestion_title(String question_title) {
 

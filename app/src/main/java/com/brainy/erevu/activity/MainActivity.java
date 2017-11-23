@@ -68,6 +68,7 @@ import com.brainy.erevu.data.CustomTypefaceSpan;
 import com.brainy.erevu.tabs.tab1Questions;
 import com.brainy.erevu.tabs.tab2Inbox;
 import com.brainy.erevu.tabs.tab3Achievements;
+import com.brainy.erevu.tabs.tab3Inbox;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
@@ -1455,7 +1456,7 @@ public class MainActivity extends AppCompatActivity
                     tab1Questions tab1 = new  tab1Questions();
                     return tab1;
                 case 1:
-                    tab2Inbox tab2 = new tab2Inbox();
+                    tab3Inbox tab2 = new tab3Inbox();
                     return tab2;
                 case 2:
                     tab3Achievements tab3 = new tab3Achievements();

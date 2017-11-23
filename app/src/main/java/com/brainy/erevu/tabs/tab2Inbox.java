@@ -1,13 +1,21 @@
 package com.brainy.erevu.tabs;
 
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +24,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -23,8 +33,13 @@ import android.widget.Toast;
 
 import com.brainy.erevu.Adapters.InboxAdapter;
 import com.brainy.erevu.R;
+import com.brainy.erevu.activity.ReadQuestionActivity;
 import com.brainy.erevu.activity.SigninActivity;
 import com.brainy.erevu.data.Answer;
+import com.brainy.erevu.data.Question;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
@@ -33,6 +48,8 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -64,6 +81,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 
 /**
  * A fragment with a Google +1 button.
@@ -78,7 +97,7 @@ public class tab2Inbox extends Fragment {
     Uri personPhoto = null;
     URL personPhoto2 = null;
     private Button signIn;
-    private DatabaseReference mDatabaseUserInbox;
+    private DatabaseReference mDatabaseUserInbox, mDatabase;
     private static final String TAG = "tab2Inbox";
     private GoogleApiClient mGoogleApiClient;
     private static int RC_SIGN_IN = 1;
@@ -262,7 +281,6 @@ public class tab2Inbox extends Fragment {
     }
 
     private void LoadMessage() {
-        questionList.clear();
         Query quizQuery = mDatabaseUserInbox.child(auth.getCurrentUser().getUid()).limitToLast(currentPage * TOTAL_ITEMS_TO_LOAD);
 
         quizQuery.addChildEventListener(new ChildEventListener() {
@@ -270,14 +288,10 @@ public class tab2Inbox extends Fragment {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
                 Answer message = dataSnapshot.getValue(Answer.class);
-
                 questionList.add(message);
                 inboxAdapter.notifyDataSetChanged();
                 inboxAdapter.notifyItemInserted(0);
 
-
-
-              /*  mQuestionsList.scrollToPosition(questionList.size()-1);*/
 
             }
 
@@ -304,7 +318,258 @@ public class tab2Inbox extends Fragment {
 
     }
 
+   /* public static class LetterViewHolder extends RecyclerView.ViewHolder {
 
+        View mView;
+
+        public TextView posted_reason;
+        public TextView post_name;
+        public TextView post_answer;
+        public RelativeTimeTextView post_date;
+        public ImageView civ;
+        public TextView viewCounter, answersCounter, favouritesCounter;
+        public DatabaseReference  mDatabase;
+        public  FirebaseAuth mAuth;
+
+        RelativeLayout answer_rely;
+
+        public LetterViewHolder(View itemView) {
+            super(itemView);
+
+            mView = itemView;
+            posted_reason = (TextView) itemView.findViewById(R.id.posted_reason);
+            civ = (CircleImageView) itemView.findViewById(R.id.sender_image);
+            post_answer = (TextView) itemView.findViewById(R.id.posted_answer);
+            post_name = (TextView) itemView.findViewById(R.id.post_name);
+            post_date = (RelativeTimeTextView) itemView.findViewById(R.id.post_date);
+            //Typeface custom_font = Typeface.createFromAsset(ctx.getAssets(), "fonts/Aller_Rg.ttf");
+           // post_date.setTypeface(custom_font);
+
+            mAuth= FirebaseAuth.getInstance();
+
+            mDatabase = FirebaseDatabase.getInstance().getReference().child("Users_inbox").child(mAuth.getCurrentUser().getUid());
+            mDatabase.keepSynced(true);
+            viewCounter = (TextView) mView.findViewById(R.id.viewsCounter);
+            answersCounter = (TextView) mView.findViewById(R.id.answersCounter);
+            favouritesCounter = (TextView) mView.findViewById(R.id.favouriteCounter);
+            answer_rely = (RelativeLayout) mView.findViewById(R.id.anser_rely);
+
+        }
+
+        public void setPosted_date(String posted_date) {
+
+            RelativeTimeTextView post_date = (RelativeTimeTextView) mView.findViewById(R.id.post_date);
+            post_date.setReferenceTime(Long.parseLong(String.valueOf(posted_date)));
+        }
+
+        public void setSender_name(String sender_name) {
+
+            TextView post_name = (TextView) mView.findViewById(R.id.post_name);
+            post_name.setText(sender_name);
+        }
+
+        public void setQuestion_body(String question_body) {
+
+            TextView post_body = (TextView) mView.findViewById(R.id.post_quiz_body);
+            post_body.setText(question_body);
+        }
+
+       *//* public void setQuestion_title(String question_title) {
+
+            TextView post_title = (TextView) mView.findViewById(R.id.post_quiz_title);
+            post_title.setText(question_title);
+        }
+*//*
+        public void setSender_image(final Context ctx, final String sender_image) {
+
+            final CircleImageView civ = (CircleImageView) mView.findViewById(R.id.post_image);
+
+            Glide.with(ctx)
+                    .load(sender_image).asBitmap()
+                    .placeholder(R.drawable.placeholder_image)
+                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                    .centerCrop()
+                    .into(new BitmapImageViewTarget(civ) {
+                        @Override
+                        protected void setResource(Bitmap resource) {
+                            RoundedBitmapDrawable circularBitmapDrawable =
+                                    RoundedBitmapDrawableFactory.create(ctx.getResources(), resource);
+                            circularBitmapDrawable.setCircular(true);
+                            civ.setImageDrawable(circularBitmapDrawable);
+                        }
+                    });
+        }
+
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        if (auth.getCurrentUser() != null) {
+            FirebaseRecyclerAdapter<Answer, tab2Inbox.LetterViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Answer, tab2Inbox.LetterViewHolder>(
+
+                    Answer.class,
+                    R.layout.inbox_item,
+                    tab2Inbox.LetterViewHolder.class,
+                    mDatabaseUserInbox.child(auth.getCurrentUser().getUid())
+
+
+            ) {
+                @Override
+                protected void populateViewHolder(final tab2Inbox.LetterViewHolder viewHolder, final Answer model, int position) {
+
+                    final String answer_key = getRef(position).getKey();
+                    auth= FirebaseAuth.getInstance();
+
+
+                   // viewHolder.posted_reason.setText(c.getPosted_reason());
+                    viewHolder.setSender_name(model.getSender_name());
+                   // viewHolder.setQuestion_title(model.getPosted_quiz_title());
+                    viewHolder.setSender_image(getContext(),model.getSender_image());
+                   *//* viewHolder.post_answer.setText(c.getPosted_answer());
+                    viewHolder.post_name.setText(c.getSender_name());*//*
+                    //viewHolder.post_date.setReferenceTime(Long.parseLong(String.valueOf(c.getPosted_date())));
+
+                    mDatabase.child(answer_key).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Boolean read_status = (Boolean) dataSnapshot.child("read").getValue();
+
+                            if (read_status.equals(true) ) {
+
+                                viewHolder.post_answer.setTextColor(Color.parseColor("#ABABAB"));
+
+                            } else {
+
+                                viewHolder.post_answer.setTextColor(Color.BLACK);
+                            }
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
+
+                    viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            mDatabase.child(answer_key).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    String quiz_key = dataSnapshot.child("question_key").getValue().toString();
+
+                                    //MARK MESSAGE AS READ ON DB
+                                    mDatabase.child(answer_key).child("read").setValue(true);
+
+                                    Intent openRead = new Intent(getActivity(), ReadQuestionActivity.class);
+                                    openRead.putExtra("question_id", quiz_key );
+                                    startActivity(openRead);
+
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+
+                        }
+                    });
+
+                    viewHolder.mView.setOnLongClickListener(new View.OnLongClickListener() {
+
+                        @Override
+                        public boolean onLongClick(View v) {
+
+
+                            // custom dialog
+                            final Dialog dialog = new Dialog(getActivity());
+                            dialog.setContentView(R.layout.inbox_popup_dialog);
+                            dialog.setTitle("Inbox Options");
+
+                            LinearLayout deleteLiny = (LinearLayout) dialog.findViewById(R.id.deleteLiny);
+                            deleteLiny.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    AlertDialog diaBox = AskOption();
+                                    diaBox.show();
+                                    dialog.dismiss();
+                                }
+                            });
+
+
+                            // if button is clicked, close the custom dialog
+
+                            dialog.show();
+                            return false;
+                        }
+
+                        private AlertDialog AskOption()
+                        {
+
+                            AlertDialog myQuittingDialogBox =new AlertDialog.Builder(getActivity())
+                                    //set message, title, and icon
+                                    .setTitle("Delete Alert!")
+                                    .setMessage("Are you sure you want to remove this message from your inbox!")
+
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                            //your deleting code
+
+                                            mDatabase.child(answer_key).removeValue();
+                                            dialog.dismiss();
+                                            Toast.makeText(getActivity(), "Message deleted!",Toast.LENGTH_SHORT).show();
+                                        }
+
+                                    })
+
+
+                                    .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                            dialog.dismiss();
+
+                                        }
+                                    })
+                                    .create();
+                            return myQuittingDialogBox;
+
+                        }
+
+                    });
+
+                   *//* Glide.with(getActivity())
+                            .load(c.getSender_image()).asBitmap()
+                            .placeholder(R.drawable.placeholder_image)
+                            .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                            .centerCrop()
+                            .into(new BitmapImageViewTarget(holder.civ) {
+                                @Override
+                                protected void setResource(Bitmap resource) {
+                                    RoundedBitmapDrawable circularBitmapDrawable =
+                                            RoundedBitmapDrawableFactory.create(ctx.getResources(), resource);
+                                    circularBitmapDrawable.setCircular(true);
+                                    holder.civ.setImageDrawable(circularBitmapDrawable);
+                                }
+                            });*//*
+
+                }
+
+
+            };
+
+            mInboxList.setAdapter(firebaseRecyclerAdapter);
+
+        }
+
+    }
+*/
     private void initSignIn() {
 
         signIn.setOnClickListener(new View.OnClickListener() {
