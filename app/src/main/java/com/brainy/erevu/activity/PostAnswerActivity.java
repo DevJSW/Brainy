@@ -93,9 +93,13 @@ public class PostAnswerActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                city = dataSnapshot.child("city").getValue().toString();
-                state = dataSnapshot.child("state").getValue().toString();
-                country = dataSnapshot.child("country").getValue().toString();
+                if (dataSnapshot.hasChild("city")) {
+                    city = dataSnapshot.child("city").getValue().toString();
+                } else if (dataSnapshot.hasChild("state")) {
+                    state = dataSnapshot.child("state").getValue().toString();
+                } if (dataSnapshot.hasChild("country")) {
+                    country = dataSnapshot.child("country").getValue().toString();
+                }
 
             }
 
@@ -170,8 +174,7 @@ public class PostAnswerActivity extends AppCompatActivity {
                             mapAns.put("state", state);
                             newPostAns.setValue(mapAns);
 
-
-                            //SEND ANSWER TO USEERS ANSWERS IN DATABASE
+                            //SEND ANSWER TO USERS ANSWERS IN DATABASE
                             newPost2.child("posted_answer").setValue(answer);
                             newPost2.child("sender_image").setValue(dataSnapshot.child("user_image").getValue());
                             newPost2.child("posted_date").setValue(System.currentTimeMillis());
@@ -204,7 +207,6 @@ public class PostAnswerActivity extends AppCompatActivity {
 
         }
         if (!TextUtils.isEmpty(answer)) {
-
 
             mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                 @Override

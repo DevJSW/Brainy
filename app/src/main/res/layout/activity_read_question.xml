@@ -202,13 +202,40 @@
                     android:id="@+id/forum"
                     android:layout_weight="1">
 
-                    <ImageView
-                        android:layout_width="30dp"
+                    <RelativeLayout
+                        android:layout_width="31dp"
                         android:layout_height="27dp"
-                        android:scaleType="fitXY"
+                        android:id="@+id/rely"
                         android:layout_above="@+id/forum_img"
+                        android:gravity="center_horizontal"
                         android:layout_centerHorizontal="true"
-                        android:src="@drawable/if_chat"/>
+                        android:orientation="vertical">
+
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="27dp"
+                            android:id="@+id/userimg"
+                            android:src="@drawable/if_chat"
+                            android:scaleType="fitXY"
+                            android:layout_centerHorizontal="true"
+                            android:layout_gravity="center_horizontal" />
+
+                        <com.brainy.erevu.data.MyFont
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:id="@+id/forumCount"
+                            android:visibility="gone"
+                            android:text="0"
+                            android:textSize="11dp"
+                            android:gravity="center_horizontal"
+                            android:textColor="#fff"
+                            android:background="@drawable/erevu_bg"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignParentTop="true"/>
+
+
+                    </RelativeLayout>
+
                     <com.brainy.erevu.data.MyFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

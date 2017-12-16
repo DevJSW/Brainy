@@ -263,6 +263,7 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
             if (QuizKey != null) {
                 mDatabaseVotes
                         .child(QuizKey)
+                        .child(answer_key)
                         .child("up_votes")
                         .addValueEventListener(new ValueEventListener() {
                             @Override
@@ -284,6 +285,7 @@ public class AnswersAdapter extends RecyclerView.Adapter<AnswersAdapter.AnswersV
             if (QuizKey != null) {
                 mDatabaseVotes
                         .child(QuizKey)
+                        .child(answer_key)
                         .child("down_votes")
                         .addValueEventListener(new ValueEventListener() {
                             @Override

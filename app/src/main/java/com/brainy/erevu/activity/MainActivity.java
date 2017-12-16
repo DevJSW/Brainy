@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity
     String selectedTopic = null;
     private ViewPager mViewPager;
     private FloatingActionButton fab;
-    private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseUsersQuestions, mDatabaseInboxUsers, mDatabaseUsersAns;
+    private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseUsersQuestions, mDatabaseInboxUsers, mDatabaseUsersAns, mDatabase, mDatabaseForumNotifications;
     Context mContext;
     private FirebaseAuth auth;
 
@@ -184,6 +184,8 @@ public class MainActivity extends AppCompatActivity
 
         auth = FirebaseAuth.getInstance();
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
+        mDatabaseForumNotifications = FirebaseDatabase.getInstance().getReference().child("Forum_notifications");
         mDatabaseUsers.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -340,6 +342,8 @@ public class MainActivity extends AppCompatActivity
 
                 }
             });
+        } else {
+
         }
 
     }
@@ -378,7 +382,10 @@ public class MainActivity extends AppCompatActivity
                         .setAction("SIGN IN", new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                showSignInDialog();
+
+                                Intent openRead = new Intent(MainActivity.this, SigninActivity.class);
+                                startActivity(openRead);
+                                //showSignInDialog();
                             }
                         });
 
@@ -386,8 +393,27 @@ public class MainActivity extends AppCompatActivity
             }
         } else if (id == R.id.nav_settings) {
 
-            Intent openRead = new Intent(MainActivity.this, SettingsActivity.class);
-            startActivity(openRead);
+            if (auth.getCurrentUser() != null) {
+                Intent openRead = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(openRead);
+            } else {
+
+                Snackbar snackbar = Snackbar
+                        .make(getWindow().getDecorView().getRootView(), "You need to be sign in!", Snackbar.LENGTH_LONG)
+                        .setAction("SIGN IN", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                                Intent openRead = new Intent(MainActivity.this, SigninActivity.class);
+                                startActivity(openRead);
+                                //showSignInDialog();
+                            }
+                        });
+
+                snackbar.show();
+            }
+
+
 
         }/* else if (id == R.id.nav_explore) {
 
@@ -621,7 +647,8 @@ public class MainActivity extends AppCompatActivity
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Long users_points = (Long) dataSnapshot.child("points_earned").getValue();
                     String users_pints = (String) dataSnapshot.child("bio").getValue();
-                    String user_reputation = dataSnapshot.child("reputation").getValue().toString();
+//
+//                    String user_reputation = dataSnapshot.child("reputation").getValue().toString();
 
 
                     if (users_points < 100) {
@@ -639,11 +666,11 @@ public class MainActivity extends AppCompatActivity
 
                     }  else if (users_points > 1000 && users_points < 1999) {
 
-                        mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Brainy");
+                        mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Erevu");
 
                     } else if (users_points > 2000 ) {
 
-                        mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Super Brainy");
+                        mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Super Erevu");
 
                     }
                 }
@@ -660,6 +687,7 @@ public class MainActivity extends AppCompatActivity
 
     private void checkForNotifications() {
 
+        // inbox notifications
         mDatabaseInboxUsers.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -761,6 +789,76 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
+
+       /* //FORUM NOTIFICATION
+        mDatabaseForumNotifications.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild(auth.getCurrentUser().getUid())) {
+                    mDatabaseForumNotifications.child(auth.getCurrentUser().getUid()).addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                            String name = (String) dataSnapshot.child("sender_name").getValue();
+                            String question_key = (String) dataSnapshot.child("question_key").getValue();
+                            String sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
+
+                                Context context = getApplicationContext();
+                                Intent intent = new Intent(context, ChatroomActivity.class);
+                                //delete notification
+                                mDatabaseForumNotifications.child(auth.getCurrentUser().getUid()).removeValue();
+                                intent.putExtra("question_id", question_key);
+                                PendingIntent pIntent = PendingIntent.getActivity(MainActivity.this, 0, intent, 0);
+                                Notification noty = new Notification.Builder(MainActivity.this)
+                                        .setContentTitle("Erevu")
+                                        .setTicker("Forum alert!")
+                                        .setContentText(name + " posted on a forum you've participated!")
+                                        .setSmallIcon(R.drawable.erevu_noty_icon)
+                                        // .setLargeIcon(bitmap)
+                                        .setContentIntent(pIntent).getNotification();
+
+
+                                noty.flags = Notification.FLAG_AUTO_CANCEL;
+                                Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                                Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+                                r.play();
+                                NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                                nm.notify(0, noty);
+
+
+
+                        }
+
+
+                        @Override
+                        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                        }
+
+                        @Override
+                        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                        }
+
+                        @Override
+                        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                } else {}
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });*/
+
 
     }
 
@@ -998,14 +1096,22 @@ public class MainActivity extends AppCompatActivity
                 map2.put("post_id", newPost.getKey());
                 newPost2.setValue(map2);
 
-                final Context context = MainActivity.this;
+                if (auth.getCurrentUser() != null) {
+                    mDatabase.child(newPost.getKey()).child("views").child(auth.getCurrentUser().getUid()).setValue("iView");
+                }
+                Intent openRead = new Intent(MainActivity.this, ReadQuestionActivity.class);
+                openRead.putExtra("question_id", newPost.getKey() );
+                startActivity(openRead);
+
+                Toast.makeText(MainActivity.this, "Your question is posted successfully!",Toast.LENGTH_LONG).show();
+               /* final Context context = MainActivity.this;
 
                 // custom dialog
                 final Dialog dialog = new Dialog(context);
                 dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
                 dialog.setContentView(R.layout.success_dialog);
                 dialog.setCancelable(false);
-                            /*dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));*/
+                            *//*dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));*//*
                 dialog.show();
 
                 Button create = (Button) dialog.findViewById(R.id.create);
@@ -1017,7 +1123,7 @@ public class MainActivity extends AppCompatActivity
                     }
 
                 });
-
+*/
             }
 
             @Override

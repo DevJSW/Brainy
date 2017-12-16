@@ -73,10 +73,10 @@ public class AdsAdapter extends RecyclerView.Adapter<AdsAdapter.AdViewHolder>
 
             mView = itemView;
 
-           /* civ = (CircleImageView) itemView.findViewById(R.id.ad_image);
-            civ = (TextView) itemView.findViewById(R.id.ad_name);
+            //civ = (ImageView) itemView.findViewById(R.id.ad_image);
+            //civ = (TextView) itemView.findViewById(R.id.ad_name);
             mAuth = FirebaseAuth.getInstance();
-            mDatabase = FirebaseDatabase.getInstance().getReference().child("Discuss_forum");*/
+            mDatabase = FirebaseDatabase.getInstance().getReference().child("Discuss_forum");
 
         }
 

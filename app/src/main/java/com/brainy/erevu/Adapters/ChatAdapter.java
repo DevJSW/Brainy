@@ -39,7 +39,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     private List<Chat>  mChatList;
     Context ctx;
 
-    private DatabaseReference mDatabase;
+    private DatabaseReference mDatabase, mDatabaseForumNotifications;
     FirebaseAuth mAuth;
 
     public ChatAdapter(Context ctx, List<Chat> mChatList)
@@ -89,6 +89,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             liny = (LinearLayout) itemView.findViewById(R.id.liny);
             mAuth = FirebaseAuth.getInstance();
             mDatabase = FirebaseDatabase.getInstance().getReference().child("Discuss_forum");
+            mDatabaseForumNotifications = FirebaseDatabase.getInstance().getReference().child("Forum_notifications");
 
         }
 

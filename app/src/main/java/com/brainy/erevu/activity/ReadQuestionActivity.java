@@ -95,13 +95,14 @@ public class ReadQuestionActivity extends AppCompatActivity {
     private ProgressBar progressBar;
 
     private RelativeLayout share, favourite, answer;
-    private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseUsersInbox, mDatabaseUsersPoints, mDatabaseUsersAns, mDatabaseAnswers, mDatabaseVotes;
+    private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseUsersInbox, mDatabaseUsersPoints, mDatabaseUsersAns, mDatabaseAnswers, mDatabaseVotes, mDatabaseDiscussForum;
     private RecyclerView mAnsList;
     Context mContext;
     private FirebaseAuth auth;
     String QuizKey = null;
 
     private ImageView quizVoteUp;
+    private TextView forumCount;
     private ImageView quizVoteDown;
     private View parent_view;
     private Boolean mProcessApproval = false;
@@ -128,6 +129,28 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
         //QuizKey = getIntent().getExtras().getString("question_id");
         QuizKey = getIntent().getStringExtra("question_id");
+
+        forumCount = (TextView) findViewById(R.id.forumCount);
+        //COUNT NUMBER OF FORUMS
+        mDatabaseDiscussForum = FirebaseDatabase.getInstance().getReference().child("Discuss_forum");
+        mDatabaseDiscussForum.child(QuizKey).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if (!dataSnapshot.hasChildren()) {
+                    forumCount.setVisibility(View.GONE);
+                } else {
+                    forumCount.setVisibility(View.VISIBLE);
+                    forumCount.setText(dataSnapshot.getChildrenCount() + "");
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         // Database channels
         mDatabaseFavourite = FirebaseDatabase.getInstance().getReference().child("Questions").child(QuizKey).child("favourite");
@@ -190,6 +213,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
         mDatabaseQuestions.keepSynced(true);
         mDatabaseUsers.keepSynced(true);
         mDatabaseVotes.keepSynced(true);
+        mDatabaseDiscussForum.keepSynced(true);
 
         Window window = ReadQuestionActivity.this.getWindow();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -215,7 +239,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                     if (dataSnapshot.hasChild(auth.getCurrentUser().getUid())) {
 
                                         ImageView starred = (ImageView) findViewById(R.id.starredImg);
-                                        starred.setImageResource(R.drawable.star_img);
+                                        starred.setImageResource(R.drawable.if_fav);
                                         // this fav displays on question at tab
                                         mDatabaseFavourite.child(auth.getCurrentUser().getUid()).removeValue();
                                         mDatabaseUsersFavourite.child(auth.getCurrentUser().getUid()).child(QuizKey).removeValue();
@@ -225,7 +249,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                     } else {
 
                                         ImageView starred = (ImageView) findViewById(R.id.starredImg);
-                                        starred.setImageResource(R.drawable.star_yellow);
+                                        starred.setImageResource(R.drawable.if_star_brown);
                                         mDatabaseFavourite.child(auth.getCurrentUser().getUid()).setValue("isFavourite");
 
                                         //ADD QUESTION TO USER_FAVOURITE IN DATABASE
@@ -316,7 +340,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                     if (dataSnapshot.hasChild(auth.getCurrentUser().getUid())) {
 
                         ImageView starred = (ImageView) findViewById(R.id.starredImg);
-                        starred.setImageResource(R.drawable.star_yellow);
+                        starred.setImageResource(R.drawable.if_star_brown);
                     } else {
 
                         ImageView starred = (ImageView) findViewById(R.id.starredImg);
@@ -384,7 +408,9 @@ public class ReadQuestionActivity extends AppCompatActivity {
                             .setAction("SIGN IN", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    showSignInDialog();
+                                    Intent openRead = new Intent(ReadQuestionActivity.this, SigninActivity.class);
+                                    startActivity(openRead);
+                                    //showSignInDialog();
                                 }
                             });
 
@@ -450,9 +476,9 @@ public class ReadQuestionActivity extends AppCompatActivity {
                         myIntent.setType("text/plain");
                         String shareBody =question_body;
                         String shareSub = question_topic;
-                        myIntent.putExtra(Intent.EXTRA_SUBJECT,shareSub);
-                        myIntent.putExtra(Intent.EXTRA_TEXT,shareBody);
-                        startActivity(Intent.createChooser(myIntent,"Share this question"));
+                       // myIntent.putExtra(Intent.EXTRA_SUBJECT," Hey, checkout this question i have asked on erevu https://play.google.com/store/apps/details?id=com.erevu.erevu" );
+                        myIntent.putExtra(Intent.EXTRA_TEXT," Hey, checkout this question i have asked on Erevu https://play.google.com/store/apps/details?id=com.erevu.erevu " +shareSub);
+                        startActivity(Intent.createChooser(myIntent,"Share question"));
                     }
                 });
 
@@ -496,7 +522,6 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
             }
         });
-
 
         //DISPLAY NUMBER OF UP VOTES A QUIZ HAS.....
         mDatabaseVotes.child(QuizKey).child("up_votes").addListenerForSingleValueEvent(new ValueEventListener() {

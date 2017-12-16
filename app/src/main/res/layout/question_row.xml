@@ -16,14 +16,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/liny"
-            android:layout_margin="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="6dp"
+                android:layout_marginBottom="4dp"
                 android:orientation="horizontal">
 
                 <RelativeLayout
@@ -53,25 +55,42 @@
                     android:layout_gravity="center_vertical"
                     android:orientation="vertical">
 
-                    <com.brainy.erevu.data.MyFont
+                    <com.brainy.erevu.data.MyBoldFont
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/post_name"
-                        android:textSize="14dp"
+                        android:textSize="15dp"
+                        android:layout_marginLeft="1dp"
                         android:scaleType="fitXY"
                         android:textStyle="bold"
                         android:text="username"/>
 
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_marginTop="1dp"
+                        android:layout_height="15dp">
+
+                        <ImageView
+                            android:layout_width="17dp"
+                            android:layout_height="15dp"
+                            android:scaleType="fitXY"
+                            android:layout_centerVertical="true"
+                            android:id="@+id/time"
+                            android:src="@drawable/if_time"/>
 
                         <com.github.curioustechizen.ago.RelativeTimeTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
                             android:textSize="12dp"
                             android:layout_gravity="center_vertical"
-                            android:layout_marginTop="1dp"
+                            android:layout_toRightOf="@+id/time"
+                            android:layout_marginLeft="3dp"
                             android:singleLine="true"
                             android:text="time"
                             android:id="@+id/post_date" />
+
+                    </RelativeLayout>
 
 
                 </LinearLayout>
@@ -88,20 +107,20 @@
                 android:textSize="17dp"
                 android:id="@+id/post_quiz_title"
                 android:textColor="@color/colorAccent"
-                android:layout_marginBottom="10dp"
                 android:text="Title"/>
             <com.brainy.erevu.data.MyFont
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/post_quiz_body"
                 android:layout_marginLeft="12dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginRight="12dp"
                 android:ellipsize="end"
                 android:maxLines="3"
+                android:text="body"
                 android:textSize="16dp"
                 android:lineSpacingExtra="2dp"
-                android:text="Body"
-                android:layout_marginBottom="10dp"/>
+                android:layout_marginBottom="15dp"/>
 
 
         </LinearLayout>
@@ -109,7 +128,6 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="5dp"
             android:background="#b9b6b6"/>
         <LinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"

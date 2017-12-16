@@ -71,12 +71,13 @@ public class ChatroomActivity extends AppCompatActivity {
     private static final String TAG = ChatroomActivity.class.getSimpleName();
     private ImageView mSendBtn;
 
+    String name = null;
     private LinearLayoutManager mLayoutManager;
     ImageView emojiImageView;
     View rootView;
     private StorageReference mStorage;
 
-    private DatabaseReference mDatabaseDiscussForum, mDatabaseUsers, mDatabaseForumParticipants;
+    private DatabaseReference mDatabaseDiscussForum, mDatabaseUsers, mDatabaseForumParticipants, mDatabaseForumNotifications, mDatabaseQuestions;
     private EditText mMessageInput;
     private Button mSubmit;
     private FirebaseAuth auth;
@@ -117,12 +118,13 @@ public class ChatroomActivity extends AppCompatActivity {
         mStorage = FirebaseStorage.getInstance().getReference();
         setSupportActionBar(my_toolbar);
         rootView = findViewById(R.id.root_view);
-
-        QuizKey = getIntent().getExtras().getString("question_id");
+        QuizKey = getIntent().getStringExtra("question_id");
         auth = FirebaseAuth.getInstance();
         mDatabaseDiscussForum = FirebaseDatabase.getInstance().getReference().child("Discuss_forum");
+        mDatabaseForumNotifications = FirebaseDatabase.getInstance().getReference().child("Forum_notifications");
         mDatabaseForumParticipants = FirebaseDatabase.getInstance().getReference().child("Users_forums");
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+        mDatabaseQuestions = FirebaseDatabase.getInstance().getReference().child("Questions");
         mMessageInput = (EditText) findViewById(R.id.input_message);
 
         mSendBtn = (ImageView) findViewById(R.id.sendBtn);
@@ -265,77 +267,6 @@ public class ChatroomActivity extends AppCompatActivity {
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
-    /*private void checkTyping() {
-
-        final long delay = 1000; // 1 seconds after user stops typing
-        final long[] last_text_edit = {0};
-        final Handler handler = new Handler();
-
-        final Runnable input_finish_checker = new Runnable() {
-            public void run() {
-                if (System.currentTimeMillis() > (last_text_edit[0])) {
-                    // ............
-                    // ............
-
-                }
-            }
-        };
-
-
-        //checking if a user is typing
-        EditText editText = (EditText) findViewById(R.id.input_message);
-        editText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged (CharSequence s,int start, int count,
-                                           int after){
-            }
-            @Override
-            public void onTextChanged ( final CharSequence s, int start, int before,
-                                        int count){
-                //You need to remove this to run only once
-                handler.removeCallbacks(input_finish_checker);
-
-            }
-            @Override
-            public void afterTextChanged ( final Editable s){
-                //avoid triggering event when text is empty
-                if (s.length() > 0) {
-                    last_text_edit[0] = System.currentTimeMillis();
-                    handler.postDelayed(input_finish_checker, delay);
-
-                    // HIDE AUDIO BUTTON WHILE USER IS TYPING
-                    ImageView photo = (ImageView) findViewById(R.id.cameraShot);
-                    photo.setVisibility(View.GONE);
-
-                    ImageView camera = (ImageView) findViewById(R.id.quickShot);
-                    camera.setVisibility(View.GONE);
-
-                    ImageView sendy = (ImageView) findViewById(R.id.sendBtn);
-                    sendy.setVisibility(View.VISIBLE);
-
-
-                } else {
-
-                    Date date = new Date();
-                    final String stringDate = DateFormat.getDateTimeInstance().format(date);
-
-
-                    // SHOW AUDIO BUTTON WHILE USER IS TYPING
-                    ImageView photo = (ImageView) findViewById(R.id.cameraShot);
-                    photo.setVisibility(View.VISIBLE);
-
-                    ImageView camera = (ImageView) findViewById(R.id.quickShot);
-                    camera.setVisibility(View.VISIBLE);
-
-                    ImageView sendy = (ImageView) findViewById(R.id.sendBtn);
-                    sendy.setVisibility(View.GONE);
-
-                }
-            }
-        });
-
-    }*/
-
     private void startPosting() {
 
         Date date = new Date();
@@ -355,7 +286,7 @@ public class ChatroomActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    final String name = dataSnapshot.child("name").getValue().toString();
+                    name = dataSnapshot.child("name").getValue().toString();
                                    /* final String image = dataSnapshot.child("image").getValue().toString();*/
                     // getting user uid
 
@@ -384,6 +315,26 @@ public class ChatroomActivity extends AppCompatActivity {
                 }
             });
 
+           /* //POST TO FORUM NOTIFICATIONS
+            mDatabaseQuestions.child(QuizKey).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    String quiz_sender_uid = dataSnapshot.child("sender_uid").getValue().toString();
+
+                    final DatabaseReference post_noty = mDatabaseForumNotifications.child(quiz_sender_uid).child(QuizKey);
+
+                    post_noty.child("sender_name").setValue(name);
+                    post_noty.child("sender_uid").setValue(auth.getCurrentUser().getUid());
+                    post_noty.child("question_key").setValue(QuizKey);
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+*/
         }
     }
 

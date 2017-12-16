@@ -1,5 +1,7 @@
 package com.brainy.erevu.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -9,11 +11,17 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.brainy.erevu.Adapters.SearchAdapter;
 import com.brainy.erevu.R;
 import com.brainy.erevu.data.Question;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -21,6 +29,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,6 +97,7 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         }
     }
 
+
     @Override
     public boolean onQueryTextSubmit(String query) {
 
@@ -102,9 +114,12 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     @Override
     public boolean onQueryTextChange(String newText) {
 
-            Query quizQuery = mDatabase.orderByChild("question_title").startAt(newText.toUpperCase());
+            Query quizQuery = mDatabase.orderByChild("question_title")
+                    .startAt(newText.toUpperCase())
+                    .endAt(newText.toUpperCase()+"\uf8ff")
+                    .limitToLast(30);
 
-            searchList.clear();
+
             searchAdapter.notifyDataSetChanged();
         searchAdapter.notifyItemInserted(0);
 
@@ -123,11 +138,11 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-                    Question message = dataSnapshot.getValue(Question.class);
-                    searchList.clear();
+                  /*  Question message = dataSnapshot.getValue(Question.class);
+
                     searchList.add(message);
                     searchAdapter.notifyDataSetChanged();
-                    searchAdapter.notifyItemInserted(0);
+                    searchAdapter.notifyItemInserted(0);*/
 
                 }
 

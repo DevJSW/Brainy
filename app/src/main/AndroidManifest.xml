@@ -59,7 +59,9 @@
             android:name=".activity.EditProfileActivity"
             android:label=""
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activity.SearchActivity" />
+        <activity
+            android:name=".activity.SearchActivity"
+            android:label="" />
 
         <service android:name=".Services.FirebaseMessagingService">
             <intent-filter>
@@ -122,7 +124,8 @@
         <activity
             android:name=".activity.SettingsActivity"
             android:label=""
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activity.AssistantActivity"></activity>
     </application>
 
 </manifest>

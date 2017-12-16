@@ -1,10 +1,13 @@
 package com.brainy.erevu.tabs;
 
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,12 +24,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.brainy.erevu.R;
+import com.brainy.erevu.activity.MainActivity;
 import com.brainy.erevu.activity.ReadQuestionActivity;
 import com.brainy.erevu.activity.SigninActivity;
 import com.brainy.erevu.data.Answer;
@@ -35,6 +40,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -71,7 +77,7 @@ public class tab3Inbox extends Fragment {
     private Button signIn;
     SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mFavouriteList;
-    private DatabaseReference mDatabaseUsers, mDatabaseUserFavourites, mDatabaseUserInbox;
+    private DatabaseReference mDatabaseUsers, mDatabaseUserFavourites, mDatabaseUserInbox, mDatabase;
     private FirebaseAuth auth;
     private TextView mNoFavouriteTxt;
     private static final String TAG = "tab2Inbox";
@@ -96,6 +102,10 @@ public class tab3Inbox extends Fragment {
         // database channels
         mDatabaseUserInbox = FirebaseDatabase.getInstance().getReference().child("Users_inbox");
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+        if (auth.getCurrentUser() != null) {
+            mDatabase = FirebaseDatabase.getInstance().getReference().child("Users_inbox").child(auth.getCurrentUser().getUid());
+            mDatabase.keepSynced(true);
+        }
 
         // SYNC DATABASE
         mDatabaseUserInbox.keepSynced(true);
@@ -103,6 +113,7 @@ public class tab3Inbox extends Fragment {
 
 
         mFavouriteList = (RecyclerView) view.findViewById(R.id.Inbox_list);
+        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         mFavouriteList.setHasFixedSize(true);
         mLinearlayout = new LinearLayoutManager(getActivity());
         mLinearlayout.setReverseLayout(true);
@@ -155,24 +166,15 @@ public class tab3Inbox extends Fragment {
         return view;
     }
 
-   /* public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setHasOptionsMenu(true);
-    }
-
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-        menu.findItem(R.id.action_search).setVisible(false);
-        *//*menu.clear();*//*
-    }*/
-
     private void initSignIn() {
 
         signIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                showSignInDialog();
+                Intent openRead = new Intent(getActivity(), SigninActivity.class);
+                startActivity(openRead);
+                //showSignInDialog();
             }
         });
     }
@@ -362,8 +364,8 @@ public class tab3Inbox extends Fragment {
 
         View mView;
 
-        TextView viewCounter, answersCounter, favouritesCounter;
-        private DatabaseReference mDatabaseUsers, mDatabaseUserFavourites, mDatabaseUserInbox;
+        TextView post_reason, post_name, post_answer;
+        private DatabaseReference mDatabase, mDatabaseUserFavourites, mDatabaseUserInbox;
         FirebaseAuth auth;
         Typeface custom_font;
         ProgressBar mProgressBar;
@@ -375,14 +377,24 @@ public class tab3Inbox extends Fragment {
             mView = itemView;
 
             mDatabaseUserInbox = FirebaseDatabase.getInstance().getReference().child("Users_inbox");
+            post_answer = (TextView) mView.findViewById(R.id.posted_answer);
+            post_name = (TextView) mView.findViewById(R.id.post_name);
+            post_reason = (TextView) mView.findViewById(R.id.posted_reason);
             auth = FirebaseAuth.getInstance();
-           /* custom_font = Typeface.createFromAsset(itemView.getAssets(), "fonts/Aller_Rg.ttf");*/
+            mDatabase = FirebaseDatabase.getInstance().getReference().child("Users_inbox").child(auth.getCurrentUser().getUid());
+            mDatabase.keepSynced(true);
         }
 
-        public void setPosted_date(String posted_date) {
+        public void setPosted_date(Long posted_date) {
 
-            TextView post_date = (TextView) mView.findViewById(R.id.post_date);
-            post_date.setText(posted_date);
+            RelativeTimeTextView post_date = (RelativeTimeTextView) mView.findViewById(R.id.post_date);
+            post_date.setReferenceTime(Long.parseLong(String.valueOf(posted_date)));
+        }
+
+        public void setPosted_reason(String posted_reason) {
+
+            TextView post_reason = (TextView) mView.findViewById(R.id.posted_reason);
+            post_reason.setText(posted_reason);
         }
 
         public void setSender_name(String sender_name) {
@@ -441,16 +453,58 @@ public class tab3Inbox extends Fragment {
                     final String PostKey = getRef(position).getKey();
 
                     viewHolder.setSender_name(model.getSender_name());
-                    //viewHolder.setPosted_date(model.getPosted_date());
+                    viewHolder.setPosted_date(model.getPosted_date());
+                    viewHolder.setPosted_reason(model.getPosted_reason());
                     viewHolder.setPosted_answer(model.getPosted_answer());
                     viewHolder.setSender_image(getContext(),model.getSender_image());
+
+                    mDatabase.child(quiz_key).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Boolean read_status = (Boolean) dataSnapshot.child("read").getValue();
+
+                            if (read_status.equals(true) ) {
+
+                                viewHolder.post_answer.setTextColor(Color.parseColor("#ABABAB"));
+                                viewHolder.post_reason.setTextColor(Color.parseColor("#FF75B4E9"));
+                                viewHolder.post_name.setTextColor(Color.parseColor("#FFE99639"));
+
+                            } else {
+
+                                viewHolder.post_answer.setTextColor(Color.BLACK);
+                            }
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
 
                     viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Intent openRead = new Intent(getActivity(), ReadQuestionActivity.class);
-                            openRead.putExtra("question_id", quiz_key );
-                            startActivity(openRead);
+                            mDatabase.child(quiz_key).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    String Quiz_key = dataSnapshot.child("question_key").getValue().toString();
+
+                                    //MARK MESSAGE AS READ ON DB
+                                    mDatabase.child(quiz_key).child("read").setValue(true);
+
+                                    Intent openRead = new Intent(getActivity(), ReadQuestionActivity.class);
+                                    openRead.putExtra("question_id", Quiz_key );
+                                    startActivity(openRead);
+
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
 
                         }
                     });
@@ -459,22 +513,60 @@ public class tab3Inbox extends Fragment {
                         @Override
                         public boolean onLongClick(View view) {
 
-                            Snackbar snackbar = Snackbar
-                                    .make(view, "Remove post from favourites!", Snackbar.LENGTH_LONG)
-                                    .setAction("REMOVE", new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            mDatabaseUserInbox
-                                                    .child(auth.getCurrentUser().getUid())
-                                                    .child(quiz_key)
-                                                    .removeValue();
-                                        }
-                                    });
+                            // custom dialog
+                            final Dialog dialog = new Dialog(getActivity());
+                            dialog.setContentView(R.layout.inbox_popup_dialog);
+                            dialog.setTitle("Inbox Options");
 
-                            snackbar.show();
-                            return true;
+                            LinearLayout deleteLiny = (LinearLayout) dialog.findViewById(R.id.deleteLiny);
+                            deleteLiny.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+
+                                    AlertDialog diaBox = AskOption();
+                                    diaBox.show();
+                                    dialog.dismiss();
+                                }
+                            });
+
+
+                            // if button is clicked, close the custom dialog
+
+                            dialog.show();
+                            return false;
+                        }
+
+                        private AlertDialog AskOption() {
+                            AlertDialog myQuittingDialogBox =new AlertDialog.Builder(getActivity())
+                                    //set message, title, and icon
+                                    .setTitle("Delete Alert!")
+                                    .setMessage("Are you sure you want to remove this message from your inbox!")
+
+                                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                            //your deleting code
+
+                                            mDatabase.child(quiz_key).removeValue();
+                                            dialog.dismiss();
+                                            Toast.makeText(getActivity(), "Message deleted!",Toast.LENGTH_SHORT).show();
+                                        }
+
+                                    })
+
+
+                                    .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                            dialog.dismiss();
+
+                                        }
+                                    })
+                                    .create();
+                            return myQuittingDialogBox;
                         }
                     });
+
 
                 }
 

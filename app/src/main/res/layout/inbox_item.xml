@@ -124,33 +124,6 @@
 
                     </LinearLayout>
 
-                   <!-- <RelativeLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/counter"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerInParent="true"
-                        android:layout_marginTop="5dp">
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:id="@+id/approveBtn"
-                            android:src="@drawable/approve"/>
-
-                        <com.brainy.brainy.data.MyFont
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="0"
-                            android:textSize="11dp"
-                            android:id="@+id/likeCount"
-                            android:lines="1"
-                            android:layout_centerVertical="true"
-                            android:layout_centerHorizontal="true" />
-
-                    </RelativeLayout>
--->
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

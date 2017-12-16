@@ -117,7 +117,7 @@ public class tab3Achievements extends Fragment {
         mLinearlayout.setReverseLayout(true);
         mLinearlayout.setStackFromEnd(true);
         mFavouriteList.setLayoutManager(mLinearlayout);
-
+        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         if (auth.getCurrentUser() != null) {
 
             Button signinBtn = (Button) view.findViewById(R.id.signIn);
@@ -181,7 +181,9 @@ public class tab3Achievements extends Fragment {
             @Override
             public void onClick(View view) {
 
-                showSignInDialog();
+                Intent openRead = new Intent(getActivity(), SigninActivity.class);
+                startActivity(openRead);
+                //showSignInDialog();
             }
         });
     }

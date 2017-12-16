@@ -209,12 +209,12 @@ public class EditProfileActivity extends AppCompatActivity {
 
                 }  else if (users_points > 1000 && users_points < 1999) {
 
-                    mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("reputation").setValue("-erevu");
+                    mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("reputation").setValue("Erevu");
                     badge.setImageResource(R.drawable.brainy_badge);
 
                 } else if (users_points > 2000 ) {
 
-                    mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("reputation").setValue("Super -erevu");
+                    mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).child("reputation").setValue("Super Erevu");
                     badge.setImageResource(R.drawable.super_brainy_badge);
 
 

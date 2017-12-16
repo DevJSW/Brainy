@@ -112,54 +112,6 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
 
         }
 
-        public void setPosted_date(String posted_date) {
-
-            RelativeTimeTextView post_date = (RelativeTimeTextView) mView.findViewById(R.id.post_date);
-            post_date.setText(posted_date);
-        }
-
-
-        public void setSender_name(String sender_name) {
-
-            TextView post_name = (TextView) mView.findViewById(R.id.post_name);
-            post_name.setText(sender_name);
-        }
-
-        public void setQuestion_body(String question_body) {
-            if (question_body != null) {
-                TextView post_body = (TextView) mView.findViewById(R.id.post_quiz_body);
-                post_body.setText(question_body);
-            } else {
-                post_body.setVisibility(View.GONE);
-            }
-        }
-
-        public void setQuestion_title(String question_title) {
-
-            TextView post_title = (TextView) mView.findViewById(R.id.post_quiz_title);
-            post_title.setText(question_title);
-        }
-
-        public void setSender_image(final Context ctx, final String sender_image) {
-
-            final CircleImageView civ = (CircleImageView) mView.findViewById(R.id.post_image);
-
-            Glide.with(ctx)
-                    .load(sender_image).asBitmap()
-                    .placeholder(R.drawable.placeholder_image)
-                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                    .centerCrop()
-                    .into(new BitmapImageViewTarget(civ) {
-                        @Override
-                        protected void setResource(Bitmap resource) {
-                            RoundedBitmapDrawable circularBitmapDrawable =
-                                    RoundedBitmapDrawableFactory.create(ctx.getResources(), resource);
-                            circularBitmapDrawable.setCircular(true);
-                            civ.setImageDrawable(circularBitmapDrawable);
-                        }
-                    });
-
-        }
     }
 
 
@@ -183,11 +135,8 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
         final String user_id = c.getSender_uid();
 
         holder.post_title.setText(c.getQuestion_title());
-        if (c.getQuestion_body() != null) {
-            holder.post_body.setText(c.getQuestion_body());
-        } else {
-            holder.post_body.setVisibility(View.GONE);
-        }
+        holder.post_body.setText(c.getQuestion_body());
+
         holder.post_name.setText(c.getSender_name());
         holder.post_date.setReferenceTime(Long.parseLong(String.valueOf(c.getPosted_date())));
 
@@ -213,84 +162,6 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
 
             }
         });
-
-        /*holder.mView.setOnLongClickListener(new View.OnLongClickListener() {
-
-            @Override
-            public boolean onLongClick(View v) {
-
-                // custom dialog
-                final Dialog dialog = new Dialog(ctx);
-                dialog.setContentView(R.layout.ans_popup_dialog);
-                dialog.setTitle("Profile Options");
-
-                LinearLayout deleteLiny = (LinearLayout) dialog.findViewById(R.id.deleteLiny);
-                deleteLiny.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        AlertDialog diaBox = AskOption();
-                        diaBox.show();
-                        dialog.dismiss();
-                    }
-                });
-
-                LinearLayout editLiny = (LinearLayout) dialog.findViewById(R.id.editLiny);
-                editLiny.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-
-                        Intent openRead = new Intent(ctx, EditQuestionActivity.class);
-                        openRead.putExtra("question_id", quiz_key );
-                        ctx.startActivity(openRead);
-                        dialog.dismiss();
-                    }
-                });
-
-                // if button is clicked, close the custom dialog
-
-                dialog.show();
-                return false;
-            }
-
-            private AlertDialog AskOption()
-            {
-
-                AlertDialog myQuittingDialogBox =new AlertDialog.Builder(ctx)
-                        //set message, title, and icon
-                        .setTitle("Remove Alert!")
-                        .setMessage("If you remove this question from your profile you will not be able to edit or easly monitor it!")
-
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                //your deleting code
-
-                                 if (mAuth.getCurrentUser() != null)
-                                mDatabaseProfileAns.child(mAuth.getCurrentUser().getUid()).child(quiz_key).removeValue();
-                                dialog.dismiss();
-                                Toast.makeText(ctx, "Message removed!",Toast.LENGTH_SHORT).show();
-                            }
-
-                        })
-
-
-                        .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                dialog.dismiss();
-
-                            }
-                        })
-                        .create();
-                return myQuittingDialogBox;
-
-            }
-
-        });
-*/
-
 
         holder.answer_rely.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -357,7 +228,6 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
                 }
             });
         }
-
 
         Glide.with(ctx)
                 .load(c.getSender_image()).asBitmap()

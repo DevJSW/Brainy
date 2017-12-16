@@ -1,9 +1,14 @@
 package com.brainy.erevu.activity;
 
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -21,12 +26,18 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.brainy.erevu.Adapters.QuestionAdapter;
 import com.brainy.erevu.R;
+import com.brainy.erevu.data.Ad;
 import com.brainy.erevu.data.Question;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -36,11 +47,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 import com.srx.widget.PullToLoadView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.brainy.erevu.R.layout.spinner_item;
 
@@ -56,7 +72,7 @@ public class FilterResultsActivity extends AppCompatActivity {
     private DatabaseReference mDatabaseChatroom, mDatabaseViews, mDatabase;
     private FirebaseAuth mAuth;
     private RecyclerView mQuestionsList;
-    private RecyclerView mQuestionsList2;
+    private RecyclerView adsList;
     private ProgressBar mProgressBar;
     private Spinner spinner1;
     private ViewPager mViewPager;
@@ -68,7 +84,6 @@ public class FilterResultsActivity extends AppCompatActivity {
     QuestionAdapter questionAdapter;
     private final List<Question> questionList = new ArrayList<>();
     LinearLayoutManager mLinearlayout;
-
 
     private static final String TAG = "tab1Question";
     private GoogleApiClient mGoogleApiClient;
@@ -113,7 +128,10 @@ public class FilterResultsActivity extends AppCompatActivity {
 
         selectedTopic = getIntent().getStringExtra("selected_topic");
 
-
+        //ADS LAYOUT
+        adsList = (RecyclerView) findViewById(R.id.ads_recycler_view);
+        final LinearLayoutManager adsLayoutManager = new LinearLayoutManager(FilterResultsActivity.this, LinearLayoutManager.HORIZONTAL, false);
+        adsList.setLayoutManager(adsLayoutManager);
 
         if (selectedTopic.equals("")) {
             sub_topic = new String[]{};
@@ -149,7 +167,6 @@ public class FilterResultsActivity extends AppCompatActivity {
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 
         if (selectedTopic.equals("Math")) {
@@ -713,13 +730,77 @@ public class FilterResultsActivity extends AppCompatActivity {
                 }, 3000);
 
 
-
             }
         });
 
         //load data
         questionList.clear();
         LoadMessage();
+        loadAds();
+    }
+
+    private void loadAds() {
+
+        FirebaseRecyclerAdapter<Question, FilterResultsActivity.adsViewHolder> firebaseRecyclerAdapter = new  FirebaseRecyclerAdapter<Question, FilterResultsActivity.adsViewHolder>(
+
+                Question.class,
+                R.layout.ads_item,
+                FilterResultsActivity.adsViewHolder.class,
+                mDatabase.orderByChild("tag").equalTo(selectedTopic).limitToLast(currentPage * TOTAL_ITEMS_TO_LOAD)
+
+
+        ) {
+            @Override
+            protected void populateViewHolder(final FilterResultsActivity.adsViewHolder viewHolder, final Question model, int position) {
+
+                final String post_key = getRef(position).getKey();
+                final String PostKey = getRef(position).getKey();
+
+                viewHolder.setName(model.getSender_name());
+                viewHolder.setImage(getApplicationContext(), model.getSender_image());
+
+            }
+
+        };
+
+        adsList.setAdapter(firebaseRecyclerAdapter);
+    }
+
+    public static class adsViewHolder extends RecyclerView.ViewHolder {
+
+        View mView;
+
+        ImageView mPostImg;
+        TextView mUnreadTxt, txname;
+
+        public adsViewHolder(View itemView) {
+            super(itemView);
+
+            mView = itemView;
+
+            txname = (TextView) mView.findViewById(R.id.ad_desc);
+            mPostImg = (ImageView) mView.findViewById(R.id.ad_image);
+
+        }
+
+        public void setName(String name) {
+
+            TextView post_name = (TextView) mView.findViewById(R.id.ad_desc);
+            post_name.setText(name);
+        }
+
+        public void setImage(final Context ctx, final String image) {
+
+            final ImageView civ = (ImageView) mView.findViewById(R.id.ad_image);
+
+            Glide.with(ctx)
+                    .load(image).asBitmap()
+                    .placeholder(R.drawable.ad_book)
+                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                    .centerCrop()
+                    .into(civ);
+
+        }
 
     }
 
@@ -837,13 +918,6 @@ public class FilterResultsActivity extends AppCompatActivity {
         });
     }
 
-
-   /* @Override
-    public void onResume() {
-        super.onResume();
-        questionList.clear();
-        LoadMessage();
-    }*/
 
     private void LoadMessage() {
 

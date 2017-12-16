@@ -7,7 +7,7 @@ android {
         applicationId 'com.erevu.erevu'
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 7
+        versionCode 14
         versionName "1.0"
         multiDexEnabled true
     }
