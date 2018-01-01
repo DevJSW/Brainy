@@ -25,6 +25,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -36,17 +37,31 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class AdsAdapter extends RecyclerView.Adapter<AdsAdapter.AdViewHolder>
 {
 
-    private List<Ad>  mAdsList;
+    private ArrayList<Ad>  mAdsList;
+    private int mRowIndex = -1;
     Context ctx;
 
     private DatabaseReference mDatabase;
     FirebaseAuth mAuth;
 
-    public AdsAdapter(Context ctx, List<Ad> mAdsList)
+    public AdsAdapter() {
+    }
+
+    public void setData(ArrayList<Ad> data) {
+        if (mAdsList != data) {
+            mAdsList = data;
+            notifyDataSetChanged();
+        }
+    }
+
+    public void setRowIndex(int index) {
+        mRowIndex = index;
+    }
+   /* public AdsAdapter(Context ctx, List<Ad> mAdsList)
     {
         this.mAdsList = mAdsList;
         this.ctx = ctx;
-    }
+    }*/
 
     @Override
     public AdViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -100,7 +115,7 @@ public class AdsAdapter extends RecyclerView.Adapter<AdsAdapter.AdViewHolder>
         */
 
         Glide.with(ctx)
-                .load(c.getAd_image()).asBitmap()
+                .load(c.getAds_image()).asBitmap()
                 .placeholder(R.drawable.placeholder_image)
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .centerCrop()

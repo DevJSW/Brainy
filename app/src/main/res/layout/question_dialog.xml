@@ -61,41 +61,59 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/rl"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="41dp"
         android:layout_below="@+id/relly"
+        android:id="@+id/rll"
         android:layout_marginBottom="10dp"
-        android:weightSum="2"
-        android:layout_marginLeft="15dp"
+        android:layout_marginLeft="12dp"
         android:layout_marginRight="15dp"
-        android:background="#d9d5d7d7"
-        >
+        android:orientation="horizontal">
 
-        <Spinner
-            android:id="@+id/spinner"
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="32dp"
+            android:layout_marginRight="7dp"
+            android:scaleType="fitXY"
+            android:layout_marginTop="5dp"
+            android:id="@+id/takeCamera"
+            android:src="@drawable/ic_camera"/>
+
+        <LinearLayout
+            android:id="@+id/rl"
             android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            />
+            android:layout_height="40dp"
+            android:layout_below="@+id/relly"
+            android:layout_marginBottom="10dp"
+            android:weightSum="2"
+            android:background="#d9d5d7d7"
+            >
 
-        <View
-            android:layout_width="1dp"
-            android:id="@+id/spinnerDivider"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:visibility="gone"
-            android:layout_marginBottom="8dp"
-            android:background="#ee838080"/>
+            <Spinner
+                android:id="@+id/spinner"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                />
 
-        <Spinner
-            android:id="@+id/spinner2"
-            android:layout_width="match_parent"
-            android:visibility="gone"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            />
+            <View
+                android:layout_width="1dp"
+                android:id="@+id/spinnerDivider"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:visibility="gone"
+                android:layout_marginBottom="8dp"
+                android:background="#ee838080"/>
 
+            <Spinner
+                android:id="@+id/spinner2"
+                android:layout_width="match_parent"
+                android:visibility="gone"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                />
+
+        </LinearLayout>
     </LinearLayout>
 
     <View
@@ -109,7 +127,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/liny"
-        android:layout_below="@+id/rl"
+        android:layout_below="@+id/rll"
         android:orientation="horizontal"
         android:weightSum="2">
 

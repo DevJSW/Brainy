@@ -13,12 +13,13 @@ public class Question {
     private String sender_name;
     private String sender_uid;
     private String post_id;
+    private String ads_image;
 
     public Question() {
 
     }
 
-    public Question(Long posted_date, String posted_reason, String question_body, String question_title, String sender_image, String sender_name, String sender_uid, String post_id) {
+    public Question(Long posted_date, String ads_image, String posted_reason, String question_body, String question_title, String sender_image, String sender_name, String sender_uid, String post_id) {
         this.posted_date = posted_date;
         this.posted_reason = posted_reason;
         this.question_body = question_body;
@@ -95,5 +96,13 @@ public class Question {
 
     public void setPost_id(String post_id) {
         this.post_id = post_id;
+    }
+
+    public String getAds_image() {
+        return ads_image;
+    }
+
+    public void setAds_image(String ads_image) {
+        this.ads_image = ads_image;
     }
 }

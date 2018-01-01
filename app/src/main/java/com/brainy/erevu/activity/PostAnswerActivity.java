@@ -85,7 +85,6 @@ public class PostAnswerActivity extends AppCompatActivity {
 
         answerInput = (EditText) findViewById(R.id.questionTitleInput);
 
-
         QuizKey = getIntent().getExtras().getString("question_id");
         auth = FirebaseAuth.getInstance();
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -156,9 +155,9 @@ public class PostAnswerActivity extends AppCompatActivity {
                             final DatabaseReference newPostAns = mDatabaseAnswers.child(QuizKey).child(auth.getCurrentUser().getUid());
                             final DatabaseReference newPost2 = mDatabaseUsersAns.child(auth.getCurrentUser().getUid()).child(QuizKey);
 
-                            //DELETE UNANSERED CHILD FROM DATABASE
+                            //DELETE UNANSWERED CHILD FROM DATABASE
                             if (dataSnapshot.hasChild("Unanswered")) {
-                                mDatabaseAnswers.child(QuizKey).child("Unanswered").removeValue();
+                                mDatabaseQuestions.child(QuizKey).child("Unanswered").removeValue();
                             }
 
                             Map<String, Object> mapAns = new HashMap<>();
@@ -229,6 +228,7 @@ public class PostAnswerActivity extends AppCompatActivity {
                             map.put("posted_reason", "answered your question");
                             map.put("posted_answer", answer);
                             map.put("sender_uid", auth.getCurrentUser().getUid());
+                            map.put("inbox_type", "quiz_notification");
                             map.put("sender_name", name);
                             map.put("read", false);
                             map.put("question_key", QuizKey);

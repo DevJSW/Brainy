@@ -15,7 +15,7 @@
         android:layout_height="40dp"
         android:weightSum="2"
         tools:context=".MainActivity"
-        android:background="#26a1a4a6"
+        android:background="#8f8c8c"
         >
         <Spinner
             android:id="@+id/spinner"
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:background="#ee838080"/>
+            android:background="@color/colorPrimary"/>
 
         <Spinner
             android:id="@+id/spinner2"

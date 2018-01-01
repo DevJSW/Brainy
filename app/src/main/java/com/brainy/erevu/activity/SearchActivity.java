@@ -1,7 +1,11 @@
 package com.brainy.erevu.activity;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -9,9 +13,14 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -36,8 +45,9 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchActivity extends AppCompatActivity implements SearchView.OnQueryTextListener{
+public class SearchActivity extends AppCompatActivity/* implements SearchView.OnQueryTextListener*/{
 
+    String searchInput = null;
     SwipeRefreshLayout mSwipeRefreshLayout;
     private DatabaseReference mDatabase;
     private FirebaseAuth auth;
@@ -54,8 +64,19 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        Window window = SearchActivity.this.getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(ContextCompat.getColor( SearchActivity.this, R.color.colorPrimaryDark));
+
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        }
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
 
         searchAdapter = new SearchAdapter(SearchActivity.this,searchList);
@@ -66,23 +87,122 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         mSearchList.setHasFixedSize(true);
         mSearchList.setLayoutManager(new LinearLayoutManager(SearchActivity.this));
         mSearchList.setAdapter(searchAdapter);
+
+        mSearchInput = (EditText) findViewById(R.id.search_edit);
+        searchInput = mSearchInput.getText().toString();
+
+        initSearch();
+    }
+
+    private void initSearch() {
+        final long delay = 1000; // 1 seconds after user stops typing
+        final long[] last_text_edit = {0};
+        final Handler handler = new Handler();
+
+        final Runnable input_finish_checker = new Runnable() {
+            public void run() {
+                if (System.currentTimeMillis() > (last_text_edit[0])) {
+                    // ............
+                    // ............
+
+                    //user is typing
+
+                }
+            }
+        };
+        
+        mSearchInput.addTextChangedListener(new TextWatcher() {
+                                            @Override
+                                            public void beforeTextChanged (CharSequence s,int start, int count,
+                                                                           int after){
+                                            }
+                                            @Override
+                                            public void onTextChanged ( final CharSequence s, int start, int before,
+                                                                        int count){
+                                                //You need to remove this to run only once
+                                                handler.removeCallbacks(input_finish_checker);
+                                                //recreate();
+                                                showSearchResults();
+
+                                            }
+                                            @Override
+                                            public void afterTextChanged ( final Editable s){
+                                                //avoid triggering event when text is empty
+                                                if (s.length() > 0) {
+                                                    last_text_edit[0] = System.currentTimeMillis();
+                                                    handler.postDelayed(input_finish_checker, delay);
+                                                    
+                                                    //showSearchResults();
+
+                                                } else {
+
+                                                    // USER IS TYPING
+                                                   // showSearchResults();
+
+                                                }
+                                            }
+                                        }
+
+        );
+    }
+
+    private void showSearchResults() {
+
+        Query quizQuery = mDatabase.orderByChild("question_title")
+                .startAt(searchInput.toUpperCase())
+                //.endAt(searchInput.toUpperCase()+"\uf8ff")
+                .limitToLast(30);
+
+        quizQuery.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                Question message = dataSnapshot.getValue(Question.class);
+
+                searchList.add(message);
+                searchAdapter.notifyDataSetChanged();
+                searchAdapter.notifyItemInserted(0);
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        mSearchList.setAdapter(searchAdapter);
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.search_menu, menu);
-        MenuItem menuItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
-        searchView.setIconified(false);
-        searchView.setQueryHint("Search question...");
-        searchView.requestFocus();
-        menuItem.expandActionView();
-        searchView.setOnQueryTextListener(this);
-        return true;
-    }
-
+    /* @Override
+     public boolean onCreateOptionsMenu(Menu menu) {
+         // Inflate the menu; this adds items to the action bar if it is present.
+         getMenuInflater().inflate(R.menu.search_menu, menu);
+         MenuItem menuItem = menu.findItem(R.id.action_search);
+         SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+         searchView.setIconified(false);
+         searchView.setQueryHint("Search question...");
+         searchView.requestFocus();
+         menuItem.expandActionView();
+         searchView.setOnQueryTextListener(this);
+         return true;
+     }
+ */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -98,15 +218,15 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
     }
 
 
-    @Override
+    /*@Override
     public boolean onQueryTextSubmit(String query) {
 
-       /* if (!query.isEmpty()) {
+        if (!query.isEmpty()) {
             Intent searchIntent = new Intent(getActivity(), MainActivity.class);
             searchIntent.setAction(Intent.ACTION_SEARCH);
             searchIntent.putExtra(SearchManager.QUERY, query);
             startActivity(searchIntent);
-        }*/
+        }
 
         return false;
     }
@@ -138,11 +258,11 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String s) {
 
-                  /*  Question message = dataSnapshot.getValue(Question.class);
+                    Question message = dataSnapshot.getValue(Question.class);
 
                     searchList.add(message);
                     searchAdapter.notifyDataSetChanged();
-                    searchAdapter.notifyItemInserted(0);*/
+                    searchAdapter.notifyItemInserted(0);
 
                 }
 
@@ -164,6 +284,5 @@ public class SearchActivity extends AppCompatActivity implements SearchView.OnQu
         mSearchList.setAdapter(searchAdapter);
         return false;
 
-    }
-
+    }*/
 }

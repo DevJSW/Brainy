@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <GridLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="125dp"
+    android:layout_width="150dp"
     android:layout_height="wrap_content"
     android:layout_marginLeft="4dp"
     android:layout_marginTop="4dp"
@@ -19,7 +19,7 @@
             android:id="@+id/ad_image"
             android:layout_width="match_parent"
             android:src="@drawable/placeholder_image"
-            android:layout_height="80dp"
+            android:layout_height="110dp"
             android:layout_margin="1dp"
             android:scaleType="fitXY"
             />
@@ -28,6 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:visibility="gone"
             android:padding="1dp">
 
             <com.brainy.erevu.data.MyBoldFont

@@ -191,7 +191,6 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.QuestionView
             }
         });
 
-
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -223,7 +222,6 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.QuestionView
 
             @Override
             public boolean onLongClick(View v) {
-
 
                 // custom dialog
                 final Dialog dialog = new Dialog(ctx);

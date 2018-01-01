@@ -335,13 +335,6 @@ public class tab3Inbox extends Fragment {
 
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        // Refresh the state of the +1 button each time the activity receives focus.
-    }
-
 
     void refreshItems() {
         // Load items
@@ -433,8 +426,8 @@ public class tab3Inbox extends Fragment {
 
     }
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onResume() {
+        super.onResume();
 
         if (auth.getCurrentUser() != null) {
             FirebaseRecyclerAdapter<Answer, tab3Inbox.LetterViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Answer, tab3Inbox.LetterViewHolder>(

@@ -76,8 +76,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ReadQuestionActivity extends AppCompatActivity {
 
     String  personName = null;
-    String sender_name = null;
-    String sender_image = null;
+    String sender_uid = null;
+    String question_topic = null;
+    String username = null;
     String  personEmail = null;
     String  personId = null;
     Uri personPhoto = null;
@@ -86,6 +87,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
     String city = null;
     String state = null;
     String country = null;
+    String user_points = null;
 
     private Button signIn;
     private DatabaseReference mDatabaseUserInbox;
@@ -109,7 +111,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
     private Boolean mProcessFavourite = false;
 
     private Boolean mProcessPoints = false;
-    private DatabaseReference mDatabaseFavourite, mDatabaseUsersFavourite;
+    private DatabaseReference mDatabaseFavourite, mDatabaseUsersFavourite, mDatabaseNotifications;
 
     SwipeRefreshLayout mSwipeRefreshLayout;
     SolutionsAdapter answersAdapter;
@@ -155,6 +157,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
         // Database channels
         mDatabaseFavourite = FirebaseDatabase.getInstance().getReference().child("Questions").child(QuizKey).child("favourite");
         mDatabaseUsersFavourite = FirebaseDatabase.getInstance().getReference().child("Users_favourite");
+        mDatabaseNotifications = FirebaseDatabase.getInstance().getReference().child("Users_notifications");
         mDatabaseUsersInbox = FirebaseDatabase.getInstance().getReference().child("Users_inbox");
         mDatabaseUsersPoints = FirebaseDatabase.getInstance().getReference().child("Users_points");
         mDatabaseUsersAns = FirebaseDatabase.getInstance().getReference().child("Users_answers");
@@ -214,6 +217,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
         mDatabaseUsers.keepSynced(true);
         mDatabaseVotes.keepSynced(true);
         mDatabaseDiscussForum.keepSynced(true);
+        mDatabaseNotifications.keepSynced(true);
 
         Window window = ReadQuestionActivity.this.getWindow();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -365,7 +369,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
                 if (auth.getCurrentUser() != null) {
 
-                    //CHECK IF USER HAS VOTED ALREADY
+                    //CHECK IF USER HAS ANSWERED ALREADY
                     mDatabaseAnswers.child(QuizKey).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -427,9 +431,10 @@ public class ReadQuestionActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 final String userimg = (String) dataSnapshot.child("sender_image").getValue();
-                final String username = (String) dataSnapshot.child("sender_name").getValue();
+                sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
+                username = (String) dataSnapshot.child("sender_name").getValue();
                 final Long date = (Long) dataSnapshot.child("posted_date").getValue();
-                final String question_topic = (String) dataSnapshot.child("question_title").getValue();
+                question_topic = (String) dataSnapshot.child("question_title").getValue();
                 final String question_body = (String) dataSnapshot.child("question_body").getValue();
                 final ImageView civ = (ImageView) findViewById(R.id.post_image);
                 final TextView name = (TextView) findViewById(R.id.post_name);
@@ -623,45 +628,48 @@ public class ReadQuestionActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if ((auth.getCurrentUser() != null))
                 {
+                    if (auth.getCurrentUser().getUid().equals(sender_uid)) {
+                        Toast.makeText(ReadQuestionActivity.this, "You cannot up vote your own question", Toast.LENGTH_LONG).show();
+                    } else {
 
-                    final Context context = ReadQuestionActivity.this;
+                        final Context context = ReadQuestionActivity.this;
 
-                    // custom dialog
-                    final Dialog dialog = new Dialog(context);
-                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    dialog.setContentView(R.layout.vote_dialog);
-                    dialog.setCancelable(false);
+                        // custom dialog
+                        final Dialog dialog = new Dialog(context);
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        dialog.setContentView(R.layout.vote_dialog);
+                        dialog.setCancelable(false);
                             /*dialog.getWindow().setBackgroundDrawable(new ColorDrawable(android.graphics.Color.TRANSPARENT));*/
-                    dialog.show();
+                        dialog.show();
 
-                    Button cancel = (Button) dialog.findViewById(R.id.cancel);
-                    cancel.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dialog.dismiss();
-                        }
-                    });
+                        Button cancel = (Button) dialog.findViewById(R.id.cancel);
+                        cancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
 
-                    Button create = (Button) dialog.findViewById(R.id.create);
-                    create.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(final View v) {
+                        Button create = (Button) dialog.findViewById(R.id.create);
+                        create.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(final View v) {
 
-                            dialog.dismiss();
-                            mProcessApproval = true;
+                                dialog.dismiss();
+                                mProcessApproval = true;
 
-                            mDatabaseVotes.child(QuizKey).addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                mDatabaseVotes.child(QuizKey).addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                    if (mProcessApproval) {
+                                        if (mProcessApproval) {
 
-                                        if (dataSnapshot.child("up_votes").hasChild(auth.getCurrentUser().getUid())) {
+                                            if (dataSnapshot.child("up_votes").hasChild(auth.getCurrentUser().getUid())) {
 
                                                    /* mDatabaseQuestions.child(QuizKey).child("Answers").child(answer_key).child("votes").child(auth.getCurrentUser().getUid()).removeValue();*/
                                            /* Toast.makeText(ReadQuestionActivity.this, "You have already voted for this question",Toast.LENGTH_LONG).show();*/
-                                            Snackbar snackbar = Snackbar
-                                                    .make(parent_view, "You have already voted for this question", Snackbar.LENGTH_LONG);
+                                                Snackbar snackbar = Snackbar
+                                                        .make(parent_view, "You have already voted for this question", Snackbar.LENGTH_LONG);
                                                    /* .setAction("UNDO", new View.OnClickListener() {
                                                         @Override
                                                         public void onClick(View view) {
@@ -670,96 +678,129 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                                         }
                                                     });*/
 
-                                            snackbar.show();
+                                                snackbar.show();
 
-                                            mDatabaseVotes.child(QuizKey).child("up_votes").addListenerForSingleValueEvent(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                                mDatabaseVotes.child(QuizKey).child("up_votes").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                                    TextView voteUpCount = (TextView) findViewById(R.id.vote_up_counter);
-                                                    voteUpCount.setText(dataSnapshot.getChildrenCount() + "");
+                                                        TextView voteUpCount = (TextView) findViewById(R.id.vote_up_counter);
+                                                        voteUpCount.setText(dataSnapshot.getChildrenCount() + "");
 
-                                                }
+                                                    }
 
-                                                @Override
-                                                public void onCancelled(DatabaseError databaseError) {
+                                                    @Override
+                                                    public void onCancelled(DatabaseError databaseError) {
 
-                                                }
-                                            });
-                                            mProcessApproval = false;
+                                                    }
+                                                });
+                                                mProcessApproval = false;
 
-                                        } else {
+                                            } else {
 
-                                                    mDatabaseVotes.child(QuizKey).child("up_votes").child(auth.getCurrentUser().getUid()).setValue("iVote");
+                                                mDatabaseVotes.child(QuizKey).child("up_votes").child(auth.getCurrentUser().getUid()).setValue("iVote");
 
-                                                    // CHECK IF USER HAS VOTED AND ADD 5 POINTS TO THE USER WHO POSTED THE QUESTION.....................
+                                                // CHECK IF USER HAS VOTED AND ADD 5 POINTS TO THE USER WHO POSTED THE QUESTION.....................
 
-                                                    mDatabaseQuestions.child(QuizKey).addValueEventListener(new ValueEventListener() {
-                                                        @Override
-                                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                                mDatabaseQuestions.child(QuizKey).addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                                            final String sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
+                                                        final String sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
 
-                                                            mDatabaseUsers.child(sender_uid).child("points_earned").runTransaction(new Transaction.Handler() {
-                                                                @Override
-                                                                public Transaction.Result doTransaction(MutableData mutableData) {
-                                                                    if (mutableData.getValue() == null) {
-                                                                        mutableData.setValue(5);
-                                                                    } else {
-                                                                        int count = mutableData.getValue(Integer.class);
-                                                                        mutableData.setValue(count + 5);
-                                                                        // mDatabaseUsers.child(sender_uid).child("points_earned").setValue(user_points);
-                                                                    }
-                                                                    return Transaction.success(mutableData);
+                                                        mDatabaseUsers.child(sender_uid).child("points_earned").runTransaction(new Transaction.Handler() {
+                                                            @Override
+                                                            public Transaction.Result doTransaction(MutableData mutableData) {
+                                                                if (mutableData.getValue() == null) {
+                                                                    mutableData.setValue(5);
+                                                                } else {
+                                                                    int count = mutableData.getValue(Integer.class);
+                                                                    mutableData.setValue(count + 5);
+                                                                    // mDatabaseUsers.child(sender_uid).child("points_earned").setValue(user_points);
                                                                 }
+                                                                return Transaction.success(mutableData);
+                                                            }
 
-                                                                @Override
-                                                                public void onComplete(DatabaseError databaseError, boolean b, com.google.firebase.database.DataSnapshot dataSnapshot) {
+                                                            @Override
+                                                            public void onComplete(DatabaseError databaseError, boolean b, com.google.firebase.database.DataSnapshot dataSnapshot) {
 
-                                                                }
+                                                            }
 
-                                                            });
+                                                        });
 
-                                                        }
+                                                      /*  //GET USER INFO
+                                                        mDatabaseUsers.child(sender_uid).addValueEventListener(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                                username = dataSnapshot.child("name").getValue().toString();
+                                                                user_points = dataSnapshot.child("points_earned").getValue().toString();
+                                                            }
 
-                                                        @Override
-                                                        public void onCancelled(DatabaseError databaseError) {
+                                                            @Override
+                                                            public void onCancelled(DatabaseError databaseError) {
 
-                                                        }
+                                                            }
+                                                        });
 
-                                                    });
+                                                        int x = Integer.parseInt(user_points);
+                                                        int y = 5;
+                                                        int z = x + y;*/
 
-                                                    mDatabaseVotes.child(QuizKey).child("up_votes").addListenerForSingleValueEvent(new ValueEventListener() {
-                                                        @Override
-                                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                                        // SEND MESSAGE TO QUESTION SENDER NOTIFICATIONS
+                                                        final DatabaseReference newPost = mDatabaseNotifications.child(sender_uid).child(QuizKey);
+                                                        Map<String, Object> map = new HashMap<>();
+                                                        map.put("posted_reason", "Hi, You've been AWARDED 5 points because this answer was up voted!");
+                                                        map.put("posted_answer", question_topic);
+                                                        map.put("sender_uid", auth.getCurrentUser().getUid());
+                                                        map.put("sender_name", "Erevu");
+                                                        map.put("inbox_type", "up_vote");
+                                                        map.put("read", false);
+                                                        map.put("question_key", QuizKey);
+                                                        map.put("posted_date", System.currentTimeMillis());
+                                                        map.put("post_id", newPost.getKey());
+                                                        newPost.setValue(map);
+                                                    }
 
-                                                            TextView voteUpCount = (TextView) findViewById(R.id.vote_up_counter);
-                                                            voteUpCount.setText(dataSnapshot.getChildrenCount() + "");
-                                                        }
+                                                    @Override
+                                                    public void onCancelled(DatabaseError databaseError) {
 
-                                                        @Override
-                                                        public void onCancelled(DatabaseError databaseError) {
+                                                    }
 
-                                                        }
-                                                    });
-                                                    mProcessApproval = false;
-                                                    Toast.makeText(ReadQuestionActivity.this, "Vote was successful",Toast.LENGTH_LONG).show();
+                                                });
 
+                                                mDatabaseVotes.child(QuizKey).child("up_votes").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                                        TextView voteUpCount = (TextView) findViewById(R.id.vote_up_counter);
+                                                        voteUpCount.setText(dataSnapshot.getChildrenCount() + "");
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(DatabaseError databaseError) {
+
+                                                    }
+                                                });
+                                                mProcessApproval = false;
+                                                Toast.makeText(ReadQuestionActivity.this, "Vote was successful",Toast.LENGTH_LONG).show();
+
+
+                                            }
 
                                         }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
 
                                     }
-                                }
+                                });
 
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
+                            }
 
-                                }
-                            });
+                        });
 
-                        }
-
-                    });
+                    }
 
                 } else
                 {
@@ -891,6 +932,24 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                                         }
 
                                                     });
+
+                                                   /* int x = Integer.parseInt(user_points);
+                                                    int y = 2;
+                                                    int z = x - y;*/
+
+                                                    // SEND MESSAGE TO QUESTION SENDER NOTIFICATIONS
+                                                    final DatabaseReference newPost = mDatabaseNotifications.child(sender_uid).child(QuizKey);
+                                                    Map<String, Object> map = new HashMap<>();
+                                                    map.put("posted_reason", "Hi, You've been DEDUCTED 2 points because this answer was down voted!");
+                                                    map.put("posted_answer", question_topic);
+                                                    map.put("sender_uid", auth.getCurrentUser().getUid());
+                                                    map.put("sender_name", "Erevu");
+                                                    map.put("inbox_type", "down_vote");
+                                                    map.put("read", false);
+                                                    map.put("question_key", QuizKey);
+                                                    map.put("posted_date", System.currentTimeMillis());
+                                                    map.put("post_id", newPost.getKey());
+                                                    newPost.setValue(map);
 
                                                 }
 

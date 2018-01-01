@@ -89,6 +89,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
@@ -123,13 +124,23 @@ public class MainActivity extends AppCompatActivity
     String questionTitlTag;
     String questionBodyTag;
 
+    String name = null;
+    String image = null;
+    String question_key = null;
+    String sender_uid = null;
+    String message = null;
+    Boolean read_status = null;
+
     private SectionsPagerAdapter mSectionsPagerAdapter;
     String selectedTopic = null;
     private ViewPager mViewPager;
     private FloatingActionButton fab;
-    private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseUsersQuestions, mDatabaseInboxUsers, mDatabaseUsersAns, mDatabase, mDatabaseForumNotifications;
+    private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseUsersQuestions, mDatabaseInboxUsers, mDatabaseUsersAns, mDatabase, mDatabaseForumNotifications, mDatabaseNotifications;
     Context mContext;
     private FirebaseAuth auth;
+    private RelativeLayout noty_icon;
+    private TextView noty_count;
+    private ImageView search_icon;
 
     private static final int REQUEST_CODE_PERMISSION = 1;
     String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
@@ -183,6 +194,18 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
 
         auth = FirebaseAuth.getInstance();
+
+        //CHECK IF USER IS ADMIN
+        if (auth.getCurrentUser() != null) {
+            String admin_email = auth.getCurrentUser().getEmail();
+            if (admin_email.equals("erevuapp@gmail.com")) {
+                //OPEN ADMIN
+                Intent cardonClick = new Intent(MainActivity.this, AdminpassActivity.class);
+                cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(cardonClick);
+            }
+        }
+
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
         mDatabaseForumNotifications = FirebaseDatabase.getInstance().getReference().child("Forum_notifications");
@@ -234,6 +257,7 @@ public class MainActivity extends AppCompatActivity
         auth = FirebaseAuth.getInstance();
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseInboxUsers = FirebaseDatabase.getInstance().getReference().child("Users_inbox");
+        mDatabaseNotifications = FirebaseDatabase.getInstance().getReference().child("Users_notifications");
         mDatabaseUsersAns = FirebaseDatabase.getInstance().getReference().child("Users_answers");
         mDatabaseQuestions.keepSynced(true);
         mDatabaseInboxUsers.keepSynced(true);
@@ -253,7 +277,7 @@ public class MainActivity extends AppCompatActivity
 
                 if (auth.getCurrentUser() != null) {
                     sendQuestion();
-
+                    //startActivity(new Intent(new Intent(MainActivity.this, PostAnswerActivity.class)));
                 } else {
                     Snackbar snackbar = Snackbar
 
@@ -268,7 +292,66 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
-        
+
+        noty_count = (TextView) findViewById(R.id.noty_count);
+        noty_icon = (RelativeLayout) findViewById(R.id.noty_icon);
+        noty_icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent openRead = new Intent(MainActivity.this, NotificationActivity.class);
+                startActivity(openRead);
+            }
+        });
+
+        search_icon = (ImageView) findViewById(R.id.search_icon);
+        search_icon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent openRead = new Intent(MainActivity.this, SearchActivity.class);
+                startActivity(openRead);
+            }
+        });
+
+        //CHECK FOR NOTIFICATIONS
+        if (auth.getCurrentUser() != null) {
+            final Query quizQuery = mDatabaseNotifications.child(auth.getCurrentUser().getUid()).orderByChild("read").equalTo(false);
+
+            mDatabaseNotifications.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.getValue() == null) {
+                        noty_count.setVisibility(View.GONE);
+                    } else {
+
+                        //COUNT THE NUMBER OF NOTIFICATIONS
+                        // count number of answers
+                        quizQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.getValue() == null) {
+                                    noty_count.setVisibility(View.GONE);
+                                } else {
+                                    noty_count.setText(dataSnapshot.getChildrenCount() + "");
+                                    noty_count.setVisibility(View.VISIBLE);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
         initPageChanger();
         checkUserLoggedIn();
 
@@ -696,70 +779,43 @@ public class MainActivity extends AppCompatActivity
                         @Override
                         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
-                            String name = (String) dataSnapshot.child("sender_name").getValue();
-                            String image = (String) dataSnapshot.child("sender_image").getValue();
-                            String question_key = (String) dataSnapshot.child("question_key").getValue();
-                            String sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
-                            String message = (String) dataSnapshot.child("posted_answer").getValue();
-                            Boolean read_status = (Boolean) dataSnapshot.child("read").getValue();
+                            //CHECK INBOX TYPE
+                            String inbox_type = (String) dataSnapshot.child("inbox_type").getValue();
+
+                            name = (String) dataSnapshot.child("sender_name").getValue();
+                            image = (String) dataSnapshot.child("sender_image").getValue();
+                            question_key = (String) dataSnapshot.child("question_key").getValue();
+                            sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
+                            message = (String) dataSnapshot.child("posted_answer").getValue();
+                            read_status = (Boolean) dataSnapshot.child("read").getValue();
                             String post_id = (String) dataSnapshot.child("post_id").getValue();
 
-                            if (read_status.equals(false)) {
-                                // send notification to reciever
 
-                                Context context = getApplicationContext();
-                                Intent intent = new Intent(context, ReadQuestionActivity.class);
-                                intent.putExtra("question_id", question_key);
-                                PendingIntent pIntent = PendingIntent.getActivity(MainActivity.this, 0, intent, 0);
-                                /*Bitmap bitmap = getBitmapFromURL(image);*/
-                       /* NotificationCompat.BigPictureStyle style = new NotificationCompat.BigPictureStyle();
-                        style.bigPicture(bitmap);*/
-                                Notification noty = new Notification.Builder(MainActivity.this)
-                                        .setContentTitle("Erevu")
-                                        .setTicker("Inbox alert!")
-                                        .setContentText(name + " answered a question you posted - " + message)
-                                        .setSmallIcon(R.drawable.erevu_noty_icon)
-                                       // .setLargeIcon(bitmap)
-                                        .setContentIntent(pIntent).getNotification();
+                                if (read_status.equals(false)) {
+                                    // send notification to reciever
+
+                                    Context context = getApplicationContext();
+                                    Intent intent = new Intent(context, ReadQuestionActivity.class);
+                                    intent.putExtra("question_id", question_key);
+                                    PendingIntent pIntent = PendingIntent.getActivity(MainActivity.this, 0, intent, 0);
+                                    Notification noty = new Notification.Builder(MainActivity.this)
+                                            .setContentTitle("Erevu")
+                                            .setTicker("Inbox alert!")
+                                            .setContentText("Hi, your post was voted up - " + message)
+                                            .setSmallIcon(R.drawable.erevu_noty_icon)
+                                            // .setLargeIcon(bitmap)
+                                            .setContentIntent(pIntent).getNotification();
 
 
-                                noty.flags = Notification.FLAG_AUTO_CANCEL;
-                                Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-                                Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-                                r.play();
-                                NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                                nm.notify(0, noty);
+                                    noty.flags = Notification.FLAG_AUTO_CANCEL;
+                                    Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                                    Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+                                    r.play();
+                                    NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                                    nm.notify(0, noty);
 
-                        /*NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
-                        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.saf_appbanner);
-
-                        builder.setContentTitle("Brainy");
-                        NotificationCompat.BigPictureStyle style = new NotificationCompat.BigPictureStyle();
-                        style.bigPicture(bitmap);
-
-                        builder.bigPicture(bitmap)
-                        Notification notification1 = builder.build();
-                        NotificationManagerCompat.from(getApplicationContext()).notify(0, notification1);
-    */
-
+                                }
                             }
-                        }
-
-                        // CONVERTING URL TO A BITMAP
-              /*  private Bitmap getBitmapFromURL(String image) {
-                    try {
-                        URL url = new URL(image);
-                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                        connection.setDoInput(true);
-                        connection.connect();
-                        InputStream input = connection.getInputStream();
-                        Bitmap myBitmap = BitmapFactory.decodeStream(input);
-                        return myBitmap;
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        return null;
-                    }
-                }*/
 
                         @Override
                         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
@@ -913,7 +969,7 @@ public class MainActivity extends AppCompatActivity
 
                     }
 
-                }else{
+                } else {
                     // can't get location
                     // GPS or Network is not enabled
                     // Ask user to enable GPS/network in settings
@@ -948,6 +1004,15 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
+            }
+        });
+
+        ImageView takeShot = (ImageView) dialog.findViewById(R.id.takeCamera);
+        takeShot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent openRead = new Intent(MainActivity.this, TakeCameraShotActivity.class);
+                startActivity(openRead);
             }
         });
 

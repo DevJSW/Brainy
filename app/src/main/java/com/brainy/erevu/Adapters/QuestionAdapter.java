@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -48,7 +50,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
 {
 
 
-    private List<Question>  mQuestionList;
+    private ArrayList<Question> mQuestionList;
     Context ctx;
 
     private DatabaseReference mDatabase, mDatabaseAnswers;
@@ -56,11 +58,12 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
 
     FirebaseAuth mAuth;
 
-    public QuestionAdapter(Context ctx, List<Question> mQuestionList)
+    public QuestionAdapter(Context ctx, ArrayList<Question> mQuestionList)
     {
         this.mQuestionList = mQuestionList;
         this.ctx = ctx;
     }
+
 
     @Override
     public QuestionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -83,7 +86,8 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
         public TextView viewCounter, answersCounter, favouritesCounter;
         public DatabaseReference  mDatabase, mDatabaseProfileAns;
         public  FirebaseAuth mAuth;
-
+        private RecyclerView adsList;
+        private AdsAdapter adsAdapter;
         RelativeLayout answer_rely;
 
 
@@ -99,6 +103,12 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
             post_date = (RelativeTimeTextView) itemView.findViewById(R.id.post_date);
             Typeface custom_font = Typeface.createFromAsset(ctx.getAssets(), "fonts/Aller_Rg.ttf");
             post_date.setTypeface(custom_font);
+
+           /* adsList = (RecyclerView) itemView.findViewById(R.id.horizontal_list);
+            adsList.setLayoutManager(new LinearLayoutManager(ctx, LinearLayoutManager.HORIZONTAL, false));
+            adsAdapter = new AdsAdapter();
+            adsList.setAdapter(adsAdapter);
+*/
 
             mAuth= FirebaseAuth.getInstance();
 
@@ -136,6 +146,9 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
 
         holder.post_title.setText(c.getQuestion_title());
         holder.post_body.setText(c.getQuestion_body());
+
+        //holder.adsAdapter.setData(mQuestionList.get(position).g); // List of Strings
+        //holder.adsAdapter.setRowIndex(position);
 
         holder.post_name.setText(c.getSender_name());
         holder.post_date.setReferenceTime(Long.parseLong(String.valueOf(c.getPosted_date())));

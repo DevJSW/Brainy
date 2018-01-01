@@ -44,7 +44,7 @@ public class QuizProfileTab extends Fragment {
     private TextView noAns;
 
     QuestionAdapter questionAdapter;
-    private final List<Question> questionList = new ArrayList<>();
+    private final ArrayList<Question> questionList = new ArrayList<>();
     LinearLayoutManager mLinearlayout;
 
     private static final int TOTAL_ITEMS_TO_LOAD = 10;
@@ -120,7 +120,7 @@ public class QuizProfileTab extends Fragment {
 
     private void LoadMessage() {
 
-        Query quizQuery = mDatabase.child(mAuth.getCurrentUser().getUid()).limitToLast(currentPage * TOTAL_ITEMS_TO_LOAD);
+        Query quizQuery = mDatabase.child(mAuth.getCurrentUser().getUid()).limitToFirst(50);
         quizQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

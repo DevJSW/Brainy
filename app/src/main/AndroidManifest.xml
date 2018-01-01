@@ -6,12 +6,13 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <!-- <uses-permission android:name="android.permission.READ_PHONE_STATE" /> -->
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <uses-feature android:name="android.hardware.location.gps" />
+    <uses-feature android:name="android.hardware.camera"/>
 
     <application
         android:name=".data.brainy"
@@ -61,7 +62,8 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.SearchActivity"
-            android:label="" />
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <service android:name=".Services.FirebaseMessagingService">
             <intent-filter>
@@ -125,7 +127,31 @@
             android:name=".activity.SettingsActivity"
             android:label=""
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activity.AssistantActivity"></activity>
+        <activity android:name=".activity.AssistantActivity" />
+        <activity
+            android:name=".activity.UnansweredActivity"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.NotificationActivity"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.AdminpassActivity"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.AdminPostAdActivity"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.ViewAdPhotoActivity"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.TakeCameraShotActivity"
+            android:label=""
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

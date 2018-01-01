@@ -82,7 +82,6 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="25dp"
-            android:layout_marginTop="5dp"
             android:layout_marginRight="25dp"
             android:layout_gravity="center_horizontal">
 
@@ -95,6 +94,72 @@
                 android:hint="Edit Bio"/>
 
         </android.support.design.widget.TextInputLayout>
+
+        <com.brainy.erevu.data.MyBoldFont
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="25dp"
+            android:visibility="gone"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:textSize="17dp"
+            android:textColor="@color/colorAccent"
+            android:text="Private Info:"/>
+
+        <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/rl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="23dp"
+            android:visibility="gone"
+            android:layout_marginTop="5dp"
+            android:orientation="vertical"
+            android:background="@drawable/button_bg"
+            android:layout_marginRight="23dp"
+            >
+            <Spinner
+                android:id="@+id/gender_spinner"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_marginBottom="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_height="match_parent"
+                />
+
+            <Spinner
+                android:id="@+id/age_spinner"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:layout_marginBottom="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_height="match_parent"
+                />
+
+            <Spinner
+                android:id="@+id/career_spinner"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:visibility="gone"
+                android:layout_marginBottom="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_height="match_parent"
+                />
+
+            <Spinner
+                android:id="@+id/student_spinner"
+                android:layout_width="match_parent"
+                android:layout_weight="1"
+                android:visibility="gone"
+                android:layout_marginBottom="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_height="match_parent"
+                />
+
+        </LinearLayout>
+
     </LinearLayout>
 
 

@@ -6,7 +6,7 @@ package com.brainy.erevu.data;
 
 public class Ad {
 
-    private String ad_image;
+    private String ads_image;
     private String ad_name;
     private String sender_uid;
 
@@ -14,18 +14,18 @@ public class Ad {
 
     }
 
-    public Ad( String ad_image,String ad_name, String sender_uid) {
-        this.ad_image = ad_image;
+    public Ad( String ads_image,String ad_name, String sender_uid) {
+        this.ads_image = ads_image;
         this.ad_name = ad_name;
         this.sender_uid = sender_uid;
     }
 
-    public String getAd_image() {
-        return ad_image;
+    public String getAds_image() {
+        return ads_image;
     }
 
-    public void setAd_image(String ad_image) {
-        this.ad_image = ad_image;
+    public void setAds_image(String ads_image) {
+        this.ads_image = ads_image;
     }
 
     public String getAd_name() {

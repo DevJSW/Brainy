@@ -19,8 +19,12 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -34,6 +38,7 @@ import android.widget.Toast;
 import com.brainy.erevu.Adapters.InboxAdapter;
 import com.brainy.erevu.R;
 import com.brainy.erevu.activity.ReadQuestionActivity;
+import com.brainy.erevu.activity.SearchActivity;
 import com.brainy.erevu.activity.SigninActivity;
 import com.brainy.erevu.data.Answer;
 import com.brainy.erevu.data.Question;
@@ -216,9 +221,13 @@ public class tab2Inbox extends Fragment {
         return view;
     }
 
+   /* @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+*/
     private void initFb() {
-
-
 
     }
 
@@ -270,6 +279,7 @@ public class tab2Inbox extends Fragment {
         });
 
     }
+
 
     @Override
     public void onResume() {
@@ -840,5 +850,6 @@ public class tab2Inbox extends Fragment {
         newPost.child(auth.getCurrentUser().getUid()).child("device_token").setValue(deviceToken);
 
     }
+
 
 }

@@ -6,7 +6,9 @@ import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.method.SingleLineTransformationMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,7 @@ import com.brainy.erevu.R;
 import com.brainy.erevu.activity.DiscussForumActivity;
 import com.brainy.erevu.activity.ReadQuestionActivity;
 import com.brainy.erevu.activity.ViewUserProfileActivity;
+import com.brainy.erevu.data.Ad;
 import com.brainy.erevu.data.Question;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -30,346 +33,118 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
 
 /**
  * Created by Shephard on 8/7/2017.
  */
 
-public class MainAdapter extends RecyclerView.Adapter<MainAdapter.QuestionViewHolder>
+/*
+public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
 
 
-    private List<Question>  mQuestionList;
+    private ArrayList<Object> items;
     Context ctx;
+    private final int VERTICAL = 1;
+    private final int HORIZONTAL = 2;
 
-    private DatabaseReference mDatabase, mDatabaseAnswers;
-    private ImageView avator;
-
-    FirebaseAuth mAuth;
-
-    public MainAdapter(Context ctx, List<Question> mQuestionList)
+    public MainAdapter(Context ctx, ArrayList<Object> items)
     {
-        this.mQuestionList = mQuestionList;
+        this.items = items;
         this.ctx = ctx;
     }
 
     @Override
-    public QuestionViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(ctx);
+        View view;
+        RecyclerView.ViewHolder holder;
+        switch (viewType) {
+            case VERTICAL:
+                view = inflater.inflate(R.layout.vertical, parent, false);
+                holder = new VerticalViewHolder(view);
+                break;
+            case HORIZONTAL:
+                view = inflater.inflate(R.layout.horizontal, parent, false);
+                holder = new HorizontalViewHolder(view);
+                break;
 
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.question_row,parent, false);
-
-        return new QuestionViewHolder(v);
+            default:
+                view = inflater.inflate(R.layout.horizontal, parent, false);
+                holder = new HorizontalViewHolder(view);
+                break;
+        }
+        return holder;
     }
 
-    public class QuestionViewHolder extends RecyclerView.ViewHolder {
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (holder.getItemViewType() == VERTICAL)
+            verticalView((VerticalViewHolder) holder);
+        else if (holder.getItemViewType() == HORIZONTAL)
+            horizontalView((HorizontalViewHolder) holder);
 
-        View mView;
-
-        public TextView post_title;
-        public TextView post_name;
-        public TextView post_body;
-        public RelativeTimeTextView post_date;
-        public ImageView avator;
-        public ImageView civ;
-        public TextView viewCounter, answersCounter, favouritesCounter;
-        public DatabaseReference  mDatabase, mDatabaseProfileAns;
-        public  FirebaseAuth mAuth;
-
-        RelativeLayout answer_rely;
-
-
-        public QuestionViewHolder(View itemView) {
-            super(itemView);
-
-            mView = itemView;
-
-            post_title = (TextView) itemView.findViewById(R.id.post_quiz_title);
-            civ = (CircleImageView) itemView.findViewById(R.id.post_image);
-            post_body = (TextView) itemView.findViewById(R.id.post_quiz_body);
-            post_name = (TextView) itemView.findViewById(R.id.post_name);
-            post_date = (RelativeTimeTextView) itemView.findViewById(R.id.post_date);
-            Typeface custom_font = Typeface.createFromAsset(ctx.getAssets(), "fonts/Aller_Rg.ttf");
-            post_date.setTypeface(custom_font);
-
-            mAuth= FirebaseAuth.getInstance();
-
-            mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
-            viewCounter = (TextView) mView.findViewById(R.id.viewsCounter);
-            answersCounter = (TextView) mView.findViewById(R.id.answersCounter);
-            favouritesCounter = (TextView) mView.findViewById(R.id.favouriteCounter);
-            answer_rely = (RelativeLayout) mView.findViewById(R.id.anser_rely);
-            avator = (ImageView) mView.findViewById(R.id.post_image);
-            mDatabaseProfileAns = FirebaseDatabase.getInstance().getReference().child("Users_answers");
-
-        }
-
-        public void setPosted_date(String posted_date) {
-
-            RelativeTimeTextView post_date = (RelativeTimeTextView) mView.findViewById(R.id.post_date);
-            post_date.setText(posted_date);
-        }
-
-
-        public void setSender_name(String sender_name) {
-
-            TextView post_name = (TextView) mView.findViewById(R.id.post_name);
-            post_name.setText(sender_name);
-        }
-
-        public void setQuestion_body(String question_body) {
-            if (question_body != null) {
-                TextView post_body = (TextView) mView.findViewById(R.id.post_quiz_body);
-                post_body.setText(question_body);
-            } else {
-                post_body.setVisibility(View.GONE);
-            }
-        }
-
-        public void setQuestion_title(String question_title) {
-
-            TextView post_title = (TextView) mView.findViewById(R.id.post_quiz_title);
-            post_title.setText(question_title);
-        }
-
-        public void setSender_image(final Context ctx, final String sender_image) {
-
-            final CircleImageView civ = (CircleImageView) mView.findViewById(R.id.post_image);
-
-            Glide.with(ctx)
-                    .load(sender_image).asBitmap()
-                    .placeholder(R.drawable.placeholder_image)
-                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                    .centerCrop()
-                    .into(new BitmapImageViewTarget(civ) {
-                        @Override
-                        protected void setResource(Bitmap resource) {
-                            RoundedBitmapDrawable circularBitmapDrawable =
-                                    RoundedBitmapDrawableFactory.create(ctx.getResources(), resource);
-                            circularBitmapDrawable.setCircular(true);
-                            civ.setImageDrawable(circularBitmapDrawable);
-                        }
-                    });
-
-        }
     }
+
+  */
+/*  private void verticalView(VerticalViewHolder holder) {
+
+        QuestionAdapter adapter1 = new QuestionAdapter(getVerticalData());
+        holder.recyclerView.setLayoutManager(new LinearLayoutManager(ctx));
+        holder.recyclerView.setAdapter(adapter1);
+    }
+
+    private void horizontalView(HorizontalViewHolder holder) {
+
+        //AdsAdapter adapter = new AdsAdapter(getHorizontalData());
+        QuestionAdapter adapter1 = new QuestionAdapter(getVerticalData());
+        holder.recyclerView.setLayoutManager(new LinearLayoutManager(ctx, LinearLayoutManager.HORIZONTAL, false));
+        holder.recyclerView.setAdapter(adapter1);
+    }*//*
 
 
     @Override
     public int getItemCount() {
-        return mQuestionList.size();
+        return items.size();
     }
 
     @Override
-    public void onBindViewHolder(final QuestionViewHolder holder, int position) {
+    public int getItemViewType(int position) {
+        if (items.get(position) instanceof Question)
+            return VERTICAL;
+        if (items.get(position) instanceof Question)
+            return HORIZONTAL;
+        return -1;
+    }
 
-        final Question c = mQuestionList.get(position);
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
-        mAuth= FirebaseAuth.getInstance();
-        final DatabaseReference mDatabaseProfileAns = FirebaseDatabase.getInstance().getReference().child("Users_answers");
-        mDatabaseAnswers = FirebaseDatabase.getInstance().getReference().child("Answers");
-        mDatabase.keepSynced(true);
-        mDatabaseAnswers.keepSynced(true);
+    public class HorizontalViewHolder extends RecyclerView.ViewHolder {
 
-        final String quiz_key = c.getPost_id();
-        final String user_id = c.getSender_uid();
+        RecyclerView recyclerView;
 
-        holder.post_title.setText(c.getQuestion_title());
-        if (c.getQuestion_body() != null) {
-            holder.post_body.setText(c.getQuestion_body());
-        } else {
-            holder.post_body.setVisibility(View.GONE);
+        HorizontalViewHolder(View itemView) {
+            super(itemView);
+            recyclerView = (RecyclerView) itemView.findViewById(R.id.Ads_list);
         }
-        holder.post_name.setText(c.getSender_name());
-        holder.post_date.setReferenceTime(Long.parseLong(String.valueOf(c.getPosted_date())));
-
-        holder.avator.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent openRead = new Intent(ctx, ViewUserProfileActivity.class);
-                openRead.putExtra("user_id", user_id );
-                ctx.startActivity(openRead);
-            }
-        });
-
-        holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (mAuth.getCurrentUser() != null) {
-                    mDatabase.child(quiz_key).child("views").child(mAuth.getCurrentUser().getUid()).setValue("iView");
-                }
-                Intent openRead = new Intent(ctx, ReadQuestionActivity.class);
-                openRead.putExtra("question_id", quiz_key );
-                ctx.startActivity(openRead);
-
-            }
-        });
-
-
-        /*holder.mView.setOnLongClickListener(new View.OnLongClickListener() {
-
-            @Override
-            public boolean onLongClick(View v) {
-
-                // custom dialog
-                final Dialog dialog = new Dialog(ctx);
-                dialog.setContentView(R.layout.ans_popup_dialog);
-                dialog.setTitle("Profile Options");
-
-                LinearLayout deleteLiny = (LinearLayout) dialog.findViewById(R.id.deleteLiny);
-                deleteLiny.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        AlertDialog diaBox = AskOption();
-                        diaBox.show();
-                        dialog.dismiss();
-                    }
-                });
-
-                LinearLayout editLiny = (LinearLayout) dialog.findViewById(R.id.editLiny);
-                editLiny.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-
-                        Intent openRead = new Intent(ctx, EditQuestionActivity.class);
-                        openRead.putExtra("question_id", quiz_key );
-                        ctx.startActivity(openRead);
-                        dialog.dismiss();
-                    }
-                });
-
-                // if button is clicked, close the custom dialog
-
-                dialog.show();
-                return false;
-            }
-
-            private AlertDialog AskOption()
-            {
-
-                AlertDialog myQuittingDialogBox =new AlertDialog.Builder(ctx)
-                        //set message, title, and icon
-                        .setTitle("Remove Alert!")
-                        .setMessage("If you remove this question from your profile you will not be able to edit or easly monitor it!")
-
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                //your deleting code
-
-                                 if (mAuth.getCurrentUser() != null)
-                                mDatabaseProfileAns.child(mAuth.getCurrentUser().getUid()).child(quiz_key).removeValue();
-                                dialog.dismiss();
-                                Toast.makeText(ctx, "Message removed!",Toast.LENGTH_SHORT).show();
-                            }
-
-                        })
-
-
-                        .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                dialog.dismiss();
-
-                            }
-                        })
-                        .create();
-                return myQuittingDialogBox;
-
-            }
-
-        });
-*/
-
-
-        holder.answer_rely.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent openRead = new Intent(ctx, DiscussForumActivity.class);
-                openRead.putExtra("question_id", quiz_key );
-
-            }
-        });
-
-        // count number of views in a views
-
-        if (quiz_key != null) {
-            mDatabase
-                    .child(quiz_key)
-                    .child("views")
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-
-                            holder.viewCounter.setText(dataSnapshot.getChildrenCount() + "");
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
-        }
-        // count number of answers
-        if (quiz_key != null) {
-            mDatabaseAnswers
-                    .child(quiz_key)
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    holder.answersCounter.setText(dataSnapshot.getChildrenCount() + "");
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
-
-        // count number of favourites
-        if (quiz_key != null) {
-            mDatabase
-                    .child(quiz_key)
-                    .child("favourite")
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-
-                    holder.favouritesCounter.setText(dataSnapshot.getChildrenCount() + "");
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-        }
-
-
-        Glide.with(ctx)
-                .load(c.getSender_image()).asBitmap()
-                .placeholder(R.drawable.placeholder_image)
-                .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                .centerCrop()
-                .into(new BitmapImageViewTarget(holder.civ) {
-                    @Override
-                    protected void setResource(Bitmap resource) {
-                        RoundedBitmapDrawable circularBitmapDrawable =
-                                RoundedBitmapDrawableFactory.create(ctx.getResources(), resource);
-                        circularBitmapDrawable.setCircular(true);
-                        holder.civ.setImageDrawable(circularBitmapDrawable);
-                    }
-                });
-
 
     }
 
+    public class VerticalViewHolder extends RecyclerView.ViewHolder {
+
+        RecyclerView recyclerView;
+
+        VerticalViewHolder(View itemView) {
+            super(itemView);
+            recyclerView = (RecyclerView) itemView.findViewById(R.id.Questions_list);
+        }
+
+    }
+
+
 }
+*/
 

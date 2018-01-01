@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.brainy.erevu.activity.SettingsActivity">
+
+    <include layout="@layout/settings_toolbar"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:layout_scrollFlags="scroll|enterAlways"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
+        android:orientation="vertical">
+        <com.brainy.erevu.data.CustomEditText
+            android:id="@+id/old_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_email"
+            android:layout_margin="10dp"
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
+            android:singleLine="true" />
+
+        <com.brainy.erevu.data.CustomEditText
+            android:id="@+id/new_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_new_email"
+            android:layout_margin="10dp"
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
+            android:singleLine="true" />
+
+        <com.brainy.erevu.data.CustomEditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
+            android:hint="Password"
+            android:layout_margin="10dp"
+            android:imeActionId="@+id/login"
+            android:imeOptions="actionUnspecified"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:singleLine="true" />
+
+        <com.brainy.erevu.data.CustomEditText
+            android:id="@+id/newPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusableInTouchMode="true"
+            android:hint="@string/new_pass"
+            android:layout_margin="10dp"
+            android:imeActionId="@+id/login"
+            android:imeOptions="actionUnspecified"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:singleLine="true" />
+
+        <com.brainy.erevu.data.MyButton
+            android:id="@+id/changeEmail"
+            style="?android:textAppearanceSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/button_bg"
+            android:text="Change"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
+        <com.brainy.erevu.data.MyButton
+            android:id="@+id/changePass"
+            style="?android:textAppearanceSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/button_bg"
+            android:text="Change"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
+        <com.brainy.erevu.data.MyButton
+            android:id="@+id/send"
+            style="?android:textAppearanceSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/button_bg"
+            android:text="Send"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:visibility="gone" />
+
+        <com.brainy.erevu.data.MyButton
+            android:id="@+id/remove"
+            style="?android:textAppearanceSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/button_bg"
+            android:text="Remove"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/toolbar"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+
+                <com.brainy.erevu.data.MyFont
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:textSize="17dp"
+                    android:textColor="@color/colorAccent"
+                    android:text="Talk to us"/>
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dp"
+                android:background="#afacac"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="13dp"
+                    android:src="@drawable/facebook_icon"/>
+
+                <com.brainy.erevu.data.MyFont
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:id="@+id/fb"
+                    android:textSize="17dp"
+                    android:text="Facebook"/>
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#afacac"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="13dp"
+                    android:src="@drawable/twitter_icon"/>
+
+                <com.brainy.erevu.data.MyFont
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:id="@+id/twitter"
+                    android:textSize="17dp"
+                    android:text="Twitter"/>
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#afacac"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="13dp"
+                    android:src="@drawable/youtube_icon"/>
+
+                <com.brainy.erevu.data.MyFont
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:id="@+id/youtube"
+                    android:textSize="17dp"
+                    android:text="YouTube"/>
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="10dp"
+                android:background="#afacac"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_margin="5dp"
+                android:orientation="horizontal">
+
+                <com.brainy.erevu.data.MyFont
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="17dp"
+                    android:text="General"/>
+            </LinearLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dp"
+                android:background="#afacac"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:id="@+id/liny_changeEmail"
+                android:orientation="horizontal">
+
+                <com.brainy.erevu.data.MyFont
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:textSize="17dp"
+                    android:text="Change Email"/>
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#afacac"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:id="@+id/liny_changePass"
+                android:orientation="horizontal">
+
+                <com.brainy.erevu.data.MyFont
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:textSize="17dp"
+                    android:text="Change Password"/>
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#afacac"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:id="@+id/liny_reset"
+                android:orientation="horizontal">
+
+                <com.brainy.erevu.data.MyFont
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:textSize="17dp"
+                    android:text="Send password reset email"/>
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#afacac"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:id="@+id/liny_delete"
+                android:orientation="horizontal">
+
+                <com.brainy.erevu.data.MyFont
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:textSize="17dp"
+                    android:text="Delete Account"/>
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#afacac"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:id="@+id/liny_signout"
+                android:orientation="horizontal">
+
+                <com.brainy.erevu.data.MyFont
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:textSize="17dp"
+                    android:text="Sign out"/>
+            </LinearLayout>
+            <!--<View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#afacac"/>
+
+            <com.brainy.erevu.data.MyButton
+                android:id="@+id/change_email_button"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_bg"
+                android:textColor="@android:color/white"
+                android:layout_marginTop="16dp"
+                android:text="Change Email"
+                android:textStyle="bold" />
+
+            <com.brainy.erevu.data.MyButton
+                android:id="@+id/change_password_button"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_bg"
+                android:textColor="@android:color/white"
+                android:layout_marginTop="16dp"
+                android:text="Change Password"
+                android:textStyle="bold" />
+
+            <com.brainy.erevu.data.MyButton
+                android:id="@+id/sending_pass_reset_button"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:background="@drawable/button_bg"
+                android:textColor="@android:color/white"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Send Password reset email"
+                android:textStyle="bold" />
+
+            <com.brainy.erevu.data.MyButton
+                android:id="@+id/remove_user_button"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:background="@drawable/button_bg"
+                android:textColor="@android:color/white"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Remove User"
+                android:textStyle="bold" />
+
+            <com.brainy.erevu.data.MyButton
+                android:id="@+id/sign_out"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/button_bg"
+                android:text="Sign Out"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />-->
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

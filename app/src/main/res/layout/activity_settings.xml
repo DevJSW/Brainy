@@ -73,7 +73,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="@color/colorPrimary"
+            android:background="@drawable/button_bg"
             android:text="Change"
             android:textColor="@android:color/white"
             android:textStyle="bold" />
@@ -84,7 +84,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="@color/colorPrimary"
+            android:background="@drawable/button_bg"
             android:text="Change"
             android:textColor="@android:color/white"
             android:textStyle="bold" />
@@ -95,7 +95,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="@color/colorPrimary"
+            android:background="@drawable/button_bg"
             android:text="Send"
             android:textColor="@android:color/white"
             android:textStyle="bold" />
@@ -112,12 +112,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="@color/colorPrimary"
+            android:background="@drawable/button_bg"
             android:text="Remove"
             android:textColor="@android:color/white"
             android:textStyle="bold" />
 
-        <com.brainy.erevu.data.MyButton
+       <!-- <com.brainy.erevu.data.MyButton
             android:id="@+id/change_email_button"
             style="?android:textAppearanceSmall"
             android:layout_width="match_parent"
@@ -170,7 +170,7 @@
             android:background="@drawable/button_bg"
             android:text="Sign Out"
             android:textColor="@android:color/white"
-            android:textStyle="bold" />
+            android:textStyle="bold" />-->
 
     </LinearLayout>
 

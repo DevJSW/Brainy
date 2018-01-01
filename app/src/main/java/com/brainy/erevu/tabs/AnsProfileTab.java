@@ -108,7 +108,7 @@ public class AnsProfileTab extends Fragment {
 
     private void LoadMessage() {
 
-        Query quizQuery = mDatabaseAnswers.child(auth.getCurrentUser().getUid()).limitToLast(currentPage * TOTAL_ITEMS_TO_LOAD);
+        Query quizQuery = mDatabaseAnswers.child(auth.getCurrentUser().getUid()).limitToFirst(50);
         quizQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

@@ -25,10 +25,12 @@ import android.support.v7.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.brainy.erevu.Adapters.MainAdapter;
 import com.brainy.erevu.Adapters.QuestionAdapter;
 import com.brainy.erevu.activity.FilterResultsActivity;
 import com.brainy.erevu.activity.SearchActivity;
+import com.brainy.erevu.activity.SettingsActivity;
+import com.brainy.erevu.activity.SignupActivity;
+import com.brainy.erevu.activity.UnansweredActivity;
 import com.brainy.erevu.data.Question;
 import com.brainy.erevu.R;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -74,7 +76,9 @@ public class tab1Questions extends Fragment {
     private int nextPage;
 
     QuestionAdapter questionAdapter;
-    private final List<Question> questionList = new ArrayList<>();
+    //MainAdapter mainAdapter;
+    private ArrayList<Question> questionList;
+    private final ArrayList<Object> objects = new ArrayList<>();
     LinearLayoutManager mLinearlayout;
 
     private static final String TAG = "tab1Question";
@@ -99,7 +103,9 @@ public class tab1Questions extends Fragment {
     private int visibleItemCount, totalItemCount, firstVisibleItem, lastVisibleItem;
 
     List<String> topicList;
+    List<String> optionList;
     Spinner spinner;
+    Spinner spinner2;
 
     @SuppressLint("ResourceAsColor")
     @Override
@@ -109,14 +115,14 @@ public class tab1Questions extends Fragment {
 
         // Get reference of widgets from XML layout
         spinner = (Spinner) v.findViewById(R.id.spinner);
-        final Spinner spinner2 = (Spinner) v.findViewById(R.id.spinner2);
-
+        spinner2 = (Spinner) v.findViewById(R.id.spinner2);
+        questionList = new ArrayList<>();
         //auth
         pullToLoadView= (PullToLoadView) v.findViewById(R.id.pullToLoadView);
 
         // Initializing a String Array
         String[] topics = new String[]{
-                "Select a topic...",
+                "All Topics",
                 "Math",
                 "Agriculture",
                 "Computer science & ICT",
@@ -140,7 +146,7 @@ public class tab1Questions extends Fragment {
         mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.refresh);
 
         topicList = new ArrayList<>(Arrays.asList(topics));
-        final List<String> optionList = new ArrayList<>(Arrays.asList(options));
+        optionList = new ArrayList<>(Arrays.asList(options));
 
         // Initializing an ArrayAdapter
         final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
@@ -185,7 +191,6 @@ public class tab1Questions extends Fragment {
                    /* Toast.makeText
                             (getActivity(), "Selected : " + selectedTopic, Toast.LENGTH_SHORT)
                             .show();*/
-
                     Bundle bundle = new Bundle();
                     bundle.putString("selected_topic", selectedTopic );
 
@@ -286,28 +291,7 @@ public class tab1Questions extends Fragment {
                     spinnerArrayAdapter.setDropDownViewResource(spinner_item);
                     spinner.setAdapter(spinnerArrayAdapter);
 
-                    mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.refresh);
-                    mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                        @Override
-                        public void onRefresh() {
-
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-
-                                    currentPage++;
-                                    questionList.clear();
-                                    unansweredFilterMessage();
-
-
-                                }
-                            }, 3000);
-
-                        }
-                    });
-
-                    questionList.clear();
-                    unansweredFilterMessage();
+                   // startActivity(new Intent(getContext(), UnansweredActivity.class));
 
                     //LOAD LATEST QUESTIONS
                 } else if (selectedOption == "Active") {
@@ -400,6 +384,7 @@ public class tab1Questions extends Fragment {
        // questionAdapter = new QuestionAdapter(getActivity(), new ArrayList<Question>());
 
         questionAdapter = new QuestionAdapter(getActivity(), questionList);
+       // mainAdapter = new MainAdapter(getActivity(), (ArrayList<Object>) getObject());
 
         mQuestionsList = (RecyclerView) v.findViewById(R.id.Questions_list);
         mLinearlayout = new LinearLayoutManager(getActivity());
@@ -463,6 +448,22 @@ public class tab1Questions extends Fragment {
 
     }
 
+  /*  private List<Object> getObject() {
+
+        objects.add(getVerticalData());
+        objects.add(getHorizontalData());
+        return objects;
+    }
+
+    public static ArrayList<Question> getVerticalData() {
+        ArrayList<Question> questionList = new ArrayList<>();
+        return questionList;
+    }
+
+    public static ArrayList<Question> getHorizontalData() {
+        ArrayList<Question> questionList = new ArrayList<>();
+        return questionList;
+    }*/
 
     private void LoadLatestMessage() {
 
@@ -522,11 +523,11 @@ public class tab1Questions extends Fragment {
         LoadMessage();
     }
 
-    @Override
+   /* @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-    }
+    }*/
 
     @Override
     public void onResume() {
@@ -536,7 +537,7 @@ public class tab1Questions extends Fragment {
 
     private void initSpinner() {
 
-        // Initializing an ArrayAdapter
+        // RESET FIRST SPINNER
         final ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<String>(
                 getActivity(), R.layout.spinner_item, topicList) {
             @Override
@@ -564,6 +565,35 @@ public class tab1Questions extends Fragment {
                 return view;
             }
         };
+
+        // RESET SECOND SPINNER
+       /* final ArrayAdapter<String> spinnerArrayAdapter2 = new ArrayAdapter<String>(
+                getActivity(), R.layout.spinner_item, optionList) {
+
+            @Override
+            public boolean isEnabled(int position) {
+                if (position == 0) {
+                    // Disable the first item from Spinner
+                    // First item will be use for hint
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView,
+                                        ViewGroup parent) {
+                View view = super.getDropDownView(position, convertView, parent);
+                TextView tv = (TextView) view;
+
+                tv.setTextColor(Color.BLACK);
+                return view;
+            }
+        };
+
+        spinnerArrayAdapter2.setDropDownViewResource(spinner_item);
+        spinner2.setAdapter(spinnerArrayAdapter2);*/
 
         spinnerArrayAdapter.setDropDownViewResource(spinner_item);
         spinner.setAdapter(spinnerArrayAdapter);
@@ -836,33 +866,5 @@ public class tab1Questions extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.action_search:  //
-
-                Intent myIntent = new Intent(getActivity(), SearchActivity.class);//
-               /* myIntent.putExtra("key", value); //Optional parameters*/
-                getActivity().startActivity(myIntent);
-                return true;
-
-           /* case R.id.a :
-                logoutUser();
-                return true;*/
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        MenuItem mSearchMenuItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) mSearchMenuItem.getActionView();
-
-    }
 
 }

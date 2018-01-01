@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -69,10 +70,11 @@ public class FilterResultsActivity extends AppCompatActivity {
     private ImageView mNoPostImg;
     SwipeRefreshLayout mSwipeRefreshLayout;
     private DatabaseReference mDatabaseUsers, mDatabaseFavourite;
-    private DatabaseReference mDatabaseChatroom, mDatabaseViews, mDatabase;
+    private DatabaseReference mDatabaseChatroom, mDatabaseViews, mDatabase, mDatabaseAds;
     private FirebaseAuth mAuth;
     private RecyclerView mQuestionsList;
     private RecyclerView adsList;
+    private ScrollView sc_filter;
     private ProgressBar mProgressBar;
     private Spinner spinner1;
     private ViewPager mViewPager;
@@ -82,7 +84,7 @@ public class FilterResultsActivity extends AppCompatActivity {
     private int nextPage;
 
     QuestionAdapter questionAdapter;
-    private final List<Question> questionList = new ArrayList<>();
+    private final ArrayList<Question> questionList = new ArrayList<>();
     LinearLayoutManager mLinearlayout;
 
     private static final String TAG = "tab1Question";
@@ -127,6 +129,7 @@ public class FilterResultsActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         selectedTopic = getIntent().getStringExtra("selected_topic");
+        sc_filter = (ScrollView) findViewById(R.id.scrollview_filter);
 
         //ADS LAYOUT
         adsList = (RecyclerView) findViewById(R.id.ads_recycler_view);
@@ -146,7 +149,7 @@ public class FilterResultsActivity extends AppCompatActivity {
 
         if (selectedTopic.equals("Law")) {
             sub_topic = new String[]{
-                    "Choose sub-topic...",
+                    "All Sub-topics",
                     "Accidents & Injuries",
                     "Bankruptcy & Debt",
                     "Car & Motor accidents",
@@ -171,7 +174,7 @@ public class FilterResultsActivity extends AppCompatActivity {
 
         if (selectedTopic.equals("Math")) {
             sub_topic = new String[]{
-                    "Choose sub-topic...",
+                    "All Sub-topics",
                     "Algebra",
                     "Calculus & Analysis",
                     "Geometry & Topology",
@@ -195,7 +198,7 @@ public class FilterResultsActivity extends AppCompatActivity {
 
         if (selectedTopic.equals("Agriculture")) {
             sub_topic = new String[]{
-                    "Choose sub-topic...",
+                    "All Sub-topics",
                     "Soil science",
                     "Animal science & Animal production",
                     "Animal breeding & Genetics",
@@ -223,7 +226,7 @@ public class FilterResultsActivity extends AppCompatActivity {
 
         if (selectedTopic.equals("Medical & Health Science")) {
             sub_topic = new String[]{
-                    "Choose sub-topic...",
+                    "All Sub-topics",
                     "Atrial Fibrillation",
                     "Bipolar Disorder",
                     "Breast Cancer",
@@ -275,7 +278,7 @@ public class FilterResultsActivity extends AppCompatActivity {
 
         if (selectedTopic.equals("Physics & Electronics")) {
             sub_topic = new String[]{
-                    "Choose sub-topic...",
+                    "All Sub-topics",
                     "Atomic, Nuclear and Particle Physics",
                     "Laws of nature",
                     "Units & dimensions",
@@ -308,7 +311,7 @@ public class FilterResultsActivity extends AppCompatActivity {
 
         if (selectedTopic.equals("Geography & Geology")) {
             sub_topic = new String[]{
-                    "Choose sub-topic...",
+                    "All Sub-topics",
                     "Physical geography ",
                     "Geomorphology",
                     "Hydrology",
@@ -333,7 +336,7 @@ public class FilterResultsActivity extends AppCompatActivity {
 
         if (selectedTopic.equals("Computer science & ICT")) {
             sub_topic = new String[]{
-                    "Choose sub-topic...",
+                    "All Sub-topics",
                     "Machine learning",
                     "Principles and techniques",
                     "Visual recognition",
@@ -415,7 +418,7 @@ public class FilterResultsActivity extends AppCompatActivity {
 
         if (selectedTopic.equals("Chemistry & Chemical science")) {
             sub_topic = new String[]{
-                    "Choose sub-topic...",
+                    "All Sub-topics",
                     "Measurement",
                     "Matter",
                     "The Periodic Table",
@@ -473,7 +476,7 @@ public class FilterResultsActivity extends AppCompatActivity {
 
         if (selectedTopic.equals("Business & Economics")) {
             sub_topic = new String[]{
-                    "Choose sub-topic...",
+                    "All Sub-topics",
                     "Business Ethics",
                     "Types of organizations",
                     "Areas of management application",
@@ -680,6 +683,7 @@ public class FilterResultsActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
         mDatabaseChatroom = FirebaseDatabase.getInstance().getReference().child("Chatrooms");
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+        mDatabaseAds = FirebaseDatabase.getInstance().getReference().child("Ads");
 
         // SYNC DATABASE
         mDatabaseUsers.keepSynced(true);
@@ -694,7 +698,7 @@ public class FilterResultsActivity extends AppCompatActivity {
 
         tvFilterTopic.setText(selectedTopic);
 
-        pullToLoadView = (PullToLoadView) findViewById(R.id.pullToLoadView);
+        //pullToLoadView = (PullToLoadView) findViewById(R.id.pullToLoadView);
        /* mQuestionsList2 = pullToLoadView.getRecyclerView();
         mQuestionsList2.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         /*pu*//*llToLoadView.isLoadMoreEnabled(true);*/
@@ -720,11 +724,11 @@ public class FilterResultsActivity extends AppCompatActivity {
                     @Override
                     public void run() {
 
-                        /*itemPos++;
+                        itemPos++;
                         currentPage++;
                         questionList.clear();
                         LoadMessage();
-*/
+
                         mSwipeRefreshLayout.setRefreshing(false);
                     }
                 }, 3000);
@@ -732,32 +736,82 @@ public class FilterResultsActivity extends AppCompatActivity {
 
             }
         });
-
         //load data
         questionList.clear();
         LoadMessage();
-        loadAds();
+
+        mDatabaseAds.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                int ads_count = (int) dataSnapshot.getChildrenCount();
+                if (ads_count == 3 || ads_count > 3) {
+                    //SHOW ADS
+                    loadAds();
+                } else {
+                    //DO NOTHING
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    @Override
+    protected void onResume() {
+        mDatabaseAds.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                int ads_count = (int) dataSnapshot.getChildrenCount();
+                if (ads_count == 3 || ads_count > 3) {
+                    //SHOW ADS
+                    loadAds();
+                } else {
+                    //DO NOTHING
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        super.onResume();
     }
 
     private void loadAds() {
 
-        FirebaseRecyclerAdapter<Question, FilterResultsActivity.adsViewHolder> firebaseRecyclerAdapter = new  FirebaseRecyclerAdapter<Question, FilterResultsActivity.adsViewHolder>(
+        FirebaseRecyclerAdapter<Ad, FilterResultsActivity.adsViewHolder> firebaseRecyclerAdapter = new  FirebaseRecyclerAdapter<Ad, FilterResultsActivity.adsViewHolder>(
 
-                Question.class,
+                Ad.class,
                 R.layout.ads_item,
                 FilterResultsActivity.adsViewHolder.class,
-                mDatabase.orderByChild("tag").equalTo(selectedTopic).limitToLast(currentPage * TOTAL_ITEMS_TO_LOAD)
+                mDatabaseAds
 
 
         ) {
             @Override
-            protected void populateViewHolder(final FilterResultsActivity.adsViewHolder viewHolder, final Question model, int position) {
+            protected void populateViewHolder(final FilterResultsActivity.adsViewHolder viewHolder, final Ad model, int position) {
 
-                final String post_key = getRef(position).getKey();
+                final String ad_key = getRef(position).getKey();
                 final String PostKey = getRef(position).getKey();
 
-                viewHolder.setName(model.getSender_name());
-                viewHolder.setImage(getApplicationContext(), model.getSender_image());
+                //viewHolder.setName(model.getSender_name());
+                viewHolder.setImage(getApplicationContext(), model.getAds_image());
+
+                viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent openRead = new Intent(FilterResultsActivity.this, ViewAdPhotoActivity.class);
+                        openRead.putExtra("ad_key", ad_key );
+                        startActivity(openRead);
+                    }
+                });
 
             }
 
@@ -789,14 +843,15 @@ public class FilterResultsActivity extends AppCompatActivity {
             post_name.setText(name);
         }
 
-        public void setImage(final Context ctx, final String image) {
+        public void setImage(final Context ctx, final String ads_image) {
 
             final ImageView civ = (ImageView) mView.findViewById(R.id.ad_image);
 
             Glide.with(ctx)
-                    .load(image).asBitmap()
+                    .load(ads_image).asBitmap()
                     .placeholder(R.drawable.ad_book)
                     .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                    .fitCenter()
                     .centerCrop()
                     .into(civ);
 
@@ -807,6 +862,7 @@ public class FilterResultsActivity extends AppCompatActivity {
     private void topicFilterMessage() {
 
         Query filterQuery = mDatabase.orderByChild("sub_tag").equalTo(selectedTopic).limitToLast(30);
+//        Query filterQueryKey = filterQuery.orderByKey().endAt(mLastKey).limitToLast(10);
         filterQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -814,9 +870,10 @@ public class FilterResultsActivity extends AppCompatActivity {
                 if (dataSnapshot.getValue() == null || dataSnapshot.equals("")) {
 
                     tvEmpty.setVisibility(View.VISIBLE);
+                    sc_filter.setVisibility(View.GONE);
                     tvEmpty.setText("Sorry! this tag is empty");
                 } else {
-
+                    sc_filter.setVisibility(View.VISIBLE);
                     tvEmpty.setVisibility(View.GONE);
                 }
 
@@ -931,10 +988,12 @@ public class FilterResultsActivity extends AppCompatActivity {
                 if (dataSnapshot.getValue() == null || dataSnapshot.equals("")) {
 
                     tvEmpty.setVisibility(View.VISIBLE);
+                    sc_filter.setVisibility(View.GONE);
                     tvEmpty.setText("Sorry! this topic is empty");
                 } else {
 
                     tvEmpty.setVisibility(View.GONE);
+                    sc_filter.setVisibility(View.VISIBLE);
                 }
 
             }

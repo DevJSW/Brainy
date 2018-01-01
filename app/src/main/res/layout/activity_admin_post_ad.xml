@@ -1,0 +1,58 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:fillViewport="true">
+
+    <include layout="@layout/adminpostad_toolbar"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:layout_scrollFlags="scroll|enterAlways"
+        />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollview_filter"
+        android:layout_below="@+id/rl">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/ads_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="1dp"
+                android:background="#fff" />
+
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:src="@drawable/placeholder_image"
+                android:scaleType="fitXY"
+                android:layout_below="@+id/ads_recycler_view"
+                android:id="@+id/ad_image"
+                android:layout_margin="20dp"/>
+
+            <com.brainy.erevu.data.MyButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Post"
+                android:id="@+id/save_btn"
+                android:layout_below="@+id/ad_image"
+                android:textColor="#fff"
+                android:layout_marginRight="20dp"
+                android:layout_marginLeft="20dp"/>
+
+        </RelativeLayout>
+    </ScrollView>
+
+
+</LinearLayout>
