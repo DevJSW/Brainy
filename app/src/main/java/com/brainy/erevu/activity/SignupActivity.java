@@ -16,6 +16,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -37,7 +38,7 @@ import java.util.regex.Pattern;
 
 public class SignupActivity extends AppCompatActivity {
 
-    private EditText inputEmail, inputPassword,inputRePassword, inputName;
+    private EditText inputEmail, inputUsername, inputPassword,inputRePassword, inputName;
     private Button btnSignIn, btnSignUp, btnResetPassword;
     private DatabaseReference mDatabaseUsers;
     private ProgressBar progressBar;
@@ -45,6 +46,7 @@ public class SignupActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private ProgressDialog mprogress;
     private StorageReference mStorage;
+    private ImageView backBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +63,6 @@ public class SignupActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         auth = FirebaseAuth.getInstance();
         mStorage = FirebaseStorage.getInstance().getReference();
@@ -89,6 +89,7 @@ public class SignupActivity extends AppCompatActivity {
         inputEmail = (EditText) findViewById(R.id.email);
         inputPassword = (EditText) findViewById(R.id.password);
         inputRePassword = (EditText) findViewById(R.id.re_password);
+        inputUsername = (EditText) findViewById(R.id.username);
         inputName = (EditText) findViewById(R.id.name);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         btnResetPassword = (Button) findViewById(R.id.btn_reset_password);
@@ -101,6 +102,14 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
 
+        backBtn = (ImageView) findViewById(R.id.backBtn);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SignupActivity.this.finish();
+            }
+        });
+
     }
 
     private void initSave() {
@@ -110,6 +119,7 @@ public class SignupActivity extends AppCompatActivity {
         final String password = inputPassword.getText().toString().trim();
         final String re_password = inputRePassword.getText().toString().trim();
         final String name = inputName.getText().toString().trim();
+        final String username = inputUsername.getText().toString().trim();
 
         Date date = new Date();
         final String stringDate = DateFormat.getDateInstance().format(date);
@@ -123,55 +133,72 @@ public class SignupActivity extends AppCompatActivity {
         Matcher matcher = pattern.matcher(email);
 
             if (TextUtils.isEmpty(name)) {
-                Toast.makeText(getApplicationContext(), "Enter name!", Toast.LENGTH_SHORT).show();
+                inputName.setError("Enter name!");
+                //Toast.makeText(getApplicationContext(), "Enter name!", Toast.LENGTH_SHORT).show();
 
             }
 
                 else if (name.length() < 3 || name.length() >15 ){
                     System.out.println("Name too short or too long");
-                    Toast.makeText(getApplicationContext(), "Username too short or too long!", Toast.LENGTH_SHORT).show();
+                   inputName.setError("Name too short or too long");
                 }
+        else if (TextUtils.isEmpty(username)) {
+            inputUsername.setError("Enter username!");
+            //Toast.makeText(getApplicationContext(), "Enter username!", Toast.LENGTH_SHORT).show();
 
+        }
+
+        else if (username.length() < 3 || username.length() >15 ){
+            System.out.println("Username too short or too long");
+            inputUsername.setError("Username too short or too long");
+        }
             else if (TextUtils.isEmpty(email)) {
-                Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
+                inputEmail.setError("Enter email address!");
+                //Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
 
 
             }
             else if (!matcher.matches()) {
-
-                     Toast.makeText(getApplicationContext(), "Invalid email Address!", Toast.LENGTH_SHORT).show();
+                     inputEmail.setError("Invalid email Address!");
+                    // Toast.makeText(getApplicationContext(), "Invalid email Address!", Toast.LENGTH_SHORT).show();
                  }
 
             else if (TextUtils.isEmpty(password)) {
-                Toast.makeText(getApplicationContext(), "Enter password!", Toast.LENGTH_SHORT).show();
-
+                inputPassword.setError("Enter password!");
+                //Toast.makeText(getApplicationContext(), "Enter password!", Toast.LENGTH_SHORT).show();
 
             }
 
-            else if (password.length() < 6 || password.length() >15 ){
+            else if (password.length() < 6 || password.length() > 15 ){
                 System.out.println("pass too short or too long");
-                Toast.makeText(getApplicationContext(), "Password too short or too long!", Toast.LENGTH_SHORT).show();
+                inputPassword.setError("Password too short or too long!");
+                //Toast.makeText(getApplicationContext(), "Password too short or too long!", Toast.LENGTH_SHORT).show();
             }
 
             else if (!password.matches(".*\\d.*")){
                 System.out.println("no digits found");
-                Toast.makeText(getApplicationContext(), "No digits found in password! e.g [0 - 9] ", Toast.LENGTH_SHORT).show();
+                inputPassword.setError("No digits found in password! e.g [0 - 9] ");
+                //Toast.makeText(getApplicationContext(), "No digits found in password! e.g [0 - 9] ", Toast.LENGTH_SHORT).show();
             }
 
             else if (!password.matches(".*[a-z].*")) {
                 System.out.println("no lowercase letters found");
-                Toast.makeText(getApplicationContext(), "No lowercase letters found in password! e.g [a - z] ", Toast.LENGTH_SHORT).show();
+                inputPassword.setError("No lowercase letters found in password! e.g [a - z] ");
+                //Toast.makeText(getApplicationContext(), "No lowercase letters found in password! e.g [a - z] ", Toast.LENGTH_SHORT).show();
             }
             else if (!password.matches(".*[!@#$%^&*+=?-].*")) {
                 System.out.println("no special chars found");
-                Toast.makeText(getApplicationContext(), "No special chars found in password! e.g [! @ # $ % ^ & * + = ? -] ", Toast.LENGTH_SHORT).show();
+                inputPassword.setError("No special chars found in password! e.g [! @ # $ % ^ & * + = ? -] ");
+                //Toast.makeText(getApplicationContext(), "No special chars found in password! e.g [! @ # $ % ^ & * + = ? -] ", Toast.LENGTH_SHORT).show();
 
             }
             else if (TextUtils.isEmpty(re_password)) {
-                Toast.makeText(getApplicationContext(), "Confirm password!", Toast.LENGTH_SHORT).show();
+                inputRePassword.setError("Confirm password!");
+                //Toast.makeText(getApplicationContext(), "Confirm password!", Toast.LENGTH_SHORT).show();
 
             } else if (!password.equals(re_password)) {
-                Toast.makeText(getApplicationContext(), "Your password and confirmation password do not match!", Toast.LENGTH_SHORT).show();
+                inputRePassword.setError("Your password and confirmation password do not match!");
+                //Toast.makeText(getApplicationContext(), "Your password and confirmation password do not match!", Toast.LENGTH_SHORT).show();
 
             }
             else {
@@ -200,8 +227,8 @@ public class SignupActivity extends AppCompatActivity {
 
                                     newPost.child(auth.getCurrentUser().getUid()).child("date").setValue(stringDate);
                                     newPost.child(auth.getCurrentUser().getUid()).child("uid").setValue(auth.getCurrentUser().getUid());
-
                                     newPost.child(auth.getCurrentUser().getUid()).child("name").setValue(name);
+                                    newPost.child(auth.getCurrentUser().getUid()).child("username").setValue("@"+username);
                                     newPost.child(auth.getCurrentUser().getUid()).child("user_image").setValue("");
                                     newPost.child(auth.getCurrentUser().getUid()).child("joined_date").setValue(stringDate);
                                     newPost.child(auth.getCurrentUser().getUid()).child("uid").setValue(auth.getCurrentUser().getUid());

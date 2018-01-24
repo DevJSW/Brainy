@@ -57,7 +57,7 @@ public class PostAnswerActivity extends AppCompatActivity {
     String sender_image = null;
     String  personEmail = null;
     String  personId = null;
-
+    private ImageView backBtn;
     Uri personPhoto = null;
     String city = null;
     String state = null;
@@ -80,8 +80,7 @@ public class PostAnswerActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
 
         answerInput = (EditText) findViewById(R.id.questionTitleInput);
 
@@ -123,7 +122,13 @@ public class PostAnswerActivity extends AppCompatActivity {
 
         });
         mDatabaseUsers.keepSynced(true);
-
+        backBtn = (ImageView) findViewById(R.id.backBtn);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PostAnswerActivity.this.finish();
+            }
+        });
     }
 
     private void startPosting() {

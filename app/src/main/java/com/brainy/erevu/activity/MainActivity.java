@@ -117,6 +117,7 @@ public class MainActivity extends AppCompatActivity
     Bitmap  LargIcon;
     String  personId = "";
     Uri personPhoto = null;
+    Long users_points = null;
     String city = null;
     String state = null;
     String country = null;
@@ -214,7 +215,7 @@ public class MainActivity extends AppCompatActivity
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 if (auth.getCurrentUser() != null) {
-                    if (!dataSnapshot.hasChild(auth.getCurrentUser().getUid())) {
+                    if (!dataSnapshot.hasChild(auth.getCurrentUser().getUid()) || !dataSnapshot.hasChild("username")) {
 
                         Intent cardonClick = new Intent(MainActivity.this, CompleteRegActivity.class);
                         cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -315,7 +316,6 @@ public class MainActivity extends AppCompatActivity
         //CHECK FOR NOTIFICATIONS
         if (auth.getCurrentUser() != null) {
             final Query quizQuery = mDatabaseNotifications.child(auth.getCurrentUser().getUid()).orderByChild("read").equalTo(false);
-
             mDatabaseNotifications.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -728,7 +728,7 @@ public class MainActivity extends AppCompatActivity
             mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    Long users_points = (Long) dataSnapshot.child("points_earned").getValue();
+                    users_points = (Long) dataSnapshot.child("points_earned").getValue();
                     String users_pints = (String) dataSnapshot.child("bio").getValue();
 //
 //                    String user_reputation = dataSnapshot.child("reputation").getValue().toString();
@@ -739,19 +739,19 @@ public class MainActivity extends AppCompatActivity
                         mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Beginner");
                         // PREVELAGE
 
-                    } else if (users_points > 100 && users_points < 499) {
+                    } else if (users_points > 100 && users_points < 999) {
 
                         mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Smart");
 
-                    } else if (users_points > 500 && users_points < 999) {
+                    } else if (users_points > 1000 && users_points < 2999) {
 
                         mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Intelligent");
 
-                    }  else if (users_points > 1000 && users_points < 1999) {
+                    }  else if (users_points > 3000 && users_points < 4999) {
 
                         mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Erevu");
 
-                    } else if (users_points > 2000 ) {
+                    } else if (users_points > 10000 ) {
 
                         mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Super Erevu");
 
@@ -1011,8 +1011,15 @@ public class MainActivity extends AppCompatActivity
         takeShot.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent openRead = new Intent(MainActivity.this, TakeCameraShotActivity.class);
-                startActivity(openRead);
+
+                // CHECK IF USER HAS ENOUGH POINTS
+                if (users_points > 9 || users_points == 100) {
+                    dialog.dismiss();
+                    Intent openRead = new Intent(MainActivity.this, TakeCameraShotActivity.class);
+                    startActivity(openRead);
+                } else {
+                    Toast.makeText(MainActivity.this, "Sorry! you don't have enough reputation to post a photo on Erevu.", Toast.LENGTH_LONG).show();
+                }
             }
         });
 

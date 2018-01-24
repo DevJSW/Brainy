@@ -637,6 +637,7 @@ public class tab2Inbox extends Fragment {
                 callbackManager = CallbackManager.Factory.create();
                 LoginButton loginButton = (LoginButton) dialog.findViewById(R.id.login_button);
                 loginButton.performClick();
+                loginButton.setReadPermissions("email", "public_profile");
                 loginButton.registerCallback(callbackManager,
                         new FacebookCallback< LoginResult >() {@Override
                         public void onSuccess(LoginResult loginResult) {

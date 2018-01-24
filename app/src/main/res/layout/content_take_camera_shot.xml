@@ -5,87 +5,126 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    android:background="#181717"
+    android:orientation="vertical"
     tools:showIn="@layout/activity_take_camera_shot">
 
-    <include layout="@layout/photo_toolbar"
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        app:layout_scrollFlags="scroll|enterAlways"
-        />
-    <android.support.design.widget.TextInputLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_below="@+id/toolbar">
-
-        <com.brainy.erevu.data.CustomEditText
-            android:id="@+id/questionTitleInput"
+        android:layout_marginBottom="10dp"
+        android:layout_above="@+id/postBtn"
+        android:orientation="vertical">
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Question "
-            android:inputType="text"
-            android:maxLength="120"
-            android:layout_marginBottom="2dp"
-            android:maxLines="4"
-            android:textColorHint="#fff"
-            android:textColor="#fff" />
+            android:layout_marginBottom="10dp"
+            android:orientation="vertical">
+            <include layout="@layout/photo_quiz_toolbar"
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:layout_scrollFlags="scroll|enterAlways"
+                />
 
-    </android.support.design.widget.TextInputLayout>
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="250dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/placeholder_image"
+                android:id="@+id/addPhoto"/>
 
-    <RelativeLayout
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:orientation="vertical">
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_below="@+id/toolbar">
+
+                    <com.brainy.erevu.data.CustomEditText
+                        android:id="@+id/questionTitleInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Question "
+                        android:inputType="text"
+                        android:maxLength="120"
+                        android:maxLines="4"
+                        android:textColorHint="@color/colorPrimary"
+                        android:textColor="@color/colorPrimary" />
+
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp">
+
+                    <com.brainy.erevu.data.CustomEditText
+                        android:id="@+id/questionBodyInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Explanation"
+                        android:layout_marginBottom="7dp"
+                        android:maxLines="8"
+                        android:textColorHint="@color/colorPrimary"
+                        android:textColor="@color/colorPrimary" />
+
+                </android.support.design.widget.TextInputLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/rl"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_below="@+id/ryl"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="10dp"
+                android:weightSum="2"
+                android:background="#d9d5d7d7"
+                >
+
+                <Spinner
+                    android:id="@+id/spinner"
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    />
+
+                <View
+                    android:layout_width="1dp"
+                    android:id="@+id/spinnerDivider"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:visibility="gone"
+                    android:layout_marginBottom="8dp"
+                    android:background="#ee838080"/>
+
+                <Spinner
+                    android:id="@+id/spinner2"
+                    android:layout_width="match_parent"
+                    android:visibility="gone"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    />
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <com.brainy.erevu.data.MyButton
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:id="@+id/ryl"
-        android:layout_centerVertical="true">
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="290dp"
-            android:scaleType="fitXY"
-            android:src="@drawable/placeholder_image"
-            android:id="@+id/addPhoto"/>
-
-
-    </RelativeLayout>
-    <LinearLayout
-        android:id="@+id/rl"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_below="@+id/ryl"
-        android:layout_margin="10dp"
-        android:weightSum="2"
-        android:background="#d9d5d7d7"
-        >
-
-        <Spinner
-            android:id="@+id/spinner"
-            android:layout_width="match_parent"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            />
-
-        <View
-            android:layout_width="1dp"
-            android:id="@+id/spinnerDivider"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:visibility="gone"
-            android:layout_marginBottom="8dp"
-            android:background="#ee838080"/>
-
-        <Spinner
-            android:id="@+id/spinner2"
-            android:layout_width="match_parent"
-            android:visibility="gone"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            />
-
-    </LinearLayout>
-
+        android:layout_height="50dp"
+        android:text="Post"
+        android:textColor="#fff"
+        android:textSize="16dp"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/postBtn"
+        android:background="@color/colorPrimary"/>
 
 </RelativeLayout>

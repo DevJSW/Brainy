@@ -185,6 +185,7 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
             }
         });
 
+
         // count number of views in a views
 
         if (quiz_key != null) {

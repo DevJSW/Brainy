@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Erevu</string>
     <string name="facebook_app_id">182331315660749</string>
+    <string name="fb_login_protocol_scheme">fb182331315660749</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
 
@@ -72,4 +73,6 @@
     <string name="btn_send">Send Password Reset Email</string>
     <string name="btn_remove">Remove User</string>
     <string name="title_activity_take_camera_shot">TakeCameraShotActivity</string>
+    <string name="title_activity_post_answer2">PostAnswer2Activity</string>
+    <string name="Username">\@Username</string>
 </resources>

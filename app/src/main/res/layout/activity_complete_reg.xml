@@ -20,18 +20,16 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:orientation="vertical"
-        android:padding="@dimen/activity_horizontal_margin">
+        android:padding="15dp">
 
 
-       <!-- <com.brainy.brainy.data.MyFont
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin ="10dp"
-            android:gravity="center_horizontal"
-            android:padding="@dimen/activity_horizontal_margin"
-            android:text="Hello, this normally does not happen but we need your name to completely finish the sign up process!"
-            android:textColor="@color/colorPrimary"
-            android:textSize="14dp" />-->
+      <de.hdodenhof.circleimageview.CircleImageView
+          android:layout_width="200dp"
+          android:layout_height="200dp"
+          android:src="@drawable/placeholder_image"
+          android:id="@+id/user_image"
+          android:layout_margin="10dp"
+          android:layout_gravity="center_horizontal"/>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
@@ -41,7 +39,24 @@
                 android:id="@+id/name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter name"
+                android:hint="Full name"
+                android:inputType="textPersonName"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColorHint="#121111"
+                android:textColor="#121111" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.brainy.erevu.data.CustomEditText
+                android:id="@+id/username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/Username"
                 android:inputType="textPersonName"
                 android:maxLines="1"
                 android:singleLine="true"
@@ -56,7 +71,8 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:textAllCaps="true"
-            android:layout_margin="8dp"
+
+            android:layout_margin="10dp"
             android:background="@drawable/button_bg3"
             android:text="Save"
             android:textColor="#ffff"

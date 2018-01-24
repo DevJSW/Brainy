@@ -48,14 +48,14 @@ import com.google.firebase.storage.StorageReference;
 
 public class EditProfileActivity extends AppCompatActivity {
 
-
+    String username = null;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private DatabaseReference mDatabaseUsers, mDatabaseUsers2, mDatabase, mDatabaseLastSeen;
     private FirebaseAuth mAuth;
     private StorageReference mStorage;
-    private ImageView mGroupIcon;
+    private ImageView mGroupIcon, editAcc;
     private EditText searchInput;
-    private TextView username, mLocation;
+    private TextView uname, mLocation, cuname;
     private ProgressDialog mProgress;
     private RecyclerView mAlbumList;
 
@@ -76,8 +76,6 @@ public class EditProfileActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
@@ -96,20 +94,24 @@ public class EditProfileActivity extends AppCompatActivity {
         mDatabaseUsers.keepSynced(true);
         mDatabaseUsers2.keepSynced(true);
 
-        username = (TextView) findViewById(R.id.username);
+        uname = (TextView) findViewById(R.id.name);
+        cuname = (TextView) findViewById(R.id.username);
 
         mDatabaseUsers.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                /* if (dataSnapshot.hasChild("status") || dataSnapshot.hasChild("city") || dataSnapshot.hasChild("address")) {*/
-
                /* String user_location = dataSnapshot.child("location").getValue().toString();*/
                 String name = dataSnapshot.child("name").getValue().toString();
                 String image = dataSnapshot.child("user_image").getValue().toString();
+                if (dataSnapshot.hasChild("username")) {
+                    username = dataSnapshot.child("username").getValue().toString();
+                    cuname.setText(username);
+                    cuname.setVisibility(View.VISIBLE);
+                }
 
-
-                username.setText(name);
+                uname.setText(name);
 
                 Glide.with(getApplicationContext())
                         .load(image).asBitmap()
@@ -141,6 +143,14 @@ public class EditProfileActivity extends AppCompatActivity {
             awardBadge();
             initLocation();
         }
+
+        editAcc = (ImageView) findViewById(R.id.editAcc);
+        editAcc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(EditProfileActivity.this, ProfileEditActivity.class));
+            }
+        });
 
     }
 

@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="50dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorPrimary"
     app:theme="@style/ThemeOverlay.AppCompat.Dark">
 
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/open_view"
-        android:orientation="vertical">
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="match_parent"
+        android:padding="6dp"
+        android:id="@+id/backBtn"
+        android:layout_marginRight="25dp"
+        android:src="@drawable/backbtn"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <com.brainy.erevu.data.MyBoldFont
             android:layout_width="wrap_content"
@@ -22,6 +26,13 @@
             />
 
 
-    </LinearLayout>
+    <ImageView
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:id="@+id/addPhoto"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="15dp"
+        android:src="@drawable/quiz_add_image"/>
+    </RelativeLayout>
 
 </android.support.v7.widget.Toolbar>

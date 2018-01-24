@@ -77,6 +77,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
 
     String  personName = null;
     String sender_uid = null;
+    String quiz_photo = null;
     String question_topic = null;
     String username = null;
     String  personEmail = null;
@@ -103,12 +104,13 @@ public class ReadQuestionActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     String QuizKey = null;
 
-    private ImageView quizVoteUp;
+    private ImageView quizVoteUp, questionPhoto;
     private TextView forumCount;
     private ImageView quizVoteDown;
     private View parent_view;
     private Boolean mProcessApproval = false;
     private Boolean mProcessFavourite = false;
+    private ImageView backBtn;
 
     private Boolean mProcessPoints = false;
     private DatabaseReference mDatabaseFavourite, mDatabaseUsersFavourite, mDatabaseNotifications;
@@ -127,7 +129,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_read_question);
         Toolbar my_toolbar = (Toolbar) findViewById(R.id.mCustomToolbar);
         setSupportActionBar(my_toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
         //QuizKey = getIntent().getExtras().getString("question_id");
         QuizKey = getIntent().getStringExtra("question_id");
@@ -178,6 +180,24 @@ public class ReadQuestionActivity extends AppCompatActivity {
         mAnsList.setHasFixedSize(true);
 */
         auth = FirebaseAuth.getInstance();
+
+        questionPhoto = (ImageView) findViewById(R.id.questionPhoto);
+        mDatabaseQuestions.child(QuizKey).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+              // quiz_photo = dataSnapshot.child("question_photo").getValue().toString();
+                if (dataSnapshot.hasChild("question_photo")) {
+                    questionPhoto.setVisibility(View.VISIBLE);
+                } else {
+                    questionPhoto.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         answersAdapter = new SolutionsAdapter(ReadQuestionActivity.this,answerList);
         mAnsList = (RecyclerView) findViewById(R.id.mAnsList);
@@ -265,7 +285,6 @@ public class ReadQuestionActivity extends AppCompatActivity {
                                                 String question_body = dataSnapshot.child("question_body").getValue().toString();
                                                 String sender_name = dataSnapshot.child("sender_name").getValue().toString();
                                                 String sender_image = dataSnapshot.child("sender_image").getValue().toString();
-                                                //String posted_date = dataSnapshot.child("posted_date").getValue().toString();
 
                                                 final DatabaseReference newPost = mDatabaseUsersFavourite.child(auth.getCurrentUser().getUid()).child(QuizKey);
 
@@ -393,7 +412,7 @@ public class ReadQuestionActivity extends AppCompatActivity {
                             } else {
 
                                 // OPEN POST ANS ACTIVITY
-                                Intent openRead = new Intent(ReadQuestionActivity.this, PostAnswerActivity.class);
+                                Intent openRead = new Intent(ReadQuestionActivity.this, PostAnswer2Activity.class);
                                 openRead.putExtra("question_id", QuizKey );
                                 startActivity(openRead);
                             }
@@ -438,6 +457,17 @@ public class ReadQuestionActivity extends AppCompatActivity {
                 final String question_body = (String) dataSnapshot.child("question_body").getValue();
                 final ImageView civ = (ImageView) findViewById(R.id.post_image);
                 final TextView name = (TextView) findViewById(R.id.post_name);
+
+                if (dataSnapshot.hasChild("question_photo")) {
+                    quiz_photo = (String) dataSnapshot.child("question_photo").getValue();
+                    questionPhoto.setVisibility(View.VISIBLE);
+
+                    Glide.with(getApplicationContext())
+                            .load(quiz_photo).asBitmap()
+                            .placeholder(R.drawable.placeholder_image)
+                            .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                            .into(questionPhoto);
+                }
 
                 // load image on toolbar
                 final CircleImageView userImgToolbar = (CircleImageView) findViewById(R.id.toolbarImg);
@@ -557,6 +587,14 @@ public class ReadQuestionActivity extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
+            }
+        });
+
+        backBtn = (ImageView) findViewById(R.id.backBtn);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ReadQuestionActivity.this.finish();
             }
         });
 

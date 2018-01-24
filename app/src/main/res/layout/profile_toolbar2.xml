@@ -34,14 +34,7 @@
                 android:text="Profile"
                />
 
-            <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:id="@+id/editAcc"
-                android:scaleType="fitXY"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="4dp"
-                android:src="@drawable/ic_edit"/>
+
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="100dp"
@@ -50,6 +43,7 @@
             android:id="@+id/rely"
             android:layout_gravity="center_horizontal"
             android:orientation="vertical">
+
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:layout_width="100dp"
@@ -83,7 +77,7 @@
             android:text="username"
             android:visibility="gone"
             android:textSize="15dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="7dp"
             android:layout_gravity="center_horizontal"/>
 
         <LinearLayout

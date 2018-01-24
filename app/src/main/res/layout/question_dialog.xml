@@ -48,8 +48,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Explanation"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="10dp"
                 android:layout_marginBottom="7dp"
                 android:maxLines="8"
                 android:textColorHint="#121111"
@@ -73,11 +71,11 @@
         <ImageView
             android:layout_width="35dp"
             android:layout_height="32dp"
-            android:layout_marginRight="7dp"
+            android:layout_marginRight="9dp"
             android:scaleType="fitXY"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="3dp"
             android:id="@+id/takeCamera"
-            android:src="@drawable/ic_camera"/>
+            android:src="@drawable/ic_gallery_cam"/>
 
         <LinearLayout
             android:id="@+id/rl"

@@ -53,6 +53,7 @@ public class SearchActivity extends AppCompatActivity/* implements SearchView.On
     private FirebaseAuth auth;
     private RecyclerView mSearchList;
     private EditText mSearchInput;
+    private ImageView backBtn;
     SearchAdapter searchAdapter;
     private final List<Question> searchList = new ArrayList<>();
     LinearLayoutManager mLinearlayout;
@@ -75,8 +76,6 @@ public class SearchActivity extends AppCompatActivity/* implements SearchView.On
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
 
         searchAdapter = new SearchAdapter(SearchActivity.this,searchList);
@@ -91,6 +90,13 @@ public class SearchActivity extends AppCompatActivity/* implements SearchView.On
         mSearchInput = (EditText) findViewById(R.id.search_edit);
         searchInput = mSearchInput.getText().toString();
 
+        backBtn = (ImageView) findViewById(R.id.backBtn);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SearchActivity.this.finish();
+            }
+        });
         initSearch();
     }
 

@@ -73,6 +73,14 @@
                 android:layout_marginRight="5dp"
                 android:orientation="vertical">
 
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:layout_margin="5dp"
+                    android:scaleType="fitXY"
+                    android:id="@+id/answerPhoto"
+                    android:visibility="gone"
+                    android:src="@drawable/placeholder_image"/>
 
                 <com.brainy.erevu.data.MyFont
                     android:id="@+id/posted_answer"

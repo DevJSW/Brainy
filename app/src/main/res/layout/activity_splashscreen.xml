@@ -9,18 +9,26 @@
     android:background="#ffff"
     tools:context="com.brainy.erevu.activity.Splashscreen">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+
         <ImageView
-            android:layout_width="94dp"
-            android:layout_height="94dp"
+            android:layout_width="135dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center_horizontal"
+            android:scaleType="fitXY"
+            android:layout_marginBottom="25dp"
+            android:src="@drawable/erevu_dark" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:id="@+id/splash"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="25dp"
-            android:src="@drawable/erevu_icon" />
+            android:layout_marginBottom="25dp" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -45,6 +46,7 @@ public class NotificationActivity extends AppCompatActivity {
     private DatabaseReference mDatabaseUsers;
     private FirebaseAuth auth;
     private TextView mNoNotification;
+    private ImageView backBtn;
     private RecyclerView mNotyList;
 
     private static final int TOTAL_ITEMS_TO_LOAD = 10;
@@ -58,7 +60,6 @@ public class NotificationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_notification);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
        // QuizKey = getIntent().getExtras().getString("question_id");
 
@@ -123,6 +124,13 @@ public class NotificationActivity extends AppCompatActivity {
 
        // progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
+        backBtn = (ImageView) findViewById(R.id.backBtn);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NotificationActivity.this.finish();
+            }
+        });
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.brainy.erevu.activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.support.design.widget.TabLayout;
@@ -49,13 +50,14 @@ public class ViewUserProfileActivity extends AppCompatActivity {
 
 
     String UserId = null;
+    String username = null;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private DatabaseReference mDatabaseUsers, mDatabaseUsers2, mDatabase, mDatabaseLastSeen, mDatabaseProfileViews;
     private FirebaseAuth mAuth;
     private StorageReference mStorage;
-    private ImageView mGroupIcon;
+    private ImageView mGroupIcon, backBtn;
     private EditText searchInput;
-    private TextView username, mLocation;
+    private TextView uname, mLocation, cuname;
     private ProgressDialog mProgress;
     private RecyclerView mAlbumList;
 
@@ -64,7 +66,7 @@ public class ViewUserProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_profile);
+        setContentView(R.layout.activity_view_user_profile);
 
         Window window = ViewUserProfileActivity.this.getWindow();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -76,8 +78,6 @@ public class ViewUserProfileActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
@@ -100,7 +100,8 @@ public class ViewUserProfileActivity extends AppCompatActivity {
         mDatabaseProfileViews.keepSynced(true);
         mDatabaseUsers2.keepSynced(true);
 
-        username = (TextView) findViewById(R.id.username);
+        uname = (TextView) findViewById(R.id.name);
+        cuname = (TextView) findViewById(R.id.username);
 
         //ADD USER ID TO PROFILE VIES
         if (mAuth.getCurrentUser() != null) {
@@ -114,10 +115,15 @@ public class ViewUserProfileActivity extends AppCompatActivity {
                /* if (dataSnapshot.hasChild("status") || dataSnapshot.hasChild("city") || dataSnapshot.hasChild("address")) {*/
 
                 String name = dataSnapshot.child("name").getValue().toString();
+                if (dataSnapshot.hasChild("username")) {
+                username = dataSnapshot.child("username").getValue().toString();
+                cuname.setText(username);
+                cuname.setVisibility(View.VISIBLE);
+                }
                 String image = dataSnapshot.child("user_image").getValue().toString();
 
 
-                username.setText(name);
+                uname.setText(name);
 
                 Glide.with(getApplicationContext())
                         .load(image).asBitmap()
@@ -144,6 +150,13 @@ public class ViewUserProfileActivity extends AppCompatActivity {
             }
         });
 
+        backBtn = (ImageView) findViewById(R.id.backBtn);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ViewUserProfileActivity.this.finish();
+            }
+        });
 
             awardBadge();
             initLocation();
@@ -203,24 +216,24 @@ public class ViewUserProfileActivity extends AppCompatActivity {
                     badge.setVisibility(View.GONE);
                     // PREVELAGE
 
-                } else if (users_points > 100 && users_points < 499) {
+                } else if (users_points > 100 && users_points < 999) {
 
                     mDatabaseUsers.child(UserId).child("reputation").setValue("Smart");
                     badge.setImageResource(R.drawable.smart_badge);
 
-                } else if (users_points > 500 && users_points < 999) {
+                } else if (users_points > 1000 && users_points < 2999) {
 
                     mDatabaseUsers.child(UserId).child("reputation").setValue("Intelligent");
                     badge.setImageResource(R.drawable.intelligent_badge);
 
-                }  else if (users_points > 1000 && users_points < 1999) {
+                }  else if (users_points > 3000 && users_points < 4999) {
 
-                    mDatabaseUsers.child(UserId).child("reputation").setValue("-erevu");
+                    mDatabaseUsers.child(UserId).child("reputation").setValue("Erevu");
                     badge.setImageResource(R.drawable.brainy_badge);
 
-                } else if (users_points > 2000 ) {
+                } else if (users_points > 10000 ) {
 
-                    mDatabaseUsers.child(UserId).child("reputation").setValue("Super -erevu");
+                    mDatabaseUsers.child(UserId).child("reputation").setValue("Super Erevu");
                     badge.setImageResource(R.drawable.super_brainy_badge);
 
 
@@ -235,12 +248,12 @@ public class ViewUserProfileActivity extends AppCompatActivity {
     }
 
 
-    @Override
+   /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_edit_profile, menu);
         return true;
-    }
+    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

@@ -11,6 +11,7 @@ public class Answer {
     private String posted_quiz_title;
     private String posted_reason;
     private String sender_image;
+    private String answer_photo;
     private String sender_name;
     private String sender_uid;
     private String post_id;
@@ -22,7 +23,7 @@ public class Answer {
 
     }
 
-    public Answer(Long posted_date, String post_answered, String posted_quiz_title, String posted_reason, String sender_image, String sender_name, String sender_uid, String post_id, String question_key, String city, String state) {
+    public Answer(Long posted_date, String answer_photo, String post_answered, String posted_quiz_title, String posted_reason, String sender_image, String sender_name, String sender_uid, String post_id, String question_key, String city, String state) {
         this.posted_date = posted_date;
         this.posted_answer = post_answered;
         this.posted_quiz_title = posted_quiz_title;
@@ -30,6 +31,7 @@ public class Answer {
         this.sender_image = sender_image;
         this.sender_name = sender_name;
         this.sender_uid = sender_uid;
+        this.answer_photo = answer_photo;
         this.post_id = post_id;
         this.question_key = question_key;
         this.city = city;
@@ -127,4 +129,11 @@ public class Answer {
         this.city = city;
     }
 
+    public String getAnswer_photo() {
+        return answer_photo;
+    }
+
+    public void setAnswer_photo(String answer_photo) {
+        this.answer_photo = answer_photo;
+    }
 }

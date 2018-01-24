@@ -23,6 +23,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -42,6 +43,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -58,7 +61,7 @@ import static com.brainy.erevu.R.layout.spinner_item;
 public class TakeCameraShotActivity extends AppCompatActivity {
 
     private ImageView mAddPhoto;
-    private EditText questionInput;
+    private EditText questionInput, bodyInput;
     private RecyclerView mCommentList;
     private DatabaseReference mDatabaseQuestions;
     private DatabaseReference mDatabaseUsersQuestions;
@@ -69,6 +72,7 @@ public class TakeCameraShotActivity extends AppCompatActivity {
     private FirebaseUser mCurrentUser;
     private FirebaseAuth mAuth;
     private StorageReference mStorage;
+    private Button postBtn;
     private ProgressDialog mProgress;
     Spinner spinner, spinner2;
 
@@ -78,9 +82,9 @@ public class TakeCameraShotActivity extends AppCompatActivity {
     List<String> subTopicList;
     String[] sub_topic;
 
-    Uri imageUri;
-    Uri selectedImageUri = null;
-    final int TAKE_PICTURE = 115;
+    private Uri resultUri = null;
+    private Uri mImageUri = null;
+    private static int GALLERY_REQUEST =1;
 
     // Initializing a String Array
     String[] topics = new String[]{
@@ -121,6 +125,7 @@ public class TakeCameraShotActivity extends AppCompatActivity {
 
 
         questionInput = (EditText) findViewById(R.id.questionTitleInput);
+        bodyInput = (EditText) findViewById(R.id.questionBodyInput);
 
         mDatabaseQuestions = FirebaseDatabase.getInstance().getReference().child("Questions");
         mProgress = new ProgressDialog(this);
@@ -205,8 +210,15 @@ public class TakeCameraShotActivity extends AppCompatActivity {
         mDatabaseQuestions.keepSynced(true);
 
 
+        postBtn = (Button) findViewById(R.id.postBtn);
+        postBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                verifyData();
+            }
+        });
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+       /* FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -215,7 +227,7 @@ public class TakeCameraShotActivity extends AppCompatActivity {
 
             }
 
-        });
+        });*/
 
         takePhoto();
     }
@@ -241,22 +253,23 @@ public class TakeCameraShotActivity extends AppCompatActivity {
 
     private void startPosting() {
 
-        mProgress.setMessage("Posting question, please wait...");
-        mProgress.setCancelable(false);
 
         final String questionTitlTag = questionInput.getText().toString().trim();
+        final String questionBodyTag = bodyInput.getText().toString().trim();
 
         final String user_id = mAuth.getCurrentUser().getUid();
         final String uid = user_id.substring(0, Math.min(user_id.length(), 4));
 
-        if (imageUri != null) {
+        if (resultUri != null) {
+
+            mProgress.setMessage("Posting question, please wait...");
+            mProgress.setCancelable(false);
 
             mProgress.show();
 
-            StorageReference filepath = mStorage.child("question_images").child(imageUri.getLastPathSegment());
+            StorageReference filepath = mStorage.child("question_images").child(resultUri.getLastPathSegment());
 
-
-            filepath.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            filepath.putFile(resultUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
@@ -271,6 +284,7 @@ public class TakeCameraShotActivity extends AppCompatActivity {
 
                             Map<String, Object> map = new HashMap<>();
                             map.put("question_title", questionTitlTag);
+                            map.put("question_body", questionBodyTag);
                             map.put("question_photo", downloadUrl.toString());
                             map.put("sender_uid", mAuth.getCurrentUser().getUid());
                             map.put("sender_name", dataSnapshot.child("name").getValue());
@@ -284,6 +298,7 @@ public class TakeCameraShotActivity extends AppCompatActivity {
 
                             Map<String, Object> map2 = new HashMap<>();
                             map2.put("question_title", questionTitlTag);
+                            map.put("question_body", questionBodyTag);
                             map2.put("question_photo", downloadUrl.toString());
                             map2.put("sender_uid", mAuth.getCurrentUser().getUid());
                             map2.put("sender_name", dataSnapshot.child("name").getValue());
@@ -323,17 +338,16 @@ public class TakeCameraShotActivity extends AppCompatActivity {
 
             });
 
+        } else {
+            Toast.makeText(TakeCameraShotActivity.this, "You need to select an image!", Toast.LENGTH_LONG).show();
         }
     }
 
     private void takePhoto() {
 
-        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-        File photoFile = new File(Environment.getExternalStorageDirectory(),  "Photo.png");
-        intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                Uri.fromFile(photoFile));
-        imageUri = Uri.fromFile(photoFile);
-        startActivityForResult(intent, TAKE_PICTURE);
+        Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+        galleryIntent.setType("image/*");
+        startActivityForResult(galleryIntent, GALLERY_REQUEST);
 
 
     }
@@ -341,15 +355,29 @@ public class TakeCameraShotActivity extends AppCompatActivity {
 
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case TAKE_PICTURE:
-                if (resultCode == Activity.RESULT_OK) {
-                    Uri selectedImageUri = imageUri;
-                    mAddPhoto.setImageURI(selectedImageUri);
 
-                }
+        if(requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
+
+            mImageUri = data.getData();
+
+            CropImage.activity(mImageUri)
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .setCropShape(CropImageView.CropShape.RECTANGLE)
+                    .setAspectRatio(2, 2)
+                    .start(TakeCameraShotActivity.this);
+
+        }
+
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                resultUri = result.getUri();
+                mAddPhoto.setImageURI(resultUri);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
         }
     }
 

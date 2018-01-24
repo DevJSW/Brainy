@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -72,6 +73,7 @@ public class DiscussForumActivity extends AppCompatActivity {
     private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseDiscussForum, mDatabaseForumParticipants;
     private FirebaseAuth auth;
     String QuizKey = null;
+    private ImageView backBtn;
 
     SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mChatList;
@@ -88,7 +90,6 @@ public class DiscussForumActivity extends AppCompatActivity {
         setContentView(R.layout.activity_answers);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         QuizKey = getIntent().getExtras().getString("question_id");
 
@@ -99,6 +100,14 @@ public class DiscussForumActivity extends AppCompatActivity {
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         }
+
+        backBtn = (ImageView) findViewById(R.id.backBtn);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DiscussForumActivity.this.finish();
+            }
+        });
 
         // Database channels
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");

@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -82,7 +83,7 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
         public TextView post_name;
         public RelativeTimeTextView post_date;
         public ImageView avator;
-        public ImageView civ;
+        public ImageView civ, answer_photo;
         public TextView  voteCount;
         public TextView  downVoteCount;
         public ImageView upVote, downVote;
@@ -97,6 +98,7 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
             post_answer = (TextView) itemView.findViewById(R.id.posted_answer);
             civ = (CircleImageView) itemView.findViewById(R.id.post_image);
             post_name = (TextView) itemView.findViewById(R.id.post_name);
+            answer_photo = (ImageView) itemView.findViewById(R.id.answerPhoto);
             post_date = (RelativeTimeTextView) itemView.findViewById(R.id.post_date);
             Typeface custom_font = Typeface.createFromAsset(ctx.getAssets(), "fonts/Aller_Rg.ttf");
             post_date.setTypeface(custom_font);
@@ -104,6 +106,7 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
             downVoteCount = (TextView) itemView.findViewById(R.id.downVoteCount);
             upVote = (ImageView) itemView.findViewById(R.id.approve);
             downVote = (ImageView) itemView.findViewById(R.id.downvote);
+
 
             mAuth = FirebaseAuth.getInstance();
             mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
@@ -140,6 +143,7 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
         mDatabaseUsersAns2 = FirebaseDatabase.getInstance().getReference().child("Users_answers");
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseVotes = FirebaseDatabase.getInstance().getReference().child("Answers_votes");
+
         //final boolean mProcessApproval = false;
         mDatabase.keepSynced(true);
 
@@ -148,6 +152,7 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
         final String answer_key = c.getPost_id();
         final String QuizKey = c.getQuestion_key();
         final String user_id = c.getSender_uid();
+        final String ans_photo = c.getAnswer_photo();
 
         holder.post_name.setText(c.getSender_name());
         holder.post_answer.setText(c.getPosted_answer());
@@ -160,6 +165,50 @@ public class SolutionsAdapter extends RecyclerView.Adapter<SolutionsAdapter.Answ
                 Intent openRead = new Intent(ctx, ViewUserProfileActivity.class);
                 openRead.putExtra("user_id", user_id );
                 ctx.startActivity(openRead);
+            }
+        });
+
+        holder.mView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mAuth.getCurrentUser() != null) {
+                    if (user_id.equals(mAuth.getCurrentUser().getUid())) {
+
+                        // custom dialog
+                        final Dialog dialog = new Dialog(ctx);
+                        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        dialog.setContentView(R.layout.delete_popup_dialog);
+                        dialog.setCancelable(true);
+                        dialog.show();
+
+                        LinearLayout delete = (LinearLayout) dialog.findViewById(R.id.deleteLiny);
+                        delete.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                mDatabaseUsersAns.child(QuizKey).removeValue();
+                                Toast.makeText(ctx, "Answer removed!", Toast.LENGTH_LONG).show();
+                                dialog.dismiss();
+                            }
+                        });
+
+                    }
+                }
+            }
+        });
+
+        mDatabaseUsersAns.child(QuizKey).child(answer_key).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild("answer_photo")) {
+                    holder.answer_photo.setVisibility(View.VISIBLE);
+                } else {
+                    holder.answer_photo.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
 

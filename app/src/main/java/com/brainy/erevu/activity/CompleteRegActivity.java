@@ -14,10 +14,12 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.brainy.erevu.R;
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,9 +35,12 @@ import java.util.Date;
 
 public class CompleteRegActivity extends AppCompatActivity {
 
-    private EditText inputName;
+    String name = null;
+    String userImage = null;
+    private EditText inputName,inputUsername;
     private Button btnSignIn;
     private DatabaseReference mDatabaseUsers;
+    private ImageView userImg;
     private ProgressBar progressBar;
     private Menu menu;
     private FirebaseAuth auth;
@@ -57,8 +62,6 @@ public class CompleteRegActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         auth = FirebaseAuth.getInstance();
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
@@ -92,14 +95,42 @@ public class CompleteRegActivity extends AppCompatActivity {
         });
 
         inputName = (EditText) findViewById(R.id.name);
+        inputUsername = (EditText) findViewById(R.id.username);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
+        userImg = (ImageView) findViewById(R.id.user_image);
+
+        mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.hasChild("name")) {
+                    name = dataSnapshot.child("name").getValue().toString();
+                    inputName.setText(name);
+                }
+
+                if (dataSnapshot.hasChild("user_image")) {
+                    userImage = dataSnapshot.child("user_image").getValue().toString();
+                    Glide.with(getApplicationContext())
+                            .load(userImage)
+                            .placeholder(R.drawable.placeholder_image)
+                            .into(userImg);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
+
 
     private void initSave() {
 
 
         final String name = inputName.getText().toString().trim();
+        final String username = inputUsername.getText().toString().trim();
 
         Date date = new Date();
         final String stringDate = DateFormat.getDateInstance().format(date);
@@ -110,8 +141,12 @@ public class CompleteRegActivity extends AppCompatActivity {
 
 
         if (TextUtils.isEmpty(name)) {
-            Toast.makeText(getApplicationContext(), "Enter name!", Toast.LENGTH_SHORT).show();
+            inputName.setError("Enter your name!");
+            //Toast.makeText(getApplicationContext(), "Enter name!", Toast.LENGTH_SHORT).show();
 
+        }
+        else if (TextUtils.isEmpty(username)) {
+            inputUsername.setError("Enter your username!");
         }
         else {
 
@@ -128,12 +163,12 @@ public class CompleteRegActivity extends AppCompatActivity {
                                 newPost.child(auth.getCurrentUser().getUid()).child("uid").setValue(auth.getCurrentUser().getUid());
 
                                 newPost.child(auth.getCurrentUser().getUid()).child("name").setValue(name);
+                                newPost.child(auth.getCurrentUser().getUid()).child("username").setValue("@"+username);
                                 newPost.child(auth.getCurrentUser().getUid()).child("user_image").setValue("");
                                 newPost.child(auth.getCurrentUser().getUid()).child("joined_date").setValue(stringDate);
                                 newPost.child(auth.getCurrentUser().getUid()).child("uid").setValue(auth.getCurrentUser().getUid());
                                 newPost.child(auth.getCurrentUser().getUid()).child("user_email").setValue(auth.getCurrentUser().getEmail());
 
-                                newPost.child(auth.getCurrentUser().getUid()).child("sign_in_type").setValue("manual_sign_In");
                                 newPost.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Beginner");
                                 newPost.child(auth.getCurrentUser().getUid()).child("points_earned").setValue(10);
                                 newPost.child(auth.getCurrentUser().getUid()).child("device_token").setValue(deviceToken);

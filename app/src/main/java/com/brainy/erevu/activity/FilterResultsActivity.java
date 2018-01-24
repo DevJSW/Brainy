@@ -91,6 +91,7 @@ public class FilterResultsActivity extends AppCompatActivity {
     private GoogleApiClient mGoogleApiClient;
     private static int RC_SIGN_IN = 1;
     private ProgressBar progressBar;
+    private ImageView backBtn;
 
     //PAGINATION
     private static int TOTAL_ITEMS_TO_LOAD = 30;
@@ -119,8 +120,6 @@ public class FilterResultsActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         final Spinner spinner = (Spinner) findViewById(R.id.spinner);
         final Spinner spinner2 = (Spinner) findViewById(R.id.spinner2);
@@ -144,6 +143,14 @@ public class FilterResultsActivity extends AppCompatActivity {
             rl.setVisibility(View.GONE);
 
         }
+
+        backBtn = (ImageView) findViewById(R.id.backBtn);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FilterResultsActivity.this.finish();
+            }
+        });
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -745,7 +752,7 @@ public class FilterResultsActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 int ads_count = (int) dataSnapshot.getChildrenCount();
-                if (ads_count == 3 || ads_count > 3) {
+                if (ads_count == 4 || ads_count > 4) {
                     //SHOW ADS
                     loadAds();
                 } else {
