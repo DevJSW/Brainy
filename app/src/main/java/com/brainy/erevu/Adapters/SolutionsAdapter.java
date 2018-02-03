@@ -22,7 +22,7 @@ import android.widget.Toast;
 
 import com.brainy.erevu.R;
 import com.brainy.erevu.activity.ViewUserProfileActivity;
-import com.brainy.erevu.data.Answer;
+import com.brainy.erevu.Pojos.Answer;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;

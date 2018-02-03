@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.brainy.erevu.Adapters.AnswersAdapter;
 import com.brainy.erevu.R;
-import com.brainy.erevu.data.Answer;
+import com.brainy.erevu.Pojos.Answer;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;

@@ -14,13 +14,13 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="48dp">
-        <ImageView
-            android:layout_width="30dp"
-            android:layout_height="48dp"
-            android:padding="6dp"
-            android:id="@+id/backBtn"
-            android:layout_marginRight="7dp"
-            android:src="@drawable/backbtn"/>
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="48dp"
+                android:padding="6dp"
+                android:id="@+id/backBtn"
+                android:layout_marginRight="7dp"
+                android:src="@drawable/backbtn"/>
 
             <com.brainy.erevu.data.MyBoldFont
                 android:layout_width="match_parent"
@@ -32,9 +32,17 @@
                 android:layout_centerHorizontal="true"
                 android:gravity="center_horizontal"
                 android:text="Profile"
-               />
+                />
 
-
+            <ImageView
+                android:layout_width="23dp"
+                android:layout_height="20dp"
+                android:id="@+id/sendMsg"
+                android:scaleType="fitXY"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="3dp"
+                android:src="@drawable/if_envelop_white"/>
         </RelativeLayout>
         <RelativeLayout
             android:layout_width="100dp"

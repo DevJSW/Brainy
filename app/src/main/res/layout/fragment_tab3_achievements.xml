@@ -61,7 +61,7 @@
     <com.brainy.erevu.data.MyFont
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="The favourite tray is where all your favourite questions are stored for easy reference."
+        android:text="The group tray is where all groups you are a participant will be collected here."
         android:layout_above="@+id/signIn"
         android:layout_centerHorizontal="true"
         android:layout_marginRight="20dp"

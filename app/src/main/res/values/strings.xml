@@ -75,4 +75,6 @@
     <string name="title_activity_take_camera_shot">TakeCameraShotActivity</string>
     <string name="title_activity_post_answer2">PostAnswer2Activity</string>
     <string name="Username">\@Username</string>
+    <string name="title_activity_group">GroupActivity</string>
+    <string name="title_activity_photo">PhotoActivity</string>
 </resources>

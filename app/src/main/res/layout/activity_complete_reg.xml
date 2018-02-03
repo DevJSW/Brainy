@@ -28,7 +28,7 @@
           android:layout_height="200dp"
           android:src="@drawable/placeholder_image"
           android:id="@+id/user_image"
-          android:layout_margin="10dp"
+          android:layout_margin="20dp"
           android:layout_gravity="center_horizontal"/>
 
         <android.support.design.widget.TextInputLayout

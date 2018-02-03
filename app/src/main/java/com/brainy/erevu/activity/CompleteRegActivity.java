@@ -7,7 +7,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.View;
 import android.view.Window;
@@ -20,11 +22,13 @@ import android.widget.Toast;
 
 import com.brainy.erevu.R;
 import com.bumptech.glide.Glide;
+import com.firebase.client.FirebaseError;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
@@ -36,10 +40,11 @@ import java.util.Date;
 public class CompleteRegActivity extends AppCompatActivity {
 
     String name = null;
-    String userImage = null;
+    String username = null;
+    String userImage = "";
     private EditText inputName,inputUsername;
     private Button btnSignIn;
-    private DatabaseReference mDatabaseUsers;
+    private DatabaseReference mDatabaseUsers, mDatabaseUsernames;
     private ImageView userImg;
     private ProgressBar progressBar;
     private Menu menu;
@@ -65,6 +70,7 @@ public class CompleteRegActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
+        mDatabaseUsernames = FirebaseDatabase.getInstance().getReference().child("Usernames");
         mDatabaseUsers.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -123,6 +129,7 @@ public class CompleteRegActivity extends AppCompatActivity {
 
             }
         });
+
     }
 
 
@@ -130,7 +137,7 @@ public class CompleteRegActivity extends AppCompatActivity {
 
 
         final String name = inputName.getText().toString().trim();
-        final String username = inputUsername.getText().toString().trim();
+        username = inputUsername.getText().toString().trim();
 
         Date date = new Date();
         final String stringDate = DateFormat.getDateInstance().format(date);
@@ -148,57 +155,77 @@ public class CompleteRegActivity extends AppCompatActivity {
         else if (TextUtils.isEmpty(username)) {
             inputUsername.setError("Enter your username!");
         }
+        else if (username.length() < 3 || username.length() >15 ){
+            System.out.println("Name too short or too long");
+            inputUsername.setError("Name too short or too long");
+        }
+        else if (username.contains(" ")) {
+            inputUsername.setError("Username should be one word e.g JohnDoe instead of John Doe.");
+            //Toast.makeText(getApplicationContext(), "Username should be one word e.g JohnDoe instead of John Doe!", Toast.LENGTH_SHORT).show();
+        }
+        else if (username.matches(".*[!@#$%^&*+=?-].*")) {
+            inputUsername.setError("Username should not contain special chars e.g [! @ # $ % ^ & * + = ? -].");
+            //Toast.makeText(getApplicationContext(), "Username should be one word e.g JohnDoe instead of John Doe!", Toast.LENGTH_SHORT).show();
+        }
         else {
 
-            progressBar.setVisibility(View.VISIBLE);
+            //CHECK IF USERNAME EXISTS
+            mDatabaseUsernames.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        if (dataSnapshot.hasChild(username.toLowerCase())) {
+                            // use "username" already exists
+                            // Let the user know he needs to pick another username.
+                            inputUsername.setError("Username already exists");
+                        } else {
+                            //inputUsername.setError("cool");
+                            mprogress.setMessage("Loading account, please wait...");
+                            mprogress.show();
+
+                            final DatabaseReference newPost = mDatabaseUsers;
+                            final DatabaseReference newPostUserName = mDatabaseUsernames;
+                            String deviceToken = FirebaseInstanceId.getInstance().getToken();
+
+                            newPost.child(auth.getCurrentUser().getUid()).child("date").setValue(stringDate);
+                            newPost.child(auth.getCurrentUser().getUid()).child("uid").setValue(auth.getCurrentUser().getUid());
+
+                            newPost.child(auth.getCurrentUser().getUid()).child("name").setValue(name);
+                            newPost.child(auth.getCurrentUser().getUid()).child("username").setValue("@"+username.toLowerCase());
+                            newPost.child(auth.getCurrentUser().getUid()).child("user_image").setValue(userImage);
+                            newPost.child(auth.getCurrentUser().getUid()).child("joined_date").setValue(stringDate);
+                            newPost.child(auth.getCurrentUser().getUid()).child("uid").setValue(auth.getCurrentUser().getUid());
+                            newPost.child(auth.getCurrentUser().getUid()).child("user_email").setValue(auth.getCurrentUser().getEmail());
+
+                            newPost.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Beginner");
+                            newPost.child(auth.getCurrentUser().getUid()).child("points_earned").setValue(10);
+                            newPost.child(auth.getCurrentUser().getUid()).child("device_token").setValue(deviceToken);
+
+                            //ADD USERNAME TO DB
+                            newPostUserName.child(username).setValue(auth.getCurrentUser().getUid());
+
+                            Toast.makeText(CompleteRegActivity.this, "Account setup finished successfully!",
+                                    Toast.LENGTH_LONG).show();
+
+                            CompleteRegActivity.this.finish();
+                            Intent cardonClick = new Intent(CompleteRegActivity.this, MainActivity.class);
+                            cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(cardonClick);
+                        }
+                    }
 
 
-                                mprogress.setMessage("Creating account, please wait...");
-                                mprogress.show();
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-                                final DatabaseReference newPost = mDatabaseUsers;
-                                String deviceToken = FirebaseInstanceId.getInstance().getToken();
-
-                                newPost.child(auth.getCurrentUser().getUid()).child("date").setValue(stringDate);
-                                newPost.child(auth.getCurrentUser().getUid()).child("uid").setValue(auth.getCurrentUser().getUid());
-
-                                newPost.child(auth.getCurrentUser().getUid()).child("name").setValue(name);
-                                newPost.child(auth.getCurrentUser().getUid()).child("username").setValue("@"+username);
-                                newPost.child(auth.getCurrentUser().getUid()).child("user_image").setValue("");
-                                newPost.child(auth.getCurrentUser().getUid()).child("joined_date").setValue(stringDate);
-                                newPost.child(auth.getCurrentUser().getUid()).child("uid").setValue(auth.getCurrentUser().getUid());
-                                newPost.child(auth.getCurrentUser().getUid()).child("user_email").setValue(auth.getCurrentUser().getEmail());
-
-                                newPost.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Beginner");
-                                newPost.child(auth.getCurrentUser().getUid()).child("points_earned").setValue(10);
-                                newPost.child(auth.getCurrentUser().getUid()).child("device_token").setValue(deviceToken);
-
-                                Toast.makeText(CompleteRegActivity.this, "Welcome " + name + " your Account was created successfully!",
-                                        Toast.LENGTH_LONG).show();
-
-                                Intent cardonClick = new Intent(CompleteRegActivity.this, MainActivity.class);
-                                cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(cardonClick);
-
-
-
-
+                }
+            });
 
 
         }
 
 
-           /* if (containsPartOf(password,name)) {
-                System.out.println("pass contains substring of username");
-                Toast.makeText(getApplicationContext(), "No special chars found in password! e.g [!@#$%^&*+=?-] ", Toast.LENGTH_SHORT).show();
-            }
-            if (containsPartOf(password,email)) {
-                System.out.println("pass contains substring of email");
-            }*/
-
     }
-
-
 
 
 }

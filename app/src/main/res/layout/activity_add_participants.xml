@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.brainy.erevu.activity.AddParticipantsActivity">
+    <include layout="@layout/users_search_toolbar"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        app:layout_scrollFlags="scroll|enterAlways"
+        />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/result_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:layout_above="@+id/bottomRely"
+        ></android.support.v7.widget.RecyclerView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/bottomRely"
+        android:background="#eaeaea"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <com.brainy.erevu.data.MyFont
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Group members"
+            android:textSize="16dp"
+            android:textColor="@color/colorAccent"
+            android:layout_marginTop="13dp"
+            android:layout_marginLeft="15dp"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/participants_list"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="5dp"
+            android:layout_height="wrap_content"
+
+            ></android.support.v7.widget.RecyclerView>
+    </LinearLayout>
+</RelativeLayout>

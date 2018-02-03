@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:ndroid="http://schemas.android.com/tools"
+    android:background="@color/colorPrimary"
+    app:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="match_parent"
+            android:padding="6dp"
+            android:id="@+id/backBtn"
+
+            android:src="@drawable/backbtn"/>
+
+
+        <com.brainy.erevu.data.MyBoldFont
+            android:layout_width="match_parent"
+            android:textColor="#fff"
+            android:layout_toRightOf="@+id/backBtn"
+            android:layout_marginRight="40dp"
+            android:gravity="center_horizontal"
+            android:layout_centerVertical="true"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:text="Inbox"
+            />
+
+    </RelativeLayout>
+</android.support.v7.widget.Toolbar>

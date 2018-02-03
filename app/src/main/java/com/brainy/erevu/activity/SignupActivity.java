@@ -25,8 +25,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -40,7 +43,7 @@ public class SignupActivity extends AppCompatActivity {
 
     private EditText inputEmail, inputUsername, inputPassword,inputRePassword, inputName;
     private Button btnSignIn, btnSignUp, btnResetPassword;
-    private DatabaseReference mDatabaseUsers;
+    private DatabaseReference mDatabaseUsers,  mDatabaseUsernames;
     private ProgressBar progressBar;
     private Menu menu;
     private FirebaseAuth auth;
@@ -67,7 +70,7 @@ public class SignupActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         mStorage = FirebaseStorage.getInstance().getReference();
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
-
+        mDatabaseUsernames = FirebaseDatabase.getInstance().getReference().child("Usernames");
         mprogress = new ProgressDialog(this);
         btnSignUp = (Button) findViewById(R.id.btn_signup);
         btnSignIn = (Button) findViewById(R.id.btn_login);
@@ -142,11 +145,22 @@ public class SignupActivity extends AppCompatActivity {
                     System.out.println("Name too short or too long");
                    inputName.setError("Name too short or too long");
                 }
-        else if (TextUtils.isEmpty(username)) {
-            inputUsername.setError("Enter username!");
-            //Toast.makeText(getApplicationContext(), "Enter username!", Toast.LENGTH_SHORT).show();
 
-        }
+            else if (TextUtils.isEmpty(username)) {
+                inputUsername.setError("Enter your username!");
+            }
+            else if (username.length() < 3 || username.length() >15 ){
+                System.out.println("Name too short or too long");
+                inputUsername.setError("Name too short or too long");
+            }
+            else if (username.contains(" ")) {
+                inputUsername.setError("Username should be one word e.g JohnDoe instead of John Doe.");
+                //Toast.makeText(getApplicationContext(), "Username should be one word e.g JohnDoe instead of John Doe!", Toast.LENGTH_SHORT).show();
+            }
+            else if (username.matches(".*[!@#$%^&*+=?-].*")) {
+                inputUsername.setError("Username should not contain special chars e.g [! @ # $ % ^ & * + = ? -].");
+                //Toast.makeText(getApplicationContext(), "Username should be one word e.g JohnDoe instead of John Doe!", Toast.LENGTH_SHORT).show();
+            }
 
         else if (username.length() < 3 || username.length() >15 ){
             System.out.println("Username too short or too long");
@@ -203,53 +217,78 @@ public class SignupActivity extends AppCompatActivity {
             }
             else {
 
-                progressBar.setVisibility(View.VISIBLE);
-                //create user
-                auth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                Toast.makeText(SignupActivity.this, "createUserWithEmail:onComplete:" + task.isSuccessful(), Toast.LENGTH_LONG).show();
-                                progressBar.setVisibility(View.GONE);
-                                // If sign in fails, display a message to the user. If sign in succeeds
-                                // the auth state listener will be notified and logic to handle the
-                                // signed in user can be handled in the listener.
-                                if (!task.isSuccessful()) {
-                                    Toast.makeText(SignupActivity.this, "Authentication failed." + task.getException(),
-                                            Toast.LENGTH_LONG).show();
-                                } else {
+                //CHECK IF USERNAME EXISTS
+                mDatabaseUsernames.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                    mprogress.setMessage("Creating account, please wait...");
-                                    mprogress.show();
+                        if (dataSnapshot.hasChild(username)) {
+                            // use "username" already exists
+                            // Let the user know he needs to pick another username.
+                            inputUsername.setError("Username already exists");
+                        } else {
 
-                                    final DatabaseReference newPost = mDatabaseUsers;
-                                    String deviceToken = FirebaseInstanceId.getInstance().getToken();
+                            progressBar.setVisibility(View.VISIBLE);
+                            //create user
+                            auth.createUserWithEmailAndPassword(email, password)
+                                    .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<AuthResult> task) {
+                                            Toast.makeText(SignupActivity.this, "createUserWithEmail:onComplete:" + task.isSuccessful(), Toast.LENGTH_LONG).show();
+                                            progressBar.setVisibility(View.GONE);
+                                            // If sign in fails, display a message to the user. If sign in succeeds
+                                            // the auth state listener will be notified and logic to handle the
+                                            // signed in user can be handled in the listener.
+                                            if (!task.isSuccessful()) {
+                                                Toast.makeText(SignupActivity.this, "Authentication failed." + task.getException(),
+                                                        Toast.LENGTH_LONG).show();
+                                            } else {
 
-                                    newPost.child(auth.getCurrentUser().getUid()).child("date").setValue(stringDate);
-                                    newPost.child(auth.getCurrentUser().getUid()).child("uid").setValue(auth.getCurrentUser().getUid());
-                                    newPost.child(auth.getCurrentUser().getUid()).child("name").setValue(name);
-                                    newPost.child(auth.getCurrentUser().getUid()).child("username").setValue("@"+username);
-                                    newPost.child(auth.getCurrentUser().getUid()).child("user_image").setValue("");
-                                    newPost.child(auth.getCurrentUser().getUid()).child("joined_date").setValue(stringDate);
-                                    newPost.child(auth.getCurrentUser().getUid()).child("uid").setValue(auth.getCurrentUser().getUid());
-                                    newPost.child(auth.getCurrentUser().getUid()).child("user_email").setValue(email);
-                                    newPost.child(auth.getCurrentUser().getUid()).child("user_password").setValue(password);
-                                    newPost.child(auth.getCurrentUser().getUid()).child("sign_in_type").setValue("manual_sign_In");
-                                    newPost.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Beginner");
-                                    newPost.child(auth.getCurrentUser().getUid()).child("points_earned").setValue(10);
-                                    newPost.child(auth.getCurrentUser().getUid()).child("device_token").setValue(deviceToken);
+                                                mprogress.setMessage("Creating account, please wait...");
+                                                mprogress.show();
 
-                                    Toast.makeText(SignupActivity.this, "Welcome " + name + " your Account was created successfully!",
-                                            Toast.LENGTH_LONG).show();
+                                                final DatabaseReference newPost = mDatabaseUsers;
+                                                final DatabaseReference newPostUserName = mDatabaseUsernames;
+                                                String deviceToken = FirebaseInstanceId.getInstance().getToken();
 
-                                    Intent cardonClick = new Intent(SignupActivity.this, MainActivity.class);
-                                    cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    startActivity(cardonClick);
+                                                newPost.child(auth.getCurrentUser().getUid()).child("date").setValue(stringDate);
+                                                newPost.child(auth.getCurrentUser().getUid()).child("uid").setValue(auth.getCurrentUser().getUid());
+                                                newPost.child(auth.getCurrentUser().getUid()).child("name").setValue(name);
+                                                newPost.child(auth.getCurrentUser().getUid()).child("username").setValue("@"+username.toLowerCase());
+                                                newPost.child(auth.getCurrentUser().getUid()).child("user_image").setValue("");
+                                                newPost.child(auth.getCurrentUser().getUid()).child("joined_date").setValue(stringDate);
+                                                newPost.child(auth.getCurrentUser().getUid()).child("uid").setValue(auth.getCurrentUser().getUid());
+                                                newPost.child(auth.getCurrentUser().getUid()).child("user_email").setValue(email);
+                                                newPost.child(auth.getCurrentUser().getUid()).child("user_password").setValue(password);
+                                                newPost.child(auth.getCurrentUser().getUid()).child("sign_in_type").setValue("manual_sign_In");
+                                                newPost.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Beginner");
+                                                newPost.child(auth.getCurrentUser().getUid()).child("points_earned").setValue(10);
+                                                newPost.child(auth.getCurrentUser().getUid()).child("device_token").setValue(deviceToken);
+
+                                                //ADD USERNAME TO DB
+                                                newPostUserName.child(username).setValue(auth.getCurrentUser().getUid());
+
+                                                Toast.makeText(SignupActivity.this, "Welcome " + name + " your Account was created successfully!",
+                                                        Toast.LENGTH_LONG).show();
+
+                                                Intent cardonClick = new Intent(SignupActivity.this, MainActivity.class);
+                                                cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                startActivity(cardonClick);
 
 
-                                }
-                            }
-                        });
+                                            }
+                                        }
+                                    });
+
+                        }
+                    }
+
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
 
             }
 

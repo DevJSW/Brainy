@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#f5f4f4"
+    android:elevation="5dp"
+    app:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+
+        <ImageView
+            android:layout_width="17dp"
+            android:layout_height="20dp"
+            android:id="@+id/backBtn"
+            android:layout_marginRight="20dp"
+            android:src="@drawable/back_arrow"/>
+
+        <com.brainy.erevu.data.MyBoldFont
+            android:layout_width="wrap_content"
+            android:textColor="#282727"
+            android:gravity="center_horizontal"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:text="Photo"
+            />
+
+
+</android.support.v7.widget.Toolbar>

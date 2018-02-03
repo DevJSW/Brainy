@@ -11,25 +11,24 @@
             android:layout_height="match_parent"
             android:padding="6dp"
             android:id="@+id/backBtn"
-            android:layout_marginRight="25dp"
+            android:layout_marginRight="15dp"
             android:src="@drawable/backbtn"/>
 
-        <android.support.design.widget.TextInputLayout
+
+        <com.brainy.erevu.data.CustomEditText
+            android:id="@+id/search_edit"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="15dp">
-
-                <com.brainy.erevu.data.CustomEditText
-                    android:id="@+id/search_edit"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Search"
-                    android:inputType="textPersonName"
-                    android:maxLines="1"
-                    android:singleLine="true"
-                    android:textColorHint="#fff"
-                    android:textColor="#fff" />
-
-        </android.support.design.widget.TextInputLayout>
+            android:layout_marginRight="20dp"
+            android:layout_height="36dp"
+            android:hint="Search"
+            android:paddingLeft="13dp"
+            android:paddingRight="13dp"
+            android:inputType="textPersonName"
+            android:textAllCaps="false"
+            android:background="@drawable/search_layout"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:textColorHint="#fff"
+            android:textColor="#fff" />
 
 </android.support.v7.widget.Toolbar>

@@ -11,16 +11,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.brainy.erevu.Adapters.InboxAdapter;
 import com.brainy.erevu.Adapters.NotificationAdapter;
 import com.brainy.erevu.R;
-import com.brainy.erevu.data.Answer;
+import com.brainy.erevu.Pojos.Answer;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;

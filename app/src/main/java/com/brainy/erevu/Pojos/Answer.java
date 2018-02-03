@@ -1,4 +1,4 @@
-package com.brainy.erevu.data;
+package com.brainy.erevu.Pojos;
 
 /**
  * Created by Shephard on 7/15/2017.

@@ -2,25 +2,19 @@ package com.brainy.erevu.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.brainy.erevu.R;
-import com.brainy.erevu.activity.ReadQuestionActivity;
 import com.brainy.erevu.activity.ViewUserProfileActivity;
-import com.brainy.erevu.data.Question;
-import com.brainy.erevu.data.Users;
+import com.brainy.erevu.Pojos.Users;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -48,11 +42,16 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.AnswersViewH
         this.ctx = ctx;
     }
 
+    public void filterList(List<Users> filterdNames) {
+        this.mAnswersList = filterdNames;
+        notifyDataSetChanged();
+    }
+
     @Override
     public AnswersViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.users_item,parent, false);
+                .inflate(R.layout.user_search_item,parent, false);
 
         return new AnswersViewHolder(v);
     }
@@ -61,20 +60,20 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.AnswersViewH
 
         View mView;
 
-        public TextView post_name;
+        public TextView post_name,post_username;
         public ImageView civ;
 
         public AnswersViewHolder(View itemView) {
             super(itemView);
             mView = itemView;
 
-            civ = (CircleImageView) itemView.findViewById(R.id.user_image);
+            civ = (CircleImageView) itemView.findViewById(R.id.post_image);
             post_name = (TextView) itemView.findViewById(R.id.post_name);
+            post_username = (TextView) itemView.findViewById(R.id.post_username);
             mAuth= FirebaseAuth.getInstance();
             mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
 
         }
-
 
     }
 
@@ -90,14 +89,14 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.AnswersViewH
         final String user_id = c.getUid();
 
         holder.post_name.setText(c.getName());
-
+        holder.post_username.setText(c.getUsername());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 if (mAuth.getCurrentUser() != null) {
-                    //mDatabase.child(quiz_key).child("views").child(mAuth.getCurrentUser().getUid()).setValue("iView");
+
                 }
                 Intent openRead = new Intent(ctx, ViewUserProfileActivity.class);
                 openRead.putExtra("user_id", user_id );
@@ -107,19 +106,10 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.AnswersViewH
         });
 
         Glide.with(ctx)
-                .load(c.getUser_image()).asBitmap()
+                .load(c.getUser_image())
                 .placeholder(R.drawable.placeholder_image)
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                .centerCrop()
-                .into(new BitmapImageViewTarget(holder.civ) {
-                    @Override
-                    protected void setResource(Bitmap resource) {
-                        RoundedBitmapDrawable circularBitmapDrawable =
-                                RoundedBitmapDrawableFactory.create(ctx.getResources(), resource);
-                        circularBitmapDrawable.setCircular(true);
-                        holder.civ.setImageDrawable(circularBitmapDrawable);
-                    }
-                });
+                .into(holder.civ);
 
     }
 

@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:myapp="http://schemas.android.com/apk/res-auto"
+    tools:context="com.brainy.erevu.activity.MainActivity">
+
+
+        <item
+            android:id="@+id/action_newgroup"
+            android:orderInCategory="100"
+            android:title="New group"
+            myapp:showAsAction="never" />
+
+</menu>

@@ -51,11 +51,14 @@ public class ViewUserProfileActivity extends AppCompatActivity {
 
     String UserId = null;
     String username = null;
+    String name = null;
+    String image = null;
+
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private DatabaseReference mDatabaseUsers, mDatabaseUsers2, mDatabase, mDatabaseLastSeen, mDatabaseProfileViews;
     private FirebaseAuth mAuth;
     private StorageReference mStorage;
-    private ImageView mGroupIcon, backBtn;
+    private ImageView mGroupIcon, backBtn, sendMsg;
     private EditText searchInput;
     private TextView uname, mLocation, cuname;
     private ProgressDialog mProgress;
@@ -114,13 +117,13 @@ public class ViewUserProfileActivity extends AppCompatActivity {
 
                /* if (dataSnapshot.hasChild("status") || dataSnapshot.hasChild("city") || dataSnapshot.hasChild("address")) {*/
 
-                String name = dataSnapshot.child("name").getValue().toString();
+                name = dataSnapshot.child("name").getValue().toString();
                 if (dataSnapshot.hasChild("username")) {
                 username = dataSnapshot.child("username").getValue().toString();
                 cuname.setText(username);
                 cuname.setVisibility(View.VISIBLE);
                 }
-                String image = dataSnapshot.child("user_image").getValue().toString();
+                image = dataSnapshot.child("user_image").getValue().toString();
 
 
                 uname.setText(name);
@@ -155,6 +158,20 @@ public class ViewUserProfileActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 ViewUserProfileActivity.this.finish();
+            }
+        });
+
+        sendMsg = (ImageView) findViewById(R.id.sendMsg);
+        sendMsg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent openActivity = new Intent(ViewUserProfileActivity.this, MessageChatActivity.class);
+                openActivity.putExtra("user_id", UserId);
+                openActivity.putExtra("username", username);
+                openActivity.putExtra("user_image", image);
+                openActivity.putExtra("name", name);
+                startActivity(openActivity);
             }
         });
 

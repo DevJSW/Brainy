@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:id="@+id/rely_img"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="58dp"
+                android:layout_height="58dp"
+                android:layout_margin="5dp"
+                android:id="@+id/post_image"
+                android:src="@drawable/placeholder_image"/>
+
+        </RelativeLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/liny"
+            android:orientation="horizontal"
+            android:layout_toLeftOf="@+id/post_date"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="5dp"
+            android:layout_toRightOf="@+id/rely_img">
+
+            <com.brainy.erevu.data.MyBoldFont
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/group_name"
+                android:singleLine="true"
+                android:layout_marginRight="3dp"
+                android:layout_gravity="top"
+                android:textSize="16dp"
+                android:scaleType="fitXY"
+                android:text="name"/>
+
+        </LinearLayout>
+
+
+
+        <com.brainy.erevu.data.MyFont
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="15dp"
+            android:layout_marginTop="3dp"
+            android:layout_toRightOf="@+id/rely_img"
+            android:layout_toLeftOf="@+id/counter"
+            android:layout_below="@+id/liny"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="5dp"
+            android:singleLine="true"
+            android:id="@+id/post_message"
+            android:text="message"/>
+
+        <RelativeLayout
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentRight="true"
+            android:visibility="gone"
+            android:id="@+id/counter"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="1dp"
+            android:background="@drawable/erevu_bg"
+            android:layout_marginRight="10dp">
+
+            <com.brainy.erevu.data.MyFont
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="1"
+                android:textSize="12dp"
+                android:layout_centerInParent="true"
+                android:textColor="#fff"
+                android:id="@+id/unreadCounter"
+                android:lines="1"/>
+
+
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@+id/rely_img"
+            android:background="#cecccc"/>
+
+    </RelativeLayout>
+
+
+</LinearLayout>
+

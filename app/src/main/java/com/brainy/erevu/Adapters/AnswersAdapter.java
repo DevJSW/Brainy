@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
@@ -20,8 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.brainy.erevu.R;
-import com.brainy.erevu.activity.EditQuestionActivity;
-import com.brainy.erevu.data.Answer;
+import com.brainy.erevu.Pojos.Answer;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;

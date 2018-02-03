@@ -9,8 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="1dp"
-        android:layout_marginRight="15dp"
+        android:layout_marginBottom="5dp"
         android:id="@+id/liny"
         android:orientation="horizontal">
 
@@ -19,14 +18,16 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:id="@+id/user_image"
+            android:layout_gravity="bottom"
             android:layout_marginBottom="10dp"
-            android:layout_marginTop="20dp">
+            android:layout_marginTop="10dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:layout_marginRight="5dp"
                 android:id="@+id/post_image"
+                android:layout_marginBottom="5dp"
                 android:src="@drawable/placeholder_image"/>
         </RelativeLayout>
 
@@ -41,7 +42,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/ley"
-                android:layout_marginRight="10dp"
                 android:layout_marginTop="10dp"
                 android:paddingTop="1dp"
                 android:orientation="vertical">
@@ -51,22 +51,13 @@
                         android:layout_height="wrap_content"
                         android:text="Name"
                         android:textSize="12dp"
+                        android:visibility="gone"
                         android:layout_marginLeft="7dp"
                         android:id="@+id/post_name" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/main_lay"
-                            android:background="@drawable/chat_bg"
-                            android:layout_marginLeft="2dp"
-                            android:layout_marginRight="10dp"
-                            android:layout_marginTop="2dp"
-                            android:orientation="vertical">
 
 
 
@@ -75,15 +66,19 @@
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceMedium"
                                 android:text="Message"
-                                android:layout_marginLeft="18dp"
+                                android:layout_marginRight="45dp"
                                 android:id="@+id/post_message"
-                                android:textSize="15dp"
-                                android:padding="2dp"
-                                android:layout_marginBottom="10dp"
-                                android:layout_marginTop="7dp"
-                                android:layout_marginRight="9dp" />
+                                android:layout_alignParentLeft="true"
 
-                       </LinearLayout>
+                                android:background="@drawable/chat_bg_2"
+
+                                android:textSize="15dp"
+                                android:paddingLeft="10dp"
+                                android:paddingBottom="10dp"
+                                android:paddingRight="10dp"
+                                android:paddingTop="9dp" />
+
+
 
                     <com.github.curioustechizen.ago.RelativeTimeTextView
                         android:layout_width="wrap_content"
@@ -91,8 +86,8 @@
                         android:layout_marginLeft="10dp"
                         android:paddingTop="3dp"
                         android:layout_marginRight="8dp"
-                        android:layout_below="@+id/main_lay"
-                        android:textSize="9dp"
+                        android:layout_below="@+id/post_message"
+                        android:textSize="11dp"
                         android:layout_gravity="right"
                         android:id="@+id/post_date" />
 

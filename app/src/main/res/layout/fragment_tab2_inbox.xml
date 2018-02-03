@@ -23,7 +23,9 @@
         <com.brainy.erevu.data.MyBoldFont
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Your inbox is empty."
+            android:text="Your inbox is empty.
+
+"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
             android:layout_marginRight="20dp"
@@ -31,7 +33,6 @@
             android:visibility="gone"
             android:textSize="18dp"
             android:gravity="center"
-            android:layout_marginTop="10dp"
             android:id="@+id/noInboxTxt"
             android:textColor="@color/colorAccent"/>
 
@@ -51,7 +52,7 @@
         <com.brainy.erevu.data.MyFont
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="All your notifications when someone answers or comments on your posts will be collected here!"
+            android:text="All your direct messages with other users will be collected here!"
             android:textSize="17dp"
             android:layout_above="@+id/signIn"
             android:layout_centerHorizontal="true"

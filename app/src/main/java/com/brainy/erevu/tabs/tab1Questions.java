@@ -21,17 +21,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.support.v7.widget.SearchView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.brainy.erevu.Adapters.QuestionAdapter;
+import com.brainy.erevu.activity.FavouriteActivity;
 import com.brainy.erevu.activity.FilterResultsActivity;
-import com.brainy.erevu.activity.SearchActivity;
-import com.brainy.erevu.activity.SettingsActivity;
-import com.brainy.erevu.activity.SignupActivity;
-import com.brainy.erevu.activity.UnansweredActivity;
-import com.brainy.erevu.data.Question;
+import com.brainy.erevu.Pojos.Question;
 import com.brainy.erevu.R;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
@@ -140,6 +136,7 @@ public class tab1Questions extends Fragment {
         // Initializing a String Array
         String[] options = new String[]{
                 "Active",
+                "Favourites",
                 "Unanswered"
         };
 
@@ -350,6 +347,8 @@ public class tab1Questions extends Fragment {
                     questionList.clear();
                     LoadMessage();
 
+                } else if (selectedOption == "Favourites") {
+                    startActivity(new Intent(getActivity(), FavouriteActivity.class));
                 }
 
             }

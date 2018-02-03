@@ -1,49 +1,30 @@
 package com.brainy.erevu.activity;
 
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.Typeface;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.brainy.erevu.Adapters.ChatAdapter;
+import com.brainy.erevu.Adapters.MessageListAdapter;
 import com.brainy.erevu.R;
-import com.brainy.erevu.data.Chat;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.brainy.erevu.Pojos.Chat;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -52,14 +33,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnPausedListener;
-import com.google.firebase.storage.OnProgressListener;
-import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -82,10 +56,11 @@ public class ChatroomActivity extends AppCompatActivity {
     private Button mSubmit;
     private FirebaseAuth auth;
     String QuizKey = null;
+    private ImageView backBtn;
 
     SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mChatList;
-    ChatAdapter chatAdapter;
+    MessageListAdapter chatAdapter;
     private final List<Chat> chatList = new ArrayList<>();
     LinearLayoutManager mLinearlayout;
 
@@ -101,7 +76,6 @@ public class ChatroomActivity extends AppCompatActivity {
         setContentView(R.layout.activity_chatroom);
         Toolbar my_toolbar = (Toolbar) findViewById(R.id.mCustomToolbarHash);
         setSupportActionBar(my_toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //keep layout on top of keyboard
 
         Window window = ChatroomActivity.this.getWindow();
@@ -140,6 +114,14 @@ public class ChatroomActivity extends AppCompatActivity {
             }
         });
 
+        backBtn = (ImageView) findViewById(R.id.backBtn);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ChatroomActivity.this.finish();
+            }
+        });
+
         final TextView mNoAnsTxt = (TextView) findViewById(R.id.noAnsTxt);
         mDatabaseDiscussForum.child(QuizKey).addValueEventListener(new ValueEventListener() {
             @Override
@@ -160,7 +142,7 @@ public class ChatroomActivity extends AppCompatActivity {
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
 
-        chatAdapter = new ChatAdapter(ChatroomActivity.this,chatList);
+        chatAdapter = new MessageListAdapter(ChatroomActivity.this,chatList);
 
         mChatList = (RecyclerView) findViewById(R.id.Chat_list);
         mLinearlayout = new LinearLayoutManager(ChatroomActivity.this);

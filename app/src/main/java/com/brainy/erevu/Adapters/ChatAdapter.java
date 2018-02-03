@@ -6,7 +6,6 @@ import android.graphics.Typeface;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.brainy.erevu.R;
-import com.brainy.erevu.data.Chat;
+import com.brainy.erevu.Pojos.Chat;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
@@ -36,6 +35,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder>
 {
 
+    private static final int VIEW_TYPE_MESSAGE_SENT = 1;
+    private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
+
     private List<Chat>  mChatList;
     Context ctx;
 
@@ -52,9 +54,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     public ChatViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.chat_item,parent, false);
+                .inflate(R.layout.item_message_sent,parent, false);
 
         return new ChatViewHolder(v);
+
     }
 
     public class ChatViewHolder extends RecyclerView.ViewHolder {
@@ -93,38 +96,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
         }
 
-        public void setPosted_date(Long posted_date) {
-
-            RelativeTimeTextView post_date = (RelativeTimeTextView) mView.findViewById(R.id.post_date);
-            post_date.setReferenceTime(Long.parseLong(String.valueOf(posted_date)));
-        }
-
-        public void setSender_name(String sender_name) {
-
-            TextView post_name = (TextView) mView.findViewById(R.id.post_name);
-            post_name.setText(sender_name);
-        }
-
-        public void setSender_image(final Context ctx, final String sender_image) {
-
-            final CircleImageView civ = (CircleImageView) mView.findViewById(R.id.post_image);
-
-            Glide.with(ctx)
-                    .load(sender_image).asBitmap()
-                    .placeholder(R.drawable.placeholder_image)
-                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                    .centerCrop()
-                    .into(new BitmapImageViewTarget(civ) {
-                        @Override
-                        protected void setResource(Bitmap resource) {
-                            RoundedBitmapDrawable circularBitmapDrawable =
-                                    RoundedBitmapDrawableFactory.create(ctx.getResources(), resource);
-                            circularBitmapDrawable.setCircular(true);
-                            civ.setImageDrawable(circularBitmapDrawable);
-                        }
-                    });
-
-        }
     }
 
     @Override
@@ -139,26 +110,17 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         final String post_key = c.getPost_id();
         String from_user_id = c.getSender_uid();
 
-       /* mDatabase = FirebaseDatabase
-                .getInstance()
-                .getReference()
-                .child("Discuss_forum")
-                .child(post_key);*/
-
+        if (c.getSender_name() != null)
         holder.sender_name.setText(c.getSender_name());
+
         holder.message.setText(c.getMessage());
 
-       /* if (from_user_id.equals(mAuth.getCurrentUser().getUid())) {
+        String current_user_id = mAuth.getCurrentUser().getUid();
+        String sender_user_id = c.getSender_uid();
 
-            holder.liny.setVisibility(View.GONE);
-        } else {
 
-            holder.min_rely.setVisibility(View.VISIBLE);
-        }
-*/
         if (c.getPosted_date() != null)
         holder.post_date.setReferenceTime(Long.parseLong(String.valueOf(c.getPosted_date())));
-
 
         Glide.with(ctx)
                 .load(c.getSender_image()).asBitmap()
@@ -176,6 +138,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
                 });
 
     }
+
 
 }
 

@@ -1,4 +1,4 @@
-package com.brainy.erevu.data;
+package com.brainy.erevu.Pojos;
 
 import android.app.Application;
 import android.content.Context;

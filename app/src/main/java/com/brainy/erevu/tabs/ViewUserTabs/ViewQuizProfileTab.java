@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.brainy.erevu.Adapters.QuestionAdapter;
 import com.brainy.erevu.R;
-import com.brainy.erevu.data.Question;
+import com.brainy.erevu.Pojos.Question;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -26,7 +26,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.

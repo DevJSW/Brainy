@@ -22,7 +22,7 @@ import android.widget.Toast;
 
 import com.brainy.erevu.R;
 import com.brainy.erevu.activity.ReadQuestionActivity;
-import com.brainy.erevu.data.Answer;
+import com.brainy.erevu.Pojos.Answer;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
@@ -80,6 +80,7 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.QuestionView
         public TextView viewCounter, answersCounter, favouritesCounter;
         public DatabaseReference  mDatabase;
         public  FirebaseAuth mAuth;
+        Typeface custom_font;
 
         RelativeLayout answer_rely;
 
@@ -94,7 +95,7 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.QuestionView
             post_answer = (TextView) itemView.findViewById(R.id.posted_answer);
             post_name = (TextView) itemView.findViewById(R.id.post_name);
             post_date = (RelativeTimeTextView) itemView.findViewById(R.id.post_date);
-            Typeface custom_font = Typeface.createFromAsset(ctx.getAssets(), "fonts/Aller_Rg.ttf");
+            custom_font = Typeface.createFromAsset(ctx.getAssets(), "fonts/Aller_Rg.ttf");
             post_date.setTypeface(custom_font);
 
             mAuth= FirebaseAuth.getInstance();
@@ -111,6 +112,7 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.QuestionView
 
             RelativeTimeTextView post_date = (RelativeTimeTextView) mView.findViewById(R.id.post_date);
             post_date.setReferenceTime(Long.parseLong(String.valueOf(posted_date)));
+            post_date.setTypeface(custom_font);
         }
 
         public void setSender_name(String sender_name) {
@@ -118,8 +120,6 @@ public class InboxAdapter extends RecyclerView.Adapter<InboxAdapter.QuestionView
             TextView post_name = (TextView) mView.findViewById(R.id.post_name);
             post_name.setText(sender_name);
         }
-
-
 
         public void setQuestion_title(String question_title) {
 

@@ -30,7 +30,7 @@ import android.widget.Toast;
 
 import com.brainy.erevu.Adapters.ChatAdapter;
 import com.brainy.erevu.R;
-import com.brainy.erevu.data.Chat;
+import com.brainy.erevu.Pojos.Chat;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;

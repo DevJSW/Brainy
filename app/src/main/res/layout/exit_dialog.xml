@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_margin="10dp"
+        android:id="@+id/relly"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="49dp"
+            android:layout_margin="5dp"
+            android:id="@+id/addUserToGroup"
+            >
+
+            <com.brainy.erevu.data.MyBoldFont
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Exit this group NOW!"
+                android:textColor="#ff1111"
+                android:textAllCaps="false"
+                android:layout_centerVertical="true"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+               />
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_margin="5dp"
+            >
+
+            <com.brainy.erevu.data.MyBoldFont
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAllCaps="true"
+                android:layout_centerVertical="true"
+                android:textStyle="bold"
+                android:layout_gravity="center_horizontal"
+                />
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>

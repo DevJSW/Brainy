@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.brainy.erevu.R;
 import com.brainy.erevu.activity.ReadQuestionActivity;
-import com.brainy.erevu.data.Question;
+import com.brainy.erevu.Pojos.Question;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.firebase.auth.FirebaseAuth;

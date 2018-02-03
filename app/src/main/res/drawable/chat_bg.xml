@@ -4,7 +4,7 @@
     android:shape="rectangle">
 
     <solid
-        android:color="#b3adad">
+        android:color="#c9c6c6">
 
     </solid>
 
@@ -12,10 +12,12 @@
 
     </stroke>
 
-    <corners
+    <!--<corners
         android:radius="12dp">
 
-    </corners>
-
+    </corners>-->
+    <corners
+        android:bottomRightRadius="0dp" android:bottomLeftRadius="16dp"
+        android:topLeftRadius="16dp" android:topRightRadius="16dp" />
 
 </shape>

@@ -43,18 +43,54 @@
             android:layout_centerVertical="true"
             android:orientation="horizontal">
 
+
+            <RelativeLayout
+                android:layout_width="30dp"
+                android:layout_height="25dp"
+                android:id="@+id/post_message"
+                android:layout_marginRight="23dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="19dp"
+                    android:layout_height="17dp"
+                    android:id="@+id/message"
+                    android:paddingBottom="0.7dp"
+                    android:layout_marginTop="3.7dp"
+                    android:src="@drawable/inbox"
+                    android:scaleType="fitXY"
+                    android:layout_centerHorizontal="true"
+                    android:layout_gravity="center_horizontal" />
+
+                <com.brainy.erevu.data.MyFont
+                    android:layout_width="13dp"
+                    android:layout_height="13dp"
+                    android:id="@+id/message_count"
+                    android:text="0"
+                    android:visibility="gone"
+                    android:textSize="9dp"
+                    android:gravity="center_horizontal"
+                    android:textColor="#fff"
+                    android:background="@drawable/erevu_bg"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"/>
+
+
+            </RelativeLayout>
         <RelativeLayout
             android:layout_width="30dp"
             android:layout_height="25dp"
             android:id="@+id/noty_icon"
-            android:layout_marginRight="25dp"
+            android:layout_marginRight="23dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="26dp"
-                android:layout_height="23dp"
+                android:layout_width="24dp"
+                android:layout_height="21dp"
                 android:id="@+id/userimg"
                 android:src="@drawable/bell3"
                 android:layout_marginTop="1dp"
@@ -63,12 +99,12 @@
                 android:layout_gravity="center_horizontal" />
 
             <com.brainy.erevu.data.MyFont
-                android:layout_width="14dp"
-                android:layout_height="14dp"
+                android:layout_width="13dp"
+                android:layout_height="13dp"
                 android:id="@+id/noty_count"
                 android:text="0"
                 android:visibility="gone"
-                android:textSize="10dp"
+                android:textSize="9dp"
                 android:gravity="center_horizontal"
                 android:textColor="#fff"
                 android:background="@drawable/erevu_bg"
@@ -79,8 +115,8 @@
         </RelativeLayout>
 
             <ImageView
-                android:layout_width="26dp"
-                android:layout_height="25dp"
+                android:layout_width="24dp"
+                android:layout_height="23dp"
                 android:id="@+id/search_icon"
                 android:src="@drawable/search3"
                 android:layout_marginTop="1dp"

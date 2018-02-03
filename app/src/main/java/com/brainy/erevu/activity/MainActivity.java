@@ -9,11 +9,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Icon;
 import android.location.Address;
 import android.location.Geocoder;
 import android.media.Ringtone;
@@ -66,9 +64,8 @@ import com.brainy.erevu.R;
 import com.brainy.erevu.Services.GPSTracker;
 import com.brainy.erevu.data.CustomTypefaceSpan;
 import com.brainy.erevu.tabs.tab1Questions;
-import com.brainy.erevu.tabs.tab2Inbox;
-import com.brainy.erevu.tabs.tab3Achievements;
-import com.brainy.erevu.tabs.tab3Inbox;
+import com.brainy.erevu.tabs.tabGroups;
+import com.brainy.erevu.tabs.tabMessages;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
@@ -94,10 +91,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLConnection;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -135,12 +128,12 @@ public class MainActivity extends AppCompatActivity
     private SectionsPagerAdapter mSectionsPagerAdapter;
     String selectedTopic = null;
     private ViewPager mViewPager;
-    private FloatingActionButton fab;
-    private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseUsersQuestions, mDatabaseInboxUsers, mDatabaseUsersAns, mDatabase, mDatabaseForumNotifications, mDatabaseNotifications;
+    private FloatingActionButton fab, fabGroup, fabMessage;
+    private DatabaseReference mDatabaseUsers, mDatabaseQuestions, mDatabaseUsersQuestions, mDatabaseInboxUsers, mDatabaseUsersAns, mDatabase, mDatabaseForumNotifications, mDatabaseNotifications, mDatabaseMessages;
     Context mContext;
     private FirebaseAuth auth;
-    private RelativeLayout noty_icon;
-    private TextView noty_count;
+    private RelativeLayout noty_icon, messages;
+    private TextView noty_count, message_count;
     private ImageView search_icon;
 
     private static final int REQUEST_CODE_PERMISSION = 1;
@@ -162,11 +155,6 @@ public class MainActivity extends AppCompatActivity
     private GoogleApiClient mGoogleApiClient;
     private static int RC_SIGN_IN = 1;
     private ProgressBar progressBar;
-
-    int[] ICONS = new int[]{
-            R.drawable.tab_home_icon,
-            R.drawable.tab_inbox_icon,
-            R.drawable.tab_fav_icon};
 
     // Get reference of widgets from XML layout
 
@@ -209,13 +197,14 @@ public class MainActivity extends AppCompatActivity
 
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
+        mDatabaseMessages = FirebaseDatabase.getInstance().getReference().child("Users_messages");
         mDatabaseForumNotifications = FirebaseDatabase.getInstance().getReference().child("Forum_notifications");
         mDatabaseUsers.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 if (auth.getCurrentUser() != null) {
-                    if (!dataSnapshot.hasChild(auth.getCurrentUser().getUid()) || !dataSnapshot.hasChild("username")) {
+                    if (!dataSnapshot.hasChild(auth.getCurrentUser().getUid()) || !dataSnapshot.child(auth.getCurrentUser().getUid()).hasChild("username")) {
 
                         Intent cardonClick = new Intent(MainActivity.this, CompleteRegActivity.class);
                         cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -263,13 +252,10 @@ public class MainActivity extends AppCompatActivity
         mDatabaseQuestions.keepSynced(true);
         mDatabaseInboxUsers.keepSynced(true);
         mDatabaseUsers.keepSynced(true);
+        mDatabaseMessages.keepSynced(true);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-
-        tabLayout.getTabAt(0).setIcon(ICONS[0]);
-        tabLayout.getTabAt(1).setIcon(ICONS[1]);
-        tabLayout.getTabAt(2).setIcon(ICONS[2]);
 
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -294,12 +280,42 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
+        fabMessage = (FloatingActionButton) findViewById(R.id.fabMessage);
+        fabMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /*Intent openRead = new Intent(MainActivity.this, GroupActivity.class);
+                startActivity(openRead);*/
+                startActivity(new Intent(MainActivity.this, UserSearchActivity.class));
+            }
+        });
+
+        fabGroup = (FloatingActionButton) findViewById(R.id.fabGroup);
+        fabGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                /*Intent openRead = new Intent(MainActivity.this, GroupActivity.class);
+                startActivity(openRead);*/
+                startActivity(new Intent(MainActivity.this, AddGroupActivity.class));
+            }
+        });
+
         noty_count = (TextView) findViewById(R.id.noty_count);
+        message_count = (TextView) findViewById(R.id.message_count);
         noty_icon = (RelativeLayout) findViewById(R.id.noty_icon);
         noty_icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent openRead = new Intent(MainActivity.this, NotificationActivity.class);
+                startActivity(openRead);
+            }
+        });
+
+        messages = (RelativeLayout) findViewById(R.id.post_message);
+        messages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent openRead = new Intent(MainActivity.this, InboxActivity.class);
                 startActivity(openRead);
             }
         });
@@ -333,6 +349,45 @@ public class MainActivity extends AppCompatActivity
                                 } else {
                                     noty_count.setText(dataSnapshot.getChildrenCount() + "");
                                     noty_count.setVisibility(View.VISIBLE);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+        //CHECK FOR MESSAGES
+        if (auth.getCurrentUser() != null) {
+            final Query quizQuery = mDatabaseMessages.child(auth.getCurrentUser().getUid()).orderByChild("read").equalTo(false);
+            mDatabaseInboxUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.getValue() == null) {
+                        message_count.setVisibility(View.GONE);
+                    } else {
+
+                        //COUNT THE NUMBER OF NOTIFICATIONS
+                        // count number of answers
+                        quizQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.getValue() == null) {
+                                    message_count.setVisibility(View.GONE);
+                                } else {
+                                    message_count.setText(dataSnapshot.getChildrenCount() + "");
+                                    message_count.setVisibility(View.VISIBLE);
                                 }
                             }
 
@@ -1563,15 +1618,18 @@ public class MainActivity extends AppCompatActivity
                 switch (position) {
                     case 0:
                         fab.show();
-                        //fabPerson.hide();
+                        fabGroup.hide();
+                        fabMessage.hide();
                         break;
                     case 1:
-                        //fabPerson.show();
+                        fabGroup.hide();
+                        fabMessage.show();
                         fab.hide();
                         break;
 
                     default:
-                        //fabHash.hide();
+                        fabGroup.show();
+                        fabMessage.hide();
                         fab.hide();
                         break;
                 }
@@ -1634,10 +1692,10 @@ public class MainActivity extends AppCompatActivity
                     tab1Questions tab1 = new  tab1Questions();
                     return tab1;
                 case 1:
-                    tab3Inbox tab2 = new tab3Inbox();
+                    tabMessages tab2 = new tabMessages();
                     return tab2;
                 case 2:
-                    tab3Achievements tab3 = new tab3Achievements();
+                    tabGroups tab3 = new tabGroups();
                     return tab3;
               /*  case 3:
                     tab4More tab4 = new tab4More();
@@ -1652,9 +1710,6 @@ public class MainActivity extends AppCompatActivity
             return 3;
         }
 
-        public int getPageIconResId(int position) {
-            return ICONS[position];
-        }
 
         @Override
         public CharSequence getPageTitle(int position) {
@@ -1662,9 +1717,9 @@ public class MainActivity extends AppCompatActivity
                 case 0:
                     return "QUESTIONS";
                 case 1:
-                    return "INBOX";
+                    return "MESSAGES";
                 case 2:
-                    return "FAVOURITES";
+                    return "GROUPS";
                /* case 3:
                     return "MORE";*/
             }

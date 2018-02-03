@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="3dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:id="@+id/liny"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/user_image"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="5dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="5dp"
+                android:id="@+id/post_image"
+                android:layout_marginBottom="10dp"
+                android:src="@drawable/placeholder_image"/>
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/ley"
+                android:layout_marginTop="10dp"
+                android:paddingTop="1dp"
+                android:orientation="vertical">
+
+                    <com.brainy.erevu.data.MyFont
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Name"
+                        android:textSize="12dp"
+                        android:visibility="gone"
+                        android:layout_marginLeft="7dp"
+                        android:id="@+id/post_name" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+
+                    <ImageView
+                        android:layout_width="250dp"
+                        android:layout_height="200dp"
+                        android:background="@drawable/chat_bg_2"
+                        android:id="@+id/post_photo"
+                        android:padding="8dp"
+                        android:src="@drawable/placeholder_image"
+                        android:scaleType="fitXY"/>
+
+                            <com.brainy.erevu.data.MyFont
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceMedium"
+                                android:text="Message"
+                                android:layout_marginRight="45dp"
+                                android:visibility="gone"
+                                android:id="@+id/post_message"
+                                android:layout_alignParentLeft="true"
+                                android:background="@drawable/chat_bg_2"
+                                android:textSize="15dp"
+                                android:paddingLeft="10dp"
+                                android:paddingBottom="10dp"
+                                android:paddingRight="10dp"
+                                android:paddingTop="9dp" />
+
+
+
+                    <com.github.curioustechizen.ago.RelativeTimeTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:paddingTop="3dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_below="@+id/post_photo"
+                        android:textSize="11dp"
+                        android:layout_gravity="right"
+                        android:id="@+id/post_date" />
+
+                </RelativeLayout>
+
+
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

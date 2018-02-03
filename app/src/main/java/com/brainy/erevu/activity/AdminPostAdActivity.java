@@ -25,8 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.brainy.erevu.R;
-import com.brainy.erevu.data.Ad;
-import com.brainy.erevu.data.Question;
+import com.brainy.erevu.Pojos.Ad;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -37,8 +36,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.theartofdev.edmodo.cropper.CropImage;
-import com.theartofdev.edmodo.cropper.CropImageView;
 
 public class AdminPostAdActivity extends AppCompatActivity {
 

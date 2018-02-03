@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="65dp"
+    android:layout_margin="5dp"
+    android:layout_height="wrap_content">
+
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="60dp"
+            android:layout_height="55dp"
+            android:layout_margin="4dp"
+            android:layout_gravity="center_horizontal"
+            app:civ_border_width="3dp"
+            app:civ_border_color="#fff"
+            android:id="@+id/post_image"
+            android:src="@drawable/placeholder_image"/>
+
+        <com.brainy.erevu.data.MyFont
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="0dp"
+            android:ellipsize="marquee"
+            android:textColor="#111111"
+            android:singleLine="true"
+            android:text="Name"
+            android:textSize="13dp"
+            android:id="@+id/post_name"
+            android:gravity="center_horizontal"
+           />
+        <com.brainy.erevu.data.MyFont
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:layout_marginRight="2dp"
+            android:layout_marginBottom="2dp"
+            android:textSize="12dp"
+            android:ellipsize="marquee"
+            android:singleLine="true"
+            android:text="Username"
+            android:id="@+id/post_username"
+            android:gravity="center_horizontal"
+            />
+</GridLayout>

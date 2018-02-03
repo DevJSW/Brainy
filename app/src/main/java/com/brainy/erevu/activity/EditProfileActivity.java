@@ -53,7 +53,7 @@ public class EditProfileActivity extends AppCompatActivity {
     private DatabaseReference mDatabaseUsers, mDatabaseUsers2, mDatabase, mDatabaseLastSeen;
     private FirebaseAuth mAuth;
     private StorageReference mStorage;
-    private ImageView mGroupIcon, editAcc;
+    private ImageView mGroupIcon, editAcc, backBtn;
     private EditText searchInput;
     private TextView uname, mLocation, cuname;
     private ProgressDialog mProgress;
@@ -152,6 +152,13 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
 
+        backBtn = (ImageView) findViewById(R.id.backBtn);
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                EditProfileActivity.this.finish();
+            }
+        });
     }
 
     private void initLocation() {
@@ -239,12 +246,6 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_edit_profile, menu);
-        return true;
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

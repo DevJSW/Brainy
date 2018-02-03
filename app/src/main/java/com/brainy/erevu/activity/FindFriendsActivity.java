@@ -11,11 +11,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 
-import com.brainy.erevu.Adapters.SearchAdapter;
 import com.brainy.erevu.Adapters.UsersAdapter;
 import com.brainy.erevu.R;
-import com.brainy.erevu.data.Question;
-import com.brainy.erevu.data.Users;
+import com.brainy.erevu.Pojos.Users;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
