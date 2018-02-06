@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -88,22 +89,16 @@ public class ParticipantsAdapter extends RecyclerView.Adapter<ParticipantsAdapte
         holder.post_name.setText(c.getName());
         holder.post_username.setText(c.getUsername());
 
-      /*  holder.mView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                Intent openRead = new Intent(ctx, ViewUserProfileActivity.class);
-                openRead.putExtra("user_id", user_id );
-                ctx.startActivity(openRead);
+        /*Glide.with(ctx)
+                .load(c.getUser_image())
+                .placeholder(R.drawable.placeholder_image)
+                .into(holder.civ);*/
 
-            }
-        });*/
-
-        Glide.with(ctx)
+        Picasso.with(ctx)
                 .load(c.getUser_image())
                 .placeholder(R.drawable.placeholder_image)
                 .into(holder.civ);
-
 
     }
 

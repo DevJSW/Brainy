@@ -32,6 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -144,7 +145,7 @@ public class GroupChatroomActivity extends AppCompatActivity {
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
 
-        chatAdapter = new MessageListAdapter(GroupChatroomActivity.this,chatList);
+        chatAdapter = new MessageListAdapter(GroupChatroomActivity.this, (ArrayList<Chat>) chatList);
 
         mChatList = (RecyclerView) findViewById(R.id.Chat_list);
         mLinearlayout = new LinearLayoutManager(GroupChatroomActivity.this);
@@ -160,11 +161,13 @@ public class GroupChatroomActivity extends AppCompatActivity {
             groupName.setText(group_name);
 
         toolbar_groupimage = (CircleImageView) findViewById(R.id.toolbar_groupimage);
-        Glide.with(getApplicationContext())
+       /* Glide.with(getApplicationContext())
                 .load(group_image)
                 .placeholder(R.drawable.placeholder_image)
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                .into(toolbar_groupimage);
+                .into(toolbar_groupimage);*/
+
+        Picasso.with(getApplicationContext()).load(group_image).placeholder(R.drawable.placeholder_image).into(toolbar_groupimage);
 
         mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
             @Override

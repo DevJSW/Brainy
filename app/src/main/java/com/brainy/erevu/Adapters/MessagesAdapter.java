@@ -31,6 +31,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -217,8 +218,9 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ChatVi
         if (c.getPosted_date() != null)
         holder.post_date.setReferenceTime(Long.parseLong(String.valueOf(c.getPosted_date())));
 
+        Picasso.with(ctx).load(c.getSender_image()).placeholder(R.drawable.placeholder_image).into(holder.civ);
 
-        Glide.with(ctx)
+       /* Glide.with(ctx)
                 .load(c.getSender_image()).asBitmap()
                 .placeholder(R.drawable.placeholder_image)
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)
@@ -231,7 +233,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ChatVi
                         circularBitmapDrawable.setCircular(true);
                         holder.civ.setImageDrawable(circularBitmapDrawable);
                     }
-                });
+                });*/
 
     }
 

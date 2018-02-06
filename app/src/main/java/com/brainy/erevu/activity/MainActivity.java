@@ -198,26 +198,10 @@ public class MainActivity extends AppCompatActivity
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabase = FirebaseDatabase.getInstance().getReference().child("Questions");
         mDatabaseMessages = FirebaseDatabase.getInstance().getReference().child("Users_messages");
+
+        checkIfAccIsCompt();
+
         mDatabaseForumNotifications = FirebaseDatabase.getInstance().getReference().child("Forum_notifications");
-        mDatabaseUsers.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                if (auth.getCurrentUser() != null) {
-                    if (!dataSnapshot.hasChild(auth.getCurrentUser().getUid()) || !dataSnapshot.child(auth.getCurrentUser().getUid()).hasChild("username")) {
-
-                        Intent cardonClick = new Intent(MainActivity.this, CompleteRegActivity.class);
-                        cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(cardonClick);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
 
         setContentView(R.layout.activity_main);
 
@@ -412,9 +396,7 @@ public class MainActivity extends AppCompatActivity
 
       if (auth.getCurrentUser() != null) {
           mDatabaseUsersQuestions = FirebaseDatabase.getInstance().getReference().child("Users_questions").child(auth.getCurrentUser().getUid());
-          checkForNotifications();
-          awardReputation();
-          getUserLocation();
+
       }
 
 
@@ -486,6 +468,39 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkIfAccIsCompt();
+    }
+
+
+    private void checkIfAccIsCompt() {
+        mDatabaseUsers.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if (auth.getCurrentUser() != null) {
+                    if (!dataSnapshot.hasChild(auth.getCurrentUser().getUid()) || !dataSnapshot.child(auth.getCurrentUser().getUid()).hasChild("username")) {
+
+                        Intent cardonClick = new Intent(MainActivity.this, CompleteRegActivity.class);
+                        cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(cardonClick);
+                    } else {
+                        checkForNotifications();
+                        awardReputation();
+                        getUserLocation();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
 
     private void applyFontToMenuItem(MenuItem item) {
         Typeface font = Typeface.createFromAsset(getAssets(), "fonts/Aller_Rg.ttf");
@@ -553,13 +568,13 @@ public class MainActivity extends AppCompatActivity
 
 
 
-        }/* else if (id == R.id.nav_explore) {
+        } else if (id == R.id.nav_favourites) {
 
-            Intent cardonClick = new Intent(MainActivity.this, FindFriendsActivity.class);
+            Intent cardonClick = new Intent(MainActivity.this, FavouriteActivity.class);
             cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(cardonClick);
 
-        }*/ else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_slideshow) {
 
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.erevu.erevu&hl=en"));
             startActivity(browserIntent);
@@ -596,30 +611,6 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        mDatabaseUsers.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                if (auth.getCurrentUser() != null) {
-                    if (!dataSnapshot.hasChild(auth.getCurrentUser().getUid())) {
-
-                        Intent cardonClick = new Intent(MainActivity.this, CompleteRegActivity.class);
-                        cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(cardonClick);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
 
     private void showSignInDialog() {
 

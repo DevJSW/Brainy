@@ -16,12 +16,12 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:id="@+id/rely_img"
-            android:layout_marginBottom="5dp"
-            android:layout_marginTop="5dp">
+            android:layout_marginBottom="7dp"
+            android:layout_marginTop="7dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:layout_width="58dp"
-                android:layout_height="58dp"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
                 android:layout_margin="5dp"
                 android:id="@+id/post_image"
                 android:src="@drawable/placeholder_image"/>
@@ -35,7 +35,7 @@
             android:id="@+id/liny"
             android:orientation="horizontal"
             android:layout_toLeftOf="@+id/post_date"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="13dp"
             android:layout_marginRight="15dp"
             android:layout_marginLeft="5dp"
             android:layout_toRightOf="@+id/rely_img">
@@ -44,6 +44,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/group_name"
+                android:textColor="@color/black"
                 android:singleLine="true"
                 android:layout_marginRight="3dp"
                 android:layout_gravity="top"
@@ -59,7 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="15dp"
-            android:layout_marginTop="3dp"
+            android:layout_marginTop="5dp"
             android:layout_toRightOf="@+id/rely_img"
             android:layout_toLeftOf="@+id/counter"
             android:layout_below="@+id/liny"
@@ -99,7 +100,8 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_below="@+id/rely_img"
-            android:background="#cecccc"/>
+            android:layout_marginLeft="75dp"
+            android:background="@color/grey_line"/>
 
     </RelativeLayout>
 

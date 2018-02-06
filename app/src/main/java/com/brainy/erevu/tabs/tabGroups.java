@@ -36,6 +36,7 @@ import com.brainy.erevu.activity.SigninActivity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.firebase.client.Firebase;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -49,10 +50,12 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 
@@ -68,7 +71,7 @@ public class tabGroups extends Fragment {
 
     private Button signIn;
     private RecyclerView mGroupList;
-    private DatabaseReference mDatabaseUsers, mDatabaseGroups, mDatabaseGroupChatlist;
+    private DatabaseReference mDatabaseUsers, mDatabaseUsersGroups, mDatabaseGroupChatlist, mDatabaseGroups, mDatabaseGroupChats;
     private FirebaseAuth auth;
     private TextView mNoFavouriteTxt;
     private ProgressBar progressBar;
@@ -84,13 +87,16 @@ public class tabGroups extends Fragment {
         auth = FirebaseAuth.getInstance();
 
         // database channels
-        mDatabaseGroups = FirebaseDatabase.getInstance().getReference().child("Users_groups");
+        mDatabaseUsersGroups = FirebaseDatabase.getInstance().getReference().child("Users_groups");
+        mDatabaseGroups = FirebaseDatabase.getInstance().getReference().child("Groups");
+        mDatabaseGroupChats = FirebaseDatabase.getInstance().getReference().child("Group_chats");
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
         mDatabaseGroupChatlist = FirebaseDatabase.getInstance().getReference().child("Group_chatlist");
 
         // SYNC DATABASE
-        mDatabaseGroups.keepSynced(true);
+        mDatabaseUsersGroups.keepSynced(true);
         mDatabaseGroupChatlist.keepSynced(true);
+        mDatabaseGroupChats.keepSynced(true);
         mDatabaseUsers.keepSynced(true);
 
         mGroupList = (RecyclerView) view.findViewById(R.id.favourite_list);
@@ -123,7 +129,7 @@ public class tabGroups extends Fragment {
 
         mNoFavouriteTxt = (TextView) view.findViewById(R.id.noFavourTxt);
         if (auth.getCurrentUser() != null) {
-            mDatabaseGroups.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+            mDatabaseUsersGroups.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if (dataSnapshot.getValue() == null) {
@@ -143,8 +149,15 @@ public class tabGroups extends Fragment {
         }
         signIn = (Button) view.findViewById(R.id.signIn);
         initSignIn();
-        loadGroups();
+
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (auth.getCurrentUser() != null)
+            loadGroups();
     }
 
     private void initSignIn() {
@@ -174,13 +187,48 @@ public class tabGroups extends Fragment {
                 Group.class,
                 R.layout.group_item,
                 tabGroups.GroupsViewHolder.class,
-                mDatabaseGroups.child(auth.getCurrentUser().getUid())
+                mDatabaseUsersGroups.child(auth.getCurrentUser().getUid())
 
         ) {
             @Override
-            protected void populateViewHolder(tabGroups.GroupsViewHolder viewHolder, final Group model, int position) {
+            protected void populateViewHolder(final tabGroups.GroupsViewHolder viewHolder, final Group model, int position) {
 
-                viewHolder.setDetails(getActivity(), model.getGroup_name(), model.getMessage(), model.getGroup_image());
+                Query lastQuery = mDatabaseGroupChats.child(model.getGroup_id()).orderByKey().limitToLast(1);
+                lastQuery.addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                        if (dataSnapshot.hasChild("message")) {
+                            String latest_message = dataSnapshot.child("message").getValue().toString();
+                            viewHolder.setDetails(getActivity(), model.getGroup_name(), latest_message, model.getGroup_image());
+                        } else {
+                            viewHolder.setDetails(getActivity(), model.getGroup_name(), "Photo", model.getGroup_image());
+                        }
+
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+               // viewHolder.setDetails(getActivity(), model.getGroup_name(), model.getMessage(), model.getGroup_image());
                 viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -203,13 +251,14 @@ public class tabGroups extends Fragment {
     public static class GroupsViewHolder extends RecyclerView.ViewHolder {
 
         View mView;
-        DatabaseReference mDatabaseGroupChatlist;
+        DatabaseReference mDatabaseGroupChatlist, mDatabaseGroups;
 
         public GroupsViewHolder(View itemView) {
             super(itemView);
 
             mView = itemView;
             mDatabaseGroupChatlist = FirebaseDatabase.getInstance().getReference().child("Group_chatlist");
+            mDatabaseGroups = FirebaseDatabase.getInstance().getReference().child("Groups");
         }
 
         public void setDetails(Context ctx, String groupName, String groupMessage, String groupImage){

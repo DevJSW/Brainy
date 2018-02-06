@@ -182,15 +182,23 @@ public class tabMessages extends Fragment {
 
     }
 
-
     @Override
+    public void onStart() {
+        super.onStart();
+        chatList.clear();
+        if (auth.getCurrentUser() != null) {
+            LoadMessage();
+        } else {}
+    }
+
+   /* @Override
     public void onResume() {
         super.onResume();
         chatList.clear();
         if (auth.getCurrentUser() != null) {
             LoadMessage();
         } else {}
-    }
+    }*/
 
 
 }

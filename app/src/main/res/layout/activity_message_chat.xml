@@ -76,34 +76,21 @@
                 android:layout_marginBottom="3dp"
                 android:background="#00ffffff"
                 android:hint="Type a message"
-                android:layout_marginLeft="13dp"
                 android:layout_marginRight="8dp"
                 android:layout_toLeftOf="@+id/sendBtn"
+                android:layout_toRightOf="@+id/photo"
                 android:padding="3dp"
                 android:layout_alignParentBottom="true" />
 
             <ImageView
-                android:layout_width="32dp"
-                android:layout_height="35dp"
-                android:id="@+id/quickShot"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/cameraShot"
-                android:visibility="gone"
-                android:layout_marginRight="20dp"
-                android:scaleType="fitXY"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/link"/>
-
-            <ImageView
-                android:layout_width="30dp"
+                android:layout_width="34dp"
                 android:layout_height="31dp"
-                android:id="@+id/cameraShot"
+                android:id="@+id/photo"
                 android:layout_centerVertical="true"
-                android:layout_toLeftOf="@+id/sendBtn"
-                android:visibility="gone"
-                android:layout_marginRight="18dp"
+                android:layout_marginRight="7dp"
+                android:layout_marginLeft="8dp"
                 android:scaleType="fitXY"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentLeft="true"
                 android:layout_gravity="center_vertical"
                 android:src="@drawable/ic_gallery_cam"/>
 

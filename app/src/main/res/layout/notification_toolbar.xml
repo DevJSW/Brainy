@@ -11,13 +11,14 @@
         android:layout_height="match_parent"
         android:padding="6dp"
         android:id="@+id/backBtn"
-        android:layout_marginRight="25dp"
         android:src="@drawable/backbtn"/>
 
         <com.brainy.erevu.data.MyBoldFont
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:textColor="#fff"
             android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:layout_marginRight="40dp"
             android:textSize="20dp"
             android:text="Notifications"
             />

@@ -1,5 +1,6 @@
 package com.brainy.erevu.activity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -8,7 +9,10 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -33,6 +37,8 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MessageChatActivity extends AppCompatActivity {
 
@@ -44,7 +50,7 @@ public class MessageChatActivity extends AppCompatActivity {
     String currentuser_username = null;
     String currentuser_name = null;
     private FirebaseAuth auth;
-    private TextView mNoNotification, currName, currUsername;
+    private TextView mNoNotification, currName, currUsername, typingIndicator;
     private DatabaseReference mDatabaseUsers, mDatabaseChats, mDatabaseMessages;
 
     SwipeRefreshLayout mSwipeRefreshLayout;
@@ -55,7 +61,7 @@ public class MessageChatActivity extends AppCompatActivity {
     private static final int TOTAL_ITEMS_TO_LOAD = 10;
     private int currentPage =1;
 
-    private ImageView sendBtn, backBtn, userImg, quickShort;
+    private ImageView sendBtn, backBtn, userImg, photo;
     private EditText inputMessage;
 
     @Override
@@ -120,7 +126,48 @@ public class MessageChatActivity extends AppCompatActivity {
             }
         });
 
+        typingIndicator = (TextView) findViewById(R.id.toolbar_typingIndicator);
+
         inputMessage = (EditText) findViewById(R.id.input_message);
+        inputMessage.addTextChangedListener(new TextWatcher() {
+
+            boolean isTyping = false;
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            private Timer timer = new Timer();
+            private final long DELAY = 3000;  // milliseconds
+
+            @Override
+            public void afterTextChanged(final Editable s) {
+                Log.d("", "");
+                if(!isTyping) {
+                   // Log.d(TAG, "started typing");
+                    // Send notification for start typing event
+                    mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("Typing").setValue(true);
+
+                    isTyping = true;
+                }
+                timer.cancel();
+                timer = new Timer();
+                timer.schedule(
+                        new TimerTask() {
+                            @Override
+                            public void run() {
+                                isTyping = false;
+                               // Log.d(TAG, "stopped typing");
+                                //send notification for stopped typing event
+                                mDatabaseUsers.child(auth.getCurrentUser().getUid()).child("Typing").removeValue();
+                            }
+                        },
+                        DELAY
+                );
+
+            }
+        });
 
         sendBtn = (ImageView) findViewById(R.id.sendBtn);
         sendBtn.setOnClickListener(new View.OnClickListener() {
@@ -132,10 +179,12 @@ public class MessageChatActivity extends AppCompatActivity {
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
 
-        chatAdapter = new MessageListAdapter(MessageChatActivity.this,chatList);
+        chatAdapter = new MessageListAdapter(getApplicationContext(), (ArrayList<Chat>) chatList);
 
         mChatList = (RecyclerView) findViewById(R.id.Chat_list);
-        mLinearlayout = new LinearLayoutManager(MessageChatActivity.this);
+       // mChatList.setLayoutManager(new LinearLayoutManager(this));
+
+        mLinearlayout = new LinearLayoutManager(this);
         mLinearlayout.setStackFromEnd(true);
 
         mChatList.setHasFixedSize(true);
@@ -157,7 +206,6 @@ public class MessageChatActivity extends AppCompatActivity {
                 if (dataSnapshot.hasChild("username"))
                 currentuser_username = dataSnapshot.child("username").getValue().toString();
 
-
             }
 
             @Override
@@ -168,8 +216,42 @@ public class MessageChatActivity extends AppCompatActivity {
 
         });
 
+        photo = (ImageView) findViewById(R.id.photo);
+        photo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent openRead = new Intent(MessageChatActivity.this, ChatPhotoActivity.class);
+                openRead.putExtra("user_id", user_id );
+                openRead.putExtra("user_name", user_name);
+                openRead.putExtra("user_image", user_image );
+                openRead.putExtra("name", name );
+                startActivity(openRead);
+            }
+        });
+
         chatList.clear();
+        isTyping();
         LoadMessage();
+    }
+
+    private void isTyping() {
+        mDatabaseUsers.child(user_id).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild("Typing")) {
+                    typingIndicator.setVisibility(View.VISIBLE);
+                    typingIndicator.setText("is typing...");
+                } else {
+                    typingIndicator.setVisibility(View.GONE);
+                    typingIndicator.setText("");
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void LoadMessage() {
@@ -182,10 +264,8 @@ public class MessageChatActivity extends AppCompatActivity {
 
                 Chat message = dataSnapshot.getValue(Chat.class);
 
-                chatList.add(message);
-                chatAdapter.notifyItemInserted(0);
-                chatAdapter.notifyItemRangeChanged(0,chatList.size());
-                chatAdapter.notifyItemInserted(-1);
+                chatList.add(chatList.size(), message);
+                chatAdapter.notifyItemRangeInserted(-1, chatList.size());
                 chatAdapter.notifyDataSetChanged();
                 mLinearlayout.setStackFromEnd(true);
                 mSwipeRefreshLayout.setRefreshing(false);
@@ -276,6 +356,7 @@ public class MessageChatActivity extends AppCompatActivity {
             newPost4.child("receiver").setValue(auth.getCurrentUser().getUid());
             newPost4.child("posted_date").setValue(System.currentTimeMillis());
             newPost4.child("post_id").setValue(newPost4.getKey());
+
 
             inputMessage.getText().clear();
             // Toast.makeText(ChatroomActivity.this, "Message posted successfully",Toast.LENGTH_LONG).show();

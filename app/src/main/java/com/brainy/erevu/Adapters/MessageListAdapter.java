@@ -1,5 +1,6 @@
 package com.brainy.erevu.Adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.brainy.erevu.R;
+import com.brainy.erevu.activity.MessageChatActivity;
 import com.brainy.erevu.activity.ViewPhotoActivity;
 import com.brainy.erevu.activity.ViewUserProfileActivity;
 import com.brainy.erevu.Pojos.Chat;
@@ -22,6 +24,7 @@ import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -38,54 +41,15 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     private static final int VIEW_TYPE_PHOTO_RECEIVED = 5;
 
     private Context mContext;
-    private List<Chat> mMessageList;
+    private ArrayList<Chat> mMessageList;
     public FirebaseAuth auth;
 
-    public MessageListAdapter(Context context, List<Chat> messageList) {
+    public MessageListAdapter(Context context, ArrayList<Chat> messageList) {
         mContext = context;
         mMessageList = messageList;
 
     }
 
-    @Override
-    public int getItemCount() {
-        return mMessageList.size();
-    }
-
-    // Determines the appropriate ViewType according to the sender of the message.
-    @Override
-    public int getItemViewType(int position) {
-        Chat message = mMessageList.get(position);
-        auth = FirebaseAuth.getInstance();
-        String current_user_id = auth.getCurrentUser().getUid();
-        String sender_user_id = message.getSender_uid();
-        String message_type = message.getMessage_type();
-
-        if (sender_user_id != null) {
-            if (message_type.equals("NOTIFICATION")){
-                return VIEW_TYPE_MESSAGE_NOTIFICATION;
-            } else if (message_type.equals("PHOTO")){
-                if (sender_user_id.equalsIgnoreCase(current_user_id)) {
-                    // If the current user is the sender of the message
-                    return VIEW_TYPE_PHOTO_SENT;
-                } else {
-                    // If some other user sent the message
-                    return VIEW_TYPE_PHOTO_RECEIVED;
-                }
-            } else {
-                if (sender_user_id.equalsIgnoreCase(current_user_id)) {
-                    // If the current user is the sender of the message
-                    return VIEW_TYPE_MESSAGE_SENT;
-                } else {
-                    // If some other user sent the message
-                    return VIEW_TYPE_MESSAGE_RECEIVED;
-                }
-            }
-
-        } else {
-            return VIEW_TYPE_MESSAGE_SENT;
-        }
-    }
     // Inflates the appropriate layout according to the ViewType.
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -114,6 +78,45 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         }
 
         return null;
+    }
+
+    @Override
+    public int getItemCount() {
+
+        return mMessageList.size();
+    }
+
+    // Determines the appropriate ViewType according to the sender of the message.
+    @Override
+    public int getItemViewType(int position) {
+        Chat message = mMessageList.get(position);
+
+        auth = FirebaseAuth.getInstance();
+        String current_user_id = auth.getCurrentUser().getUid();
+        String sender_user_id = message.getSender_uid();
+        String message_type = message.getMessage_type();
+
+
+        if (message_type.equals("NOTIFICATION")){
+            return VIEW_TYPE_MESSAGE_NOTIFICATION;
+        } else if (message_type.equals("PHOTO")){
+            if (sender_user_id.equalsIgnoreCase(current_user_id)) {
+                // If the current user is the sender of the message
+                return VIEW_TYPE_PHOTO_SENT;
+            } else {
+                // If some other user sent the message
+                return VIEW_TYPE_PHOTO_RECEIVED;
+            }
+        } else {
+            if (sender_user_id.equalsIgnoreCase(current_user_id)) {
+                // If the current user is the sender of the message
+                return VIEW_TYPE_MESSAGE_SENT;
+            } else {
+                // If some other user sent the message
+                return VIEW_TYPE_MESSAGE_RECEIVED;
+            }
+        }
+
     }
 
     // Passes the message object to a ViewHolder so that the contents can be bound to UI.
@@ -267,31 +270,13 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                     .load(message.getSender_image()).asBitmap()
                     .placeholder(R.drawable.placeholder_image)
                     .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                    .centerCrop()
-                    .into(new BitmapImageViewTarget(profileImage) {
-                        @Override
-                        protected void setResource(Bitmap resource) {
-                            RoundedBitmapDrawable circularBitmapDrawable =
-                                    RoundedBitmapDrawableFactory.create(mContext.getResources(), resource);
-                            circularBitmapDrawable.setCircular(true);
-                            profileImage.setImageDrawable(circularBitmapDrawable);
-                        }
-                    });
+                    .into(profileImage);
 
             Glide.with(mContext)
                     .load(message.getPhoto()).asBitmap()
                     .placeholder(R.drawable.placeholder_image)
                     .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                    .centerCrop()
-                    .into(new BitmapImageViewTarget(profileImage) {
-                        @Override
-                        protected void setResource(Bitmap resource) {
-                            RoundedBitmapDrawable circularBitmapDrawable =
-                                    RoundedBitmapDrawableFactory.create(mContext.getResources(), resource);
-                            circularBitmapDrawable.setCircular(true);
-                            post_photo.setImageDrawable(circularBitmapDrawable);
-                        }
-                    });
+                    .into(profileImage);
 
         }
     }

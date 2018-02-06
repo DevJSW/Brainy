@@ -50,7 +50,16 @@
                 android:maxLines="1"
                 android:id="@+id/toolbar_username"
                 android:paddingLeft="10dp" />
-
+            <com.brainy.erevu.data.MyFont
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13dp"
+                android:text="Typing..."
+                android:visibility="gone"
+                android:textColor="#0fb41a"
+                android:maxLines="1"
+                android:id="@+id/toolbar_typingIndicator"
+                android:paddingLeft="5dp" />
 
         </LinearLayout>
 

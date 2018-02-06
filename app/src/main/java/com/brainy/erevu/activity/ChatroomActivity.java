@@ -142,7 +142,7 @@ public class ChatroomActivity extends AppCompatActivity {
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
 
-        chatAdapter = new MessageListAdapter(ChatroomActivity.this,chatList);
+        chatAdapter = new MessageListAdapter(ChatroomActivity.this, (ArrayList<Chat>) chatList);
 
         mChatList = (RecyclerView) findViewById(R.id.Chat_list);
         mLinearlayout = new LinearLayoutManager(ChatroomActivity.this);

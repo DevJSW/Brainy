@@ -213,7 +213,8 @@
             android:label="@string/title_activity_photo"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.ViewPhotoActivity" />
-        <activity android:name=".activity.FavouriteActivity"></activity>
+        <activity android:name=".activity.FavouriteActivity" />
+        <activity android:name=".activity.ChatPhotoActivity"></activity>
     </application>
 
 </manifest>

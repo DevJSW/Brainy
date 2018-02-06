@@ -518,9 +518,19 @@ public class tab1Questions extends Fragment {
             }
         });
 
+       /* questionList.clear();
+        LoadMessage();*/
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
         questionList.clear();
         LoadMessage();
+
     }
+
 
    /* @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -749,95 +759,8 @@ public class tab1Questions extends Fragment {
 
     }
 
-    private void unansweredFilterMessage() {
-
-        Query filterQuery = mDatabase.orderByChild(selectedOption).limitToLast(currentPage * TOTAL_ITEMS_TO_LOAD);
-
-        filterQuery.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-                Question message = dataSnapshot.getValue(Question.class);
-
-                questionList.add(message);
-                questionAdapter.notifyDataSetChanged();
-                mSwipeRefreshLayout.setRefreshing(false);
-
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void topicFilterMessage() {
-
-        Query filterQuery = mDatabase.orderByChild("tag").equalTo(selectedTopic).limitToLast(currentPage * TOTAL_ITEMS_TO_LOAD);
-
-        filterQuery.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-                Question message = dataSnapshot.getValue(Question.class);
-
-                questionList.add(message);
-                questionAdapter.notifyDataSetChanged();
-                mSwipeRefreshLayout.setRefreshing(false);
-
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-    }
-
-
     public void setPullToLoadView(PullToLoadView pullToLoadView) {
         this.pullToLoadView = pullToLoadView;
-    }
-
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-       /* LoadMessage();*/
-
     }
 
     void refreshItems() {

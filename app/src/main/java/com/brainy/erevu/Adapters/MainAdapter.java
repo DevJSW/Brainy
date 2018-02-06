@@ -1,11 +1,18 @@
 package com.brainy.erevu.Adapters;
 
 
+/*
+import android.support.v7.widget.RecyclerView;
+import android.view.View;
+
+import com.brainy.erevu.R;
+
+*/
 /**
  * Created by Shephard on 8/7/2017.
- */
+ *//*
 
-/*
+
 public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 {
 
@@ -53,8 +60,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     }
 
-  */
-/*  private void verticalView(VerticalViewHolder holder) {
+  private void verticalView(VerticalViewHolder holder) {
 
         QuestionAdapter adapter1 = new QuestionAdapter(getVerticalData());
         holder.recyclerView.setLayoutManager(new LinearLayoutManager(ctx));
@@ -67,7 +73,7 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         QuestionAdapter adapter1 = new QuestionAdapter(getVerticalData());
         holder.recyclerView.setLayoutManager(new LinearLayoutManager(ctx, LinearLayoutManager.HORIZONTAL, false));
         holder.recyclerView.setAdapter(adapter1);
-    }*//*
+    }
 
 
     @Override
@@ -108,5 +114,5 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
 
 }
-*/
 
+*/

@@ -50,6 +50,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class AddGroupActivity extends AppCompatActivity {
 
     String founder_name = "";
+    String founder_image = "";
     String user_name = "";
     String group_id = "";
     private EditText inputName;
@@ -83,7 +84,6 @@ public class AddGroupActivity extends AppCompatActivity {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         }
 
-
         userAvator = (CircleImageView) findViewById(R.id.user_avator);
         userAvator.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,6 +106,7 @@ public class AddGroupActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 founder_name = dataSnapshot.child("username").getValue().toString();
+                founder_image = dataSnapshot.child("user_image").getValue().toString();
                 user_name = dataSnapshot.child("name").getValue().toString();
 
             }
@@ -189,12 +190,12 @@ public class AddGroupActivity extends AppCompatActivity {
                         //ADD THIS USER TO PARTICIPANTS IN GROUP
                         newPost2.child(newPost.getKey()).child("Participants").child(auth.getCurrentUser().getUid()).child("username").setValue(founder_name);
                         newPost2.child(newPost.getKey()).child("Participants").child(auth.getCurrentUser().getUid()).child("name").setValue(user_name);
-                        newPost2.child(newPost.getKey()).child("Participants").child(auth.getCurrentUser().getUid()).child("user_image").setValue(downloadUrl.toString());
+                        newPost2.child(newPost.getKey()).child("Participants").child(auth.getCurrentUser().getUid()).child("user_image").setValue(founder_image);
                         newPost2.child(newPost.getKey()).child("Participants").child(auth.getCurrentUser().getUid()).child("uid").setValue(auth.getCurrentUser().getUid());
 
                         //SEND ALERT MESSAGE
-                        final DatabaseReference newGroupChats =  mDatabaseGroupChats.child(group_id).push();
-                        final DatabaseReference newGroupChatlist =  mDatabaseGroupChatlist.child(group_id);
+                        final DatabaseReference newGroupChats =  mDatabaseGroupChats.child(newPost.getKey()).push();
+                        final DatabaseReference newGroupChatlist =  mDatabaseGroupChatlist.child(newPost.getKey());
                         Date date = new Date();
                         final String stringDate = DateFormat.getDateTimeInstance().format(date);
                         final String stringDate2 = DateFormat.getDateInstance().format(date);
@@ -242,8 +243,29 @@ public class AddGroupActivity extends AppCompatActivity {
                 //ADD THIS USER TO PARTICIPANTS IN GROUP
                 newPost2.child(newPost.getKey()).child("Participants").child(auth.getCurrentUser().getUid()).child("username").setValue(founder_name);
                 newPost2.child(newPost.getKey()).child("Participants").child(auth.getCurrentUser().getUid()).child("name").setValue(user_name);
-                newPost2.child(newPost.getKey()).child("Participants").child(auth.getCurrentUser().getUid()).child("user_image").setValue("");
+                newPost2.child(newPost.getKey()).child("Participants").child(auth.getCurrentUser().getUid()).child("user_image").setValue(founder_image);
                 newPost2.child(newPost.getKey()).child("Participants").child(auth.getCurrentUser().getUid()).child("uid").setValue(auth.getCurrentUser().getUid());
+
+                //SEND ALERT MESSAGE
+                final DatabaseReference newGroupChats =  mDatabaseGroupChats.child(newPost.getKey()).push();
+                final DatabaseReference newGroupChatlist =  mDatabaseGroupChatlist.child(newPost.getKey());
+                Date date2 = new Date();
+                //final String stringDate = DateFormat.getDateTimeInstance().format(date);
+                final String stringDate2 = DateFormat.getDateInstance().format(date2);
+
+                newGroupChats.child("message").setValue(user_name+ " created this group on "+stringDate2);
+                newGroupChats.child("sender_uid").setValue(auth.getCurrentUser().getUid());
+                newGroupChats.child("sender_name").setValue(user_name);
+                newGroupChats.child("message_type").setValue("NOTIFICATION");
+                newGroupChats.child("posted_date").setValue(System.currentTimeMillis());
+                newGroupChats.child("post_id").setValue(newGroupChats.getKey());
+
+                newGroupChatlist.child("message").setValue(user_name+ " left on "+stringDate2);
+                newGroupChatlist.child("sender_uid").setValue(auth.getCurrentUser().getUid());
+                newGroupChatlist.child("sender_name").setValue(user_name);
+                newGroupChatlist.child("message_type").setValue("NOTIFICATION");
+                newGroupChatlist.child("posted_date").setValue(System.currentTimeMillis());
+                newGroupChatlist.child("post_id").setValue(newGroupChatlist.getKey());
 
                 Intent openRead = new Intent(AddGroupActivity.this, GroupChatroomActivity.class);
                 openRead.putExtra("group_id", group_id );

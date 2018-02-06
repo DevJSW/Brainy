@@ -25,7 +25,6 @@ import android.widget.TextView;
 
 import com.brainy.erevu.Pojos.Question;
 import com.brainy.erevu.R;
-import com.brainy.erevu.tabs.tab3Achievements;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
