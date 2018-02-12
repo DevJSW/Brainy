@@ -21,14 +21,6 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.brainy.erevu.R;
-import com.facebook.AccessToken;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -57,6 +49,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SigninActivity extends AppCompatActivity {
 
@@ -71,8 +65,8 @@ public class SigninActivity extends AppCompatActivity {
     URL personPhoto2 = null;
     private GoogleApiClient mGoogleApiClient;
     private static int RC_SIGN_IN = 1;
-    LoginButton login_button;
-    CallbackManager callbackManager;
+    //LoginButton login_button;
+    //CallbackManager callbackManager;
 
     private EditText inputEmail, inputPassword;
     private FirebaseAuth auth;
@@ -174,16 +168,16 @@ public class SigninActivity extends AppCompatActivity {
         googleSignin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                initGoogleSignIn();
+                //initGoogleSignIn();
             }
         });
 
-        callbackManager = CallbackManager.Factory.create();
+        //callbackManager = CallbackManager.Factory.create();
         facebookSignin = (ImageView) findViewById(R.id.facebookSignin);
         facebookSignin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                initfBSignIn();
+                //initfBSignIn();
             }
         });
 
@@ -196,12 +190,12 @@ public class SigninActivity extends AppCompatActivity {
         });
     }
 
-    private void initfBSignIn() {
+   /* private void initfBSignIn() {
 
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.performClick();
         loginButton.setReadPermissions(email, public_profile);
-        /*loginButton.registerCallback(callbackManager,
+        *//*loginButton.registerCallback(callbackManager,
                 new FacebookCallback< LoginResult >() {@Override
                 public void onSuccess(LoginResult loginResult) {
 
@@ -260,7 +254,7 @@ public class SigninActivity extends AppCompatActivity {
                         System.out.println("onError");
                       //  Log.v("LoginActivity", exception.getCause().toString());
                     }
-                });*/
+                });*//*
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -280,9 +274,9 @@ public class SigninActivity extends AppCompatActivity {
                 // ...
             }
         });
-    }
+    }*/
 
-    private void handleFacebookAccessToken(AccessToken token) {
+   /* private void handleFacebookAccessToken(AccessToken token) {
         Log.d(TAG, "handleFacebookAccessToken:" + token);
 
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
@@ -332,7 +326,7 @@ public class SigninActivity extends AppCompatActivity {
                     }
                 });
     }
-
+*/
     private void postFbUserInfoToDB() {
 
         Date date = new Date();
@@ -390,7 +384,7 @@ public class SigninActivity extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+        //callbackManager.onActivityResult(requestCode, resultCode, data);
 
         progressBar.setVisibility(View.VISIBLE);
 
@@ -460,6 +454,7 @@ public class SigninActivity extends AppCompatActivity {
                                 });
 
 
+                            SigninActivity.this.finish();
                             Toast.makeText(SigninActivity.this, "Sign in success!.",
                                     Toast.LENGTH_LONG).show();
 
@@ -477,9 +472,9 @@ public class SigninActivity extends AppCompatActivity {
         final String stringDate = DateFormat.getDateInstance().format(date);
         String deviceToken = FirebaseInstanceId.getInstance().getToken();
 
-        final DatabaseReference newPost = mDatabaseUsers;
+        final DatabaseReference newPost = mDatabaseUsers.child(auth.getCurrentUser().getUid());
 
-        newPost.child(auth.getCurrentUser().getUid()).child("name").setValue(personName);
+        /*newPost.child(auth.getCurrentUser().getUid()).child("name").setValue(personName);
         newPost.child(auth.getCurrentUser().getUid()).child("status").setValue("");
         newPost.child(auth.getCurrentUser().getUid()).child("user_image").setValue(personPhoto.toString());
         newPost.child(auth.getCurrentUser().getUid()).child("joined_date").setValue(stringDate);
@@ -489,7 +484,21 @@ public class SigninActivity extends AppCompatActivity {
         newPost.child(auth.getCurrentUser().getUid()).child("sign_in_type").setValue("google_signIn");
         newPost.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Beginner");
         newPost.child(auth.getCurrentUser().getUid()).child("points_earned").setValue(10);
-        newPost.child(auth.getCurrentUser().getUid()).child("device_token").setValue(deviceToken);
+        newPost.child(auth.getCurrentUser().getUid()).child("device_token").setValue(deviceToken);*/
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("uid", auth.getCurrentUser().getUid());
+        map.put("name", personName);
+        map.put("status", "");
+        map.put("user_image", personPhoto.toString());
+        map.put("joined_date", stringDate);
+        map.put("personId", personId);
+        map.put("user_email", personEmail);
+        map.put("sign_in_type", "google_signIn");
+        map.put("reputation", "Beginner");
+        map.put("points_earned", 10);
+        map.put("device_token", deviceToken);
+        newPost.setValue(map);
 
     }
 

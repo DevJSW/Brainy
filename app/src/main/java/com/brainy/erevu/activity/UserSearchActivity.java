@@ -130,6 +130,15 @@ public class UserSearchActivity extends AppCompatActivity {
                         startActivity(openRead);
                     }
                 });
+
+                viewHolder.user_image.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent openRead = new Intent(UserSearchActivity.this, ViewUserProfileActivity.class);
+                        openRead.putExtra("user_id", user_id );
+                        startActivity(openRead);
+                    }
+                });
             }
         };
 
@@ -142,20 +151,19 @@ public class UserSearchActivity extends AppCompatActivity {
     public static class UsersViewHolder extends RecyclerView.ViewHolder {
 
         View mView;
+        CircleImageView user_image;
 
         public UsersViewHolder(View itemView) {
             super(itemView);
 
             mView = itemView;
-
+            user_image = (CircleImageView) mView.findViewById(R.id.post_image);
         }
 
         public void setDetails(Context ctx, String userName, String userStatus, String userImage){
 
             TextView user_name = (TextView) mView.findViewById(R.id.post_name);
             TextView user_status = (TextView) mView.findViewById(R.id.post_username);
-            CircleImageView user_image = (CircleImageView) mView.findViewById(R.id.post_image);
-
 
             user_name.setText(userName);
             user_status.setText(userStatus);

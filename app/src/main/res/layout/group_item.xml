@@ -49,8 +49,7 @@
                 android:layout_marginRight="3dp"
                 android:layout_gravity="top"
                 android:textSize="16dp"
-                android:scaleType="fitXY"
-                android:text="name"/>
+                android:scaleType="fitXY" />
 
         </LinearLayout>
 
@@ -68,7 +67,7 @@
             android:layout_marginLeft="5dp"
             android:singleLine="true"
             android:id="@+id/post_message"
-            android:text="message"/>
+            />
 
         <RelativeLayout
             android:layout_width="20dp"

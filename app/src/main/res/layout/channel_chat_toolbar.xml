@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="53dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorPrimary"
+    app:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+    <ImageView
+        android:layout_width="30dp"
+        android:layout_height="match_parent"
+        android:padding="6dp"
+        android:id="@+id/backBtn"
+        android:layout_marginRight="20dp"
+        android:src="@drawable/backbtn"/>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:src="@drawable/placeholder_image"
+        android:id="@+id/toolbarImg" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/open_view"
+        android:orientation="vertical">
+
+        <com.brainy.erevu.data.MyFont
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:text="username"
+            android:maxLines="1"
+            android:id="@+id/toolbar_channel_name"
+            android:paddingLeft="10dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+
+            <com.brainy.erevu.data.MyFont
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13dp"
+                android:text="0 Subscribers"
+                android:maxLines="1"
+                android:id="@+id/toolbar_subscribers"
+                android:paddingLeft="11dp" />
+
+        </LinearLayout>
+
+      <!--  <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:id="@+id/liny_loc"
+            android:orientation="horizontal">
+
+
+            <com.brainy.brainy.data.MyFont
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="11dp"
+                android:maxLines="1"
+                android:text="city"
+                android:id="@+id/post_locality"/>
+
+        </LinearLayout>-->
+
+    </LinearLayout>
+
+</android.support.v7.widget.Toolbar>

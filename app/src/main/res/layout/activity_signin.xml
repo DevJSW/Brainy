@@ -46,11 +46,11 @@
                 android:id="@+id/googleSignin"
                 android:scaleType="fitXY"
                 android:src="@drawable/googlelogin_btn"/>
-            <com.facebook.login.widget.LoginButton
+           <!-- <com.facebook.login.widget.LoginButton
                 android:id="@+id/login_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone" />
+                android:visibility="gone" />-->
             <ImageView
                 android:layout_width="60dp"
                 android:layout_height="60dp"

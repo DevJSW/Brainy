@@ -37,7 +37,9 @@ import com.squareup.picasso.Picasso;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -226,9 +228,6 @@ public class GroupChatroomActivity extends AppCompatActivity {
                 Chat message = dataSnapshot.getValue(Chat.class);
 
                 chatList.add(message);
-                chatAdapter.notifyItemInserted(0);
-                chatAdapter.notifyItemRangeChanged(0,chatList.size());
-                chatAdapter.notifyItemInserted(-1);
                 chatAdapter.notifyDataSetChanged();
                 mLinearlayout.setStackFromEnd(true);
                 mSwipeRefreshLayout.setRefreshing(false);
@@ -273,24 +272,27 @@ public class GroupChatroomActivity extends AppCompatActivity {
             final DatabaseReference newPost =  mDatabaseGroupChats.child(group_id).push();
             final DatabaseReference newPost2 =  mDatabaseGroupChatlist.child(group_id);
 
+            Map<String, Object> map = new HashMap<>();
+            map.put("message", questionBodyTag);
+            map.put("sender_uid", auth.getCurrentUser().getUid());
+            map.put("message_type", "MESSAGE");
+            map.put("sender_name", currentuser_name);
+            map.put("sender_image", currentuser_image);
+            map.put("posted_date", System.currentTimeMillis());
+            map.put("post_id", newPost.getKey());
+            newPost.setValue(map);
 
-            newPost.child("message").setValue(questionBodyTag);
-            newPost.child("sender_uid").setValue(auth.getCurrentUser().getUid());
-            newPost.child("sender_image").setValue(currentuser_image);
-            newPost.child("sender_name").setValue(currentuser_name);
-            newPost.child("message_type").setValue("MESSAGE");
-            newPost.child("posted_date").setValue(System.currentTimeMillis());
-            newPost.child("post_id").setValue(newPost.getKey());
-
-            newPost2.child("message").setValue(questionBodyTag);
-            newPost2.child("group_image").setValue(group_image);
-            newPost2.child("group_name").setValue(group_name);
-            newPost2.child("group_id").setValue(group_image);
-            newPost2.child("message_type").setValue("MESSAGE");
-            newPost2.child("read").setValue(false);
-            newPost2.child("posted_date").setValue(System.currentTimeMillis());
-            newPost2.child("post_id").setValue(newPost2.getKey());
-
+           /* Map<String, Object> map2 = new HashMap<>();
+            map2.put("message", questionBodyTag);
+            map2.put("group_image", group_image);
+            map2.put("message_type", "MESSAGE");
+            map2.put("group_name", group_name);
+            map2.put("group_id", group_id);
+            map2.put("read", false);
+            map2.put("posted_date", System.currentTimeMillis());
+            map2.put("post_id", newPost2.getKey());
+            newPost2.setValue(map2);
+*/
             inputMessage.getText().clear();
 
         }

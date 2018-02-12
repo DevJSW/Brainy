@@ -518,17 +518,8 @@ public class tab1Questions extends Fragment {
             }
         });
 
-       /* questionList.clear();
-        LoadMessage();*/
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
         questionList.clear();
         LoadMessage();
-
     }
 
 

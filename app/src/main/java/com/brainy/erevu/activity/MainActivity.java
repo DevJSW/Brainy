@@ -49,6 +49,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -156,6 +158,11 @@ public class MainActivity extends AppCompatActivity
     private static int RC_SIGN_IN = 1;
     private ProgressBar progressBar;
 
+
+    private Boolean isFabOpen = false;
+    private FloatingActionButton fabAddGroup,fabCreateBroadcast, fabSearchChannel;
+    private Animation fab_open,fab_close,rotate_forward,rotate_backward;
+
     // Get reference of widgets from XML layout
 
     // Initializing a String Array
@@ -241,6 +248,36 @@ public class MainActivity extends AppCompatActivity
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
+        fabSearchChannel = (FloatingActionButton) findViewById(R.id.fabSearchChannel);
+        fabSearchChannel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, SearchChannelActivity.class));
+            }
+        });
+
+        fabAddGroup = (FloatingActionButton)findViewById(R.id.fabAddGroup);
+        fabCreateBroadcast = (FloatingActionButton)findViewById(R.id.fabCreateBroadcast);
+        fabCreateBroadcast.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, AddChannelActivity.class));
+            }
+        });
+        fabAddGroup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(MainActivity.this, AddGroupActivity.class));
+            }
+        });
+        fab_open = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fab_open);
+        fab_close = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.fab_close);
+        rotate_forward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_forward);
+        rotate_backward = AnimationUtils.loadAnimation(getApplicationContext(),R.anim.rotate_backward);
+        /*fab.setOnClickListener(MainActivity.this);
+        fab1.setOnClickListener(this);
+        fab2.setOnClickListener(this);*/
+
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -248,15 +285,16 @@ public class MainActivity extends AppCompatActivity
 
                 if (auth.getCurrentUser() != null) {
                     sendQuestion();
+                    fab.setVisibility(View.VISIBLE);
                     //startActivity(new Intent(new Intent(MainActivity.this, PostAnswerActivity.class)));
                 } else {
+                    fab.setVisibility(View.GONE);
                     Snackbar snackbar = Snackbar
-
                             .make(view, "You need to sign in first to be able to post a question!", Snackbar.LENGTH_LONG)
                             .setAction("SIGN IN", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    //showSignInDialog();
+                                    startActivity(new Intent(MainActivity.this, SigninActivity.class));
                                 }
                             });
                     snackbar.show();
@@ -268,9 +306,23 @@ public class MainActivity extends AppCompatActivity
         fabMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Intent openRead = new Intent(MainActivity.this, GroupActivity.class);
-                startActivity(openRead);*/
-                startActivity(new Intent(MainActivity.this, UserSearchActivity.class));
+                if (auth.getCurrentUser() != null) {
+                    startActivity(new Intent(MainActivity.this, UserSearchActivity.class));
+                    fabMessage.setVisibility(View.VISIBLE);
+                    //startActivity(new Intent(new Intent(MainActivity.this, PostAnswerActivity.class)));
+                } else {
+                    fabMessage.setVisibility(View.GONE);
+                    Snackbar snackbar = Snackbar
+                            .make(view, "You need to sign in first to be able to post a direct message!", Snackbar.LENGTH_LONG)
+                            .setAction("SIGN IN", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    startActivity(new Intent(MainActivity.this, SigninActivity.class));
+                                }
+                            });
+                    snackbar.show();
+                }
+
             }
         });
 
@@ -278,9 +330,24 @@ public class MainActivity extends AppCompatActivity
         fabGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Intent openRead = new Intent(MainActivity.this, GroupActivity.class);
-                startActivity(openRead);*/
-                startActivity(new Intent(MainActivity.this, AddGroupActivity.class));
+                if (auth.getCurrentUser() != null) {
+                    animateFAB();
+                    /*startActivity(new Intent(MainActivity.this, AddGroupActivity.class));
+                    fabGroup.setVisibility(View.VISIBLE);*/
+                    //startActivity(new Intent(new Intent(MainActivity.this, PostAnswerActivity.class)));
+                } else {
+                    fabGroup.setVisibility(View.GONE);
+                    Snackbar snackbar = Snackbar
+                            .make(view, "You need to sign in first to be able to start a group!", Snackbar.LENGTH_LONG)
+                            .setAction("SIGN IN", new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    startActivity(new Intent(MainActivity.this, SigninActivity.class));
+                                }
+                            });
+                    snackbar.show();
+                }
+
             }
         });
 
@@ -471,9 +538,49 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        checkIfAccIsCompt();
+        closeAnimFab();
     }
 
+    public void closeAnimFab() {
+        if(isFabOpen){
+            fabGroup.startAnimation(rotate_backward);
+            fabAddGroup.startAnimation(fab_close);
+            fabCreateBroadcast.startAnimation(fab_close);
+            fabSearchChannel.startAnimation(fab_close);
+            fabAddGroup.setClickable(false);
+            fabCreateBroadcast.setClickable(false);
+            isFabOpen = false;
+            Log.d("Raj", "close");
+        }
+    }
+
+
+    public void animateFAB(){
+
+        if(isFabOpen){
+
+            fabGroup.startAnimation(rotate_backward);
+            fabAddGroup.startAnimation(fab_close);
+            fabCreateBroadcast.startAnimation(fab_close);
+            fabSearchChannel.startAnimation(fab_close);
+            fabAddGroup.setClickable(false);
+            fabCreateBroadcast.setClickable(false);
+            isFabOpen = false;
+            Log.d("Raj", "close");
+
+        } else {
+
+            fabGroup.startAnimation(rotate_forward);
+            fabAddGroup.startAnimation(fab_open);
+            fabCreateBroadcast.startAnimation(fab_open);
+            fabSearchChannel.startAnimation(fab_open);
+            fabAddGroup.setClickable(true);
+            fabCreateBroadcast.setClickable(true);
+            isFabOpen = true;
+            Log.d("Raj","open");
+
+        }
+    }
 
     private void checkIfAccIsCompt() {
         mDatabaseUsers.addValueEventListener(new ValueEventListener() {
@@ -481,15 +588,23 @@ public class MainActivity extends AppCompatActivity
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 if (auth.getCurrentUser() != null) {
-                    if (!dataSnapshot.hasChild(auth.getCurrentUser().getUid()) || !dataSnapshot.child(auth.getCurrentUser().getUid()).hasChild("username")) {
+                    if (!dataSnapshot.hasChild(auth.getCurrentUser().getUid())) {
 
+                        Intent cardonClick = new Intent(MainActivity.this, CompleteRegActivity.class);
+                        cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(cardonClick);
+                    } else if (!dataSnapshot.child(auth.getCurrentUser().getUid()).hasChild("username")){
                         Intent cardonClick = new Intent(MainActivity.this, CompleteRegActivity.class);
                         cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(cardonClick);
                     } else {
                         checkForNotifications();
+                        checkForNotyMgs();
                         awardReputation();
                         getUserLocation();
+
+                        DatabaseReference mDatabaseUsersOnline = FirebaseDatabase.getInstance().getReference().child("Users").child(auth.getCurrentUser().getUid());
+                        mDatabaseUsersOnline.child("isOnline").setValue(true);
                     }
                 }
             }
@@ -566,15 +681,19 @@ public class MainActivity extends AppCompatActivity
                 snackbar.show();
             }
 
-
-
         } else if (id == R.id.nav_favourites) {
 
             Intent cardonClick = new Intent(MainActivity.this, FavouriteActivity.class);
             cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(cardonClick);
 
-        } else if (id == R.id.nav_slideshow) {
+        } /*else if (id == R.id.nav_assistant) {
+
+            Intent cardonClick = new Intent(MainActivity.this, ErevuAssistantActivity.class);
+            cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(cardonClick);
+
+        }*/ else if (id == R.id.nav_slideshow) {
 
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.erevu.erevu&hl=en"));
             startActivity(browserIntent);
@@ -813,7 +932,70 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    private void checkForNotyMgs() {
 
+        mDatabaseMessages.child(auth.getCurrentUser().getUid()).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+                String msg_sender_name = (String) dataSnapshot.child("sender_name").getValue();
+                String msg_sender_uname = (String) dataSnapshot.child("sender_username").getValue();
+                String msg_sender_image = (String) dataSnapshot.child("sender_image").getValue();
+                String msg_sender_uid = (String) dataSnapshot.child("sender_uid").getValue();
+                Boolean msg_read_status = (Boolean) dataSnapshot.child("read").getValue();
+
+                if (msg_read_status != null) {
+                    if (msg_read_status.equals(false)) {
+                        // send notification to reciever
+
+                        Context context = getApplicationContext();
+                        Intent intent = new Intent(context, MessageChatActivity.class);
+                        intent.putExtra("user_id", msg_sender_uid);
+                        intent.putExtra("name", msg_sender_name);
+                        intent.putExtra("username", msg_sender_uname);
+                        intent.putExtra("user_image", msg_sender_image);
+                        PendingIntent pIntent = PendingIntent.getActivity(MainActivity.this, 0, intent, 0);
+                        Notification noty = new Notification.Builder(MainActivity.this)
+                                .setContentTitle("Erevu")
+                                .setTicker("Inbox alert!")
+                                .setContentText("Hi, you have a new message from " + msg_sender_name)
+                                .setSmallIcon(R.drawable.erevu_noty_icon)
+                                // .setLargeIcon(bitmap)
+                                .setContentIntent(pIntent).getNotification();
+
+                        noty.flags = Notification.FLAG_AUTO_CANCEL;
+                        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                        Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+                        //r.play();
+                        NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                        nm.notify(0, noty);
+
+                    }
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
     private void checkForNotifications() {
 
         // inbox notifications
@@ -856,7 +1038,7 @@ public class MainActivity extends AppCompatActivity
                                     noty.flags = Notification.FLAG_AUTO_CANCEL;
                                     Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
                                     Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
-                                    r.play();
+                                    //r.play();
                                     NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                                     nm.notify(0, noty);
 
@@ -1251,7 +1433,6 @@ public class MainActivity extends AppCompatActivity
         });
 
 
-
     }
 
     private void checkIfTopicSelected() {
@@ -1268,7 +1449,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initSpinner2() {
-
 
         if ("Law".equals(selectedTopic)) {
             sub_topic = new String[]{
@@ -1611,11 +1791,13 @@ public class MainActivity extends AppCompatActivity
                         fab.show();
                         fabGroup.hide();
                         fabMessage.hide();
+                        closeAnimFab();
                         break;
                     case 1:
                         fabGroup.hide();
                         fabMessage.show();
                         fab.hide();
+                        closeAnimFab();
                         break;
 
                     default:
@@ -1740,3 +1922,5 @@ public class MainActivity extends AppCompatActivity
     }
 
 }
+//E/UncaughtException: java.lang.OutOfMemoryError: Failed to allocate a 3534412 byte allocation with 3405864 free bytes and 3MB until OOM
+//at dalvik.system.VMRuntime.newNonMovableArray(Native Method)

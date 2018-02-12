@@ -155,12 +155,12 @@ public class GroupProfileActivity extends AppCompatActivity {
                         newGroupChats.child("posted_date").setValue(System.currentTimeMillis());
                         newGroupChats.child("post_id").setValue(newGroupChats.getKey());
 
-                        newGroupChatlist.child("message").setValue(currentuser_name+ " left on "+stringDate2);
+                       /* newGroupChatlist.child("message").setValue(currentuser_name+ " left on "+stringDate2);
                         newGroupChatlist.child("sender_uid").setValue(auth.getCurrentUser().getUid());
                         newGroupChatlist.child("sender_name").setValue(currentuser_name);
                         newGroupChatlist.child("message_type").setValue("NOTIFICATION");
                         newGroupChatlist.child("posted_date").setValue(System.currentTimeMillis());
-                        newGroupChatlist.child("post_id").setValue(newGroupChatlist.getKey());
+                        newGroupChatlist.child("post_id").setValue(newGroupChatlist.getKey());*/
 
                         startActivity(new Intent(GroupProfileActivity.this, MainActivity.class));
                         Toast.makeText(GroupProfileActivity.this, "Exit successfully!",Toast.LENGTH_LONG).show();
@@ -200,19 +200,6 @@ public class GroupProfileActivity extends AppCompatActivity {
         final LinearLayoutManager photoLayoutManager = new LinearLayoutManager(GroupProfileActivity.this, LinearLayoutManager.HORIZONTAL, false);
         participantsList.setLayoutManager(photoLayoutManager);
 
-        //COUNT NUMBER OF PARTICIPANTS
-        participantsCounter = (TextView) findViewById(R.id.participantsCounter);
-        mDatabaseGroups.child(group_id).child("Participants").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                participantsCounter.setText(dataSnapshot.getChildrenCount()+"");
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
 
         mDatabaseGroups.child(group_id).addValueEventListener(new ValueEventListener() {
             @Override
@@ -247,6 +234,24 @@ public class GroupProfileActivity extends AppCompatActivity {
         participantsList.setAdapter(usersAdapter);
 
         loadParticipants();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //COUNT NUMBER OF PARTICIPANTS
+        participantsCounter = (TextView) findViewById(R.id.participantsCounter);
+        mDatabaseGroups.child(group_id).child("Participants").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                participantsCounter.setText(dataSnapshot.getChildrenCount()+"");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void loadParticipants() {

@@ -7,6 +7,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -36,7 +37,9 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -56,7 +59,7 @@ public class MessageChatActivity extends AppCompatActivity {
     SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mChatList;
     MessageListAdapter chatAdapter;
-    private final List<Chat> chatList = new ArrayList<>();
+    private List<Chat> chatList = new ArrayList<>();
     LinearLayoutManager mLinearlayout;
     private static final int TOTAL_ITEMS_TO_LOAD = 10;
     private int currentPage =1;
@@ -179,16 +182,13 @@ public class MessageChatActivity extends AppCompatActivity {
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
 
-        chatAdapter = new MessageListAdapter(getApplicationContext(), (ArrayList<Chat>) chatList);
+        chatAdapter = new MessageListAdapter(getApplicationContext(), chatList);
 
         mChatList = (RecyclerView) findViewById(R.id.Chat_list);
-       // mChatList.setLayoutManager(new LinearLayoutManager(this));
-
         mLinearlayout = new LinearLayoutManager(this);
-        mLinearlayout.setStackFromEnd(true);
-
         mChatList.setHasFixedSize(true);
         mChatList.setLayoutManager(mLinearlayout);
+        mLinearlayout.setStackFromEnd(true);
         mChatList.setAdapter(chatAdapter);
 
         currName = (TextView) findViewById(R.id.toolbar_name);
@@ -264,8 +264,7 @@ public class MessageChatActivity extends AppCompatActivity {
 
                 Chat message = dataSnapshot.getValue(Chat.class);
 
-                chatList.add(chatList.size(), message);
-                chatAdapter.notifyItemRangeInserted(-1, chatList.size());
+                chatList.add(message);
                 chatAdapter.notifyDataSetChanged();
                 mLinearlayout.setStackFromEnd(true);
                 mSwipeRefreshLayout.setRefreshing(false);
@@ -313,56 +312,63 @@ public class MessageChatActivity extends AppCompatActivity {
             final DatabaseReference newPost4 = mDatabaseMessages.child(auth.getCurrentUser().getUid()).child(user_id);
 
             //MINE
-            newPost.child("message").setValue(questionBodyTag);
-            newPost.child("sender_uid").setValue(auth.getCurrentUser().getUid());
-            newPost.child("receiver_uid").setValue(auth.getCurrentUser().getUid());
-            newPost.child("message_type").setValue("MESSAGE");
-            newPost.child("sender_image").setValue(currentuser_image);
-            newPost.child("sender_name").setValue(currentuser_name);
-            newPost.child("receiver").setValue(user_id);
-            newPost.child("posted_date").setValue(System.currentTimeMillis());
-            newPost.child("post_id").setValue(newPost.getKey());
+            Map<String, Object> map = new HashMap<>();
+            map.put("message", questionBodyTag);
+            map.put("sender_uid", auth.getCurrentUser().getUid());
+            map.put("receiver_uid", auth.getCurrentUser().getUid());
+            map.put("message_type", "MESSAGE");
+            map.put("sender_name", currentuser_name);
+            map.put("sender_image", currentuser_image);
+            map.put("receiver", user_id);
+            map.put("posted_date", System.currentTimeMillis());
+            map.put("post_id", newPost.getKey());
+            newPost.setValue(map);
 
-            // THERES
-            newPost2.child("message").setValue(questionBodyTag);
-            newPost2.child("sender_uid").setValue(auth.getCurrentUser().getUid());
-            newPost2.child("receiver_uid").setValue(user_id);
-            newPost2.child("message_type").setValue("MESSAGE");
-            newPost2.child("sender_uid").setValue(auth.getCurrentUser().getUid());
-            newPost2.child("sender_image").setValue(currentuser_image);
-            newPost2.child("sender_name").setValue(currentuser_name);
-            newPost2.child("receiver").setValue(auth.getCurrentUser().getUid());
-            newPost2.child("read").setValue(false);
-            newPost2.child("posted_date").setValue(System.currentTimeMillis());
-            newPost2.child("post_id").setValue(newPost2.getKey());
+            //THERES
+            Map<String, Object> map2 = new HashMap<>();
+            map2.put("message", questionBodyTag);
+            map2.put("sender_uid", auth.getCurrentUser().getUid());
+            map2.put("receiver_uid", user_id);
+            map2.put("message_type", "MESSAGE");
+            map2.put("sender_name", currentuser_name);
+            map2.put("sender_image", currentuser_image);
+            map2.put("receiver", auth.getCurrentUser().getUid());
+            map2.put("read", false);
+            map2.put("posted_date", System.currentTimeMillis());
+            map2.put("post_id", newPost2.getKey());
+            newPost2.setValue(map2);
 
-            //THERE'S
-            newPost3.child("message").setValue(questionBodyTag);
-            newPost3.child("sender_image").setValue(currentuser_image);
-            newPost3.child("sender_name").setValue(currentuser_name);
-            newPost3.child("sender_username").setValue(currentuser_username);
-            newPost3.child("sender_uid").setValue(auth.getCurrentUser().getUid());
-            newPost3.child("receiver").setValue(user_id);
-            newPost3.child("read").setValue(false);
-            newPost3.child("posted_date").setValue(System.currentTimeMillis());
-            newPost3.child("post_id").setValue(newPost3.getKey());
+           //THERE'S
+            Map<String, Object> map3 = new HashMap<>();
+            map3.put("message", questionBodyTag);
+            map3.put("sender_uid", auth.getCurrentUser().getUid());
+            map3.put("receiver_uid", auth.getCurrentUser().getUid());
+            map3.put("sender_name", currentuser_name);
+            map3.put("sender_username", currentuser_username);
+            map3.put("sender_image", currentuser_image);
+            map3.put("receiver", user_id);
+            map3.put("read", false);
+            map3.put("posted_date", System.currentTimeMillis());
+            map3.put("post_id", newPost3.getKey());
+            newPost3.setValue(map3);
 
-            //YOU SCREEN ON CHATLIST
-            newPost4.child("message").setValue(questionBodyTag);
-            newPost4.child("sender_image").setValue(user_image);
-            newPost4.child("sender_name").setValue(name);
-            newPost4.child("sender_username").setValue(user_name);
-            newPost4.child("sender_uid").setValue(user_id);
-            newPost4.child("receiver").setValue(auth.getCurrentUser().getUid());
-            newPost4.child("posted_date").setValue(System.currentTimeMillis());
-            newPost4.child("post_id").setValue(newPost4.getKey());
-
+            //MINE
+            Map<String, Object> map4 = new HashMap<>();
+            map4.put("message", questionBodyTag);
+            map4.put("sender_uid", user_id);
+            map4.put("sender_name", name);
+            map4.put("sender_username", user_name);
+            map4.put("sender_image", user_image);
+            map4.put("read", true);
+            map4.put("receiver", auth.getCurrentUser().getUid());
+            map4.put("posted_date", System.currentTimeMillis());
+            map4.put("post_id", newPost4.getKey());
+            newPost4.setValue(map4);
 
             inputMessage.getText().clear();
             // Toast.makeText(ChatroomActivity.this, "Message posted successfully",Toast.LENGTH_LONG).show();
 
         }
     }
-
 
 }

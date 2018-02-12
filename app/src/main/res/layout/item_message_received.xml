@@ -9,7 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="2.5dp"
         android:id="@+id/liny"
         android:orientation="horizontal">
 
@@ -19,7 +19,8 @@
             android:layout_marginLeft="10dp"
             android:id="@+id/user_image"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="10dp"
+            android:layout_marginRight="3dp"
+            android:layout_marginBottom="17dp"
             android:layout_marginTop="10dp">
 
             <de.hdodenhof.circleimageview.CircleImageView
@@ -27,8 +28,9 @@
                 android:layout_height="35dp"
                 android:layout_marginRight="5dp"
                 android:id="@+id/post_image"
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="7dp"
                 android:src="@drawable/placeholder_image"/>
+
         </RelativeLayout>
 
 
@@ -59,8 +61,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-
-
                             <com.brainy.erevu.data.MyFont
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -69,9 +69,7 @@
                                 android:layout_marginRight="45dp"
                                 android:id="@+id/post_message"
                                 android:layout_alignParentLeft="true"
-
                                 android:background="@drawable/chat_bg_2"
-
                                 android:textSize="15dp"
                                 android:paddingLeft="10dp"
                                 android:paddingBottom="10dp"

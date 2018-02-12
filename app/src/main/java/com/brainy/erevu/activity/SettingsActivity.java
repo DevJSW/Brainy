@@ -296,7 +296,7 @@ public class SettingsActivity extends AppCompatActivity {
         linSignout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                signOut();
+               // signOut();
                 /*finish();
                 Toast.makeText(SettingsActivity.this, "You have successfully Logged out!",Toast.LENGTH_LONG).show();*/
             }

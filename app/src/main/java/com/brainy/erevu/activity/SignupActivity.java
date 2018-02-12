@@ -36,6 +36,8 @@ import com.google.firebase.storage.StorageReference;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -247,29 +249,44 @@ public class SignupActivity extends AppCompatActivity {
                                                 mprogress.setMessage("Creating account, please wait...");
                                                 mprogress.show();
 
-                                                final DatabaseReference newPost = mDatabaseUsers;
+                                                final DatabaseReference newPost = mDatabaseUsers.child(auth.getCurrentUser().getUid());
                                                 final DatabaseReference newPostUserName = mDatabaseUsernames;
                                                 String deviceToken = FirebaseInstanceId.getInstance().getToken();
 
-                                                newPost.child(auth.getCurrentUser().getUid()).child("date").setValue(stringDate);
+                                                /*newPost.child(auth.getCurrentUser().getUid()).child("date").setValue(stringDate);
                                                 newPost.child(auth.getCurrentUser().getUid()).child("uid").setValue(auth.getCurrentUser().getUid());
                                                 newPost.child(auth.getCurrentUser().getUid()).child("name").setValue(name);
                                                 newPost.child(auth.getCurrentUser().getUid()).child("username").setValue("@"+username.toLowerCase());
                                                 newPost.child(auth.getCurrentUser().getUid()).child("user_image").setValue("");
                                                 newPost.child(auth.getCurrentUser().getUid()).child("joined_date").setValue(stringDate);
-                                                newPost.child(auth.getCurrentUser().getUid()).child("uid").setValue(auth.getCurrentUser().getUid());
                                                 newPost.child(auth.getCurrentUser().getUid()).child("user_email").setValue(email);
                                                 newPost.child(auth.getCurrentUser().getUid()).child("user_password").setValue(password);
                                                 newPost.child(auth.getCurrentUser().getUid()).child("sign_in_type").setValue("manual_sign_In");
                                                 newPost.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Beginner");
                                                 newPost.child(auth.getCurrentUser().getUid()).child("points_earned").setValue(10);
-                                                newPost.child(auth.getCurrentUser().getUid()).child("device_token").setValue(deviceToken);
+                                                newPost.child(auth.getCurrentUser().getUid()).child("device_token").setValue(deviceToken);*/
+
+                                                Map<String, Object> map = new HashMap<>();
+                                                map.put("uid", auth.getCurrentUser().getUid());
+                                                map.put("name", name);
+                                                map.put("status", "");
+                                                map.put("username", "@"+username.toLowerCase());
+                                                map.put("user_image", "");
+                                                map.put("joined_date", stringDate);
+                                                map.put("user_email", email);
+                                                map.put("sign_in_type", "manual_sign_In");
+                                                map.put("reputation", "Beginner");
+                                                map.put("points_earned", 10);
+                                                map.put("device_token", deviceToken);
+                                                newPost.setValue(map);
 
                                                 //ADD USERNAME TO DB
                                                 newPostUserName.child(username).setValue(auth.getCurrentUser().getUid());
 
                                                 Toast.makeText(SignupActivity.this, "Welcome " + name + " your Account was created successfully!",
                                                         Toast.LENGTH_LONG).show();
+
+                                                SignupActivity.this.finish();
 
                                                 Intent cardonClick = new Intent(SignupActivity.this, MainActivity.class);
                                                 cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

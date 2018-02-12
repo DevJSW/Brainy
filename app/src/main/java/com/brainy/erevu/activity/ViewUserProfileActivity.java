@@ -106,7 +106,7 @@ public class ViewUserProfileActivity extends AppCompatActivity {
         uname = (TextView) findViewById(R.id.name);
         cuname = (TextView) findViewById(R.id.username);
 
-        //ADD USER ID TO PROFILE VIES
+        //ADD USER ID TO PROFILE VIEWS
         if (mAuth.getCurrentUser() != null) {
             mDatabaseProfileViews.child(UserId).child(mAuth.getCurrentUser().getUid()).setValue("iView");
         }

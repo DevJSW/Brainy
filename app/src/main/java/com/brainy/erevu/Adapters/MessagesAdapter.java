@@ -194,16 +194,19 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ChatVi
         mDatabaseMessages.child(mAuth.getCurrentUser().getUid()).child(user_id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Boolean read_status = (Boolean) dataSnapshot.child("read").getValue();
 
-                if (read_status != null) {
-                    if (read_status.equals(false)) {
+                if (dataSnapshot.hasChild("read")) {
+                    Boolean read_status = (Boolean) dataSnapshot.child("read").getValue();
 
-                        holder.counter.setVisibility(View.VISIBLE);
+                    if (read_status != null) {
+                        if (read_status.equals(false)) {
 
-                    } else {
+                            holder.counter.setVisibility(View.VISIBLE);
 
-                        holder.counter.setVisibility(View.GONE);
+                        } else {
+
+                            holder.counter.setVisibility(View.GONE);
+                        }
                     }
                 }
             }
@@ -218,9 +221,9 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ChatVi
         if (c.getPosted_date() != null)
         holder.post_date.setReferenceTime(Long.parseLong(String.valueOf(c.getPosted_date())));
 
-        Picasso.with(ctx).load(c.getSender_image()).placeholder(R.drawable.placeholder_image).into(holder.civ);
+        //Picasso.with(ctx).load(c.getSender_image()).placeholder(R.drawable.placeholder_image).into(holder.civ);
 
-       /* Glide.with(ctx)
+        Glide.with(ctx)
                 .load(c.getSender_image()).asBitmap()
                 .placeholder(R.drawable.placeholder_image)
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)
@@ -233,7 +236,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.ChatVi
                         circularBitmapDrawable.setCircular(true);
                         holder.civ.setImageDrawable(circularBitmapDrawable);
                     }
-                });*/
+                });
 
     }
 

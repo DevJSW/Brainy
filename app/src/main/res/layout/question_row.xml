@@ -51,6 +51,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/subscribeBtn"
                     android:layout_toRightOf="@+id/post_image"
+                    android:layout_marginLeft="8dp"
                     android:layout_gravity="center_vertical"
                     android:orientation="vertical">
 
@@ -116,7 +117,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/post_quiz_body"
                 android:layout_marginLeft="12dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="3dp"
                 android:layout_below="@+id/post_quiz_title"
                 android:layout_marginRight="12dp"
                 android:ellipsize="end"
@@ -132,6 +133,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:layout_marginTop="8dp"
             android:background="#c6c3c3"/>
         <LinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"

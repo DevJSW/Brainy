@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/chat_wallpaper"
+    tools:context="com.brainy.erevu.activity.ErevuAssistantActivity">
+
+    <include layout="@layout/e_assistant_toolbar"
+        android:id="@+id/mCustomToolbar"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.brainy.erevu.data.MyBoldFont
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Empty"
+            android:textSize="17dp"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="15dp"
+            android:id="@+id/noAnsTxt"
+            android:textColor="@color/colorPrimary"/>
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/toolbar"
+            android:visibility="gone"
+            android:layout_above="@+id/typing_bar"
+            android:id="@+id/refresh">
+            <android.support.v7.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/Chat_list"
+                >
+
+            </android.support.v7.widget.RecyclerView>
+
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="6dp"
+                android:id="@+id/user_image"
+                android:layout_gravity="bottom"
+
+                >
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_marginRight="5dp"
+                    android:id="@+id/post_image"
+                    android:layout_marginBottom="15dp"
+                    android:src="@drawable/erevu_assistant_chat"/>
+            </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="250dp"
+            android:layout_height="220dp"
+            android:background="@drawable/chat_bg_2"
+            android:padding="8dp"
+            android:orientation="vertical"
+            android:weightSum="3"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:weightSum="3"
+                android:orientation="horizontal">
+
+                <com.brainy.erevu.data.MyButton
+                    android:id="@+id/b1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textSize="35dp"
+                    android:layout_weight="1"/>
+                <com.brainy.erevu.data.MyButton
+                    android:id="@+id/b2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textSize="35dp"
+                    android:layout_weight="1"/>
+                <com.brainy.erevu.data.MyButton
+                    android:id="@+id/b3"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textSize="35dp"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:weightSum="3"
+                android:orientation="horizontal">
+
+                <com.brainy.erevu.data.MyButton
+                    android:id="@+id/b4"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textSize="35dp"
+                    android:layout_weight="1"/>
+                <com.brainy.erevu.data.MyButton
+                    android:id="@+id/b5"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textSize="35dp"
+                    android:layout_weight="1"/>
+                <com.brainy.erevu.data.MyButton
+                    android:id="@+id/b6"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textSize="35dp"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:weightSum="3"
+                android:orientation="horizontal">
+
+                <com.brainy.erevu.data.MyButton
+                    android:id="@+id/b7"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textSize="35dp"
+                    android:layout_weight="1"/>
+                <com.brainy.erevu.data.MyButton
+                    android:id="@+id/b8"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textSize="35dp"
+                    android:layout_weight="1"/>
+                <com.brainy.erevu.data.MyButton
+                    android:id="@+id/b9"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textSize="35dp"
+                    android:layout_weight="1"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+        </LinearLayout>
+        <com.brainy.erevu.data.MyBoldFont
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginRight="40dp"
+            android:layout_marginLeft="40dp"
+            android:visibility="gone"
+            android:textSize="18dp"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            android:id="@+id/noNotyTxt"
+            android:textColor="@color/colorAccent"/>
+
+        <HorizontalScrollView
+            android:id="@+id/hsv"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_above="@+id/typing_bar"
+            android:fillViewport="true"
+            android:measureAllChildren="false"
+            android:scrollbars="none" >
+            <LinearLayout
+                android:id="@+id/innerLay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_marginRight="8dp"
+                android:orientation="horizontal" >
+
+                <RelativeLayout
+                    android:layout_width="95dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="8dp"
+                    android:background="@drawable/button_layout">
+
+
+                    <com.brainy.erevu.data.MyFont
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_centerInParent="true"
+                        android:text="Sign in"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="95dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="8dp"
+                    android:background="@drawable/button_layout">
+
+                    <com.brainy.erevu.data.MyFont
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Ask"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="95dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="8dp"
+                    android:background="@drawable/button_layout">
+
+                    <com.brainy.erevu.data.MyFont
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Report"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="95dp"
+                    android:layout_height="40dp"
+                    android:layout_marginLeft="8dp"
+                    android:background="@drawable/button_layout">
+
+                    <com.brainy.erevu.data.MyFont
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="Play Game"/>
+                </RelativeLayout>
+
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:id="@+id/typing_bar"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/typing_layout">
+
+            <com.brainy.erevu.data.CustomEditText
+                android:id="@+id/input_message"
+                android:layout_width="match_parent"
+                android:layout_height="43dp"
+                android:layout_marginBottom="3dp"
+                android:layout_marginLeft="10dp"
+                android:background="#00ffffff"
+                android:hint="Say something..."
+                android:layout_marginRight="8dp"
+                android:layout_toLeftOf="@+id/sendBtn"
+                android:layout_toRightOf="@+id/photo"
+                android:padding="3dp"
+                android:layout_alignParentBottom="true" />
+
+            <ImageView
+                android:layout_width="34dp"
+                android:layout_height="31dp"
+                android:id="@+id/photo"
+                android:visibility="gone"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="7dp"
+                android:layout_marginLeft="8dp"
+                android:scaleType="fitXY"
+                android:layout_alignParentLeft="true"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_gallery_cam"/>
+
+
+            <ImageView
+                android:layout_width="29dp"
+                android:layout_height="29dp"
+                android:layout_centerVertical="true"
+                android:id="@+id/sendBtn"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="18dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/ic_send"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

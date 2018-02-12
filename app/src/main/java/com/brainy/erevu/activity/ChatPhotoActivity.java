@@ -29,6 +29,9 @@ import com.google.firebase.storage.UploadTask;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ChatPhotoActivity extends AppCompatActivity {
 
     private ImageView addImage, backBtn;
@@ -43,6 +46,7 @@ public class ChatPhotoActivity extends AppCompatActivity {
 
     String currentuser_image = null;
     String currentuser_name = null;
+    String current_name = null;
 
     private DatabaseReference mDatabaseUsers, mDatabaseChats, mDatabaseMessages;
     private FirebaseUser mCurrentUser;
@@ -84,6 +88,7 @@ public class ChatPhotoActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 currentuser_name = dataSnapshot.child("username").getValue().toString();
                 currentuser_image = dataSnapshot.child("user_image").getValue().toString();
+                current_name = dataSnapshot.child("name").getValue().toString();
             }
 
             @Override
@@ -137,43 +142,59 @@ public class ChatPhotoActivity extends AppCompatActivity {
                 final DatabaseReference newPost4 = mDatabaseMessages.child(auth.getCurrentUser().getUid()).child(user_id);
 
                 //MINE
-                newPost.child("photo").setValue(downloadUrl.toString());
-                newPost.child("message_type").setValue("PHOTO");
-                newPost.child("sender_uid").setValue(auth.getCurrentUser().getUid());
-                newPost.child("receiver_uid").setValue(auth.getCurrentUser().getUid());
-                newPost.child("sender_image").setValue(currentuser_image);
-                newPost.child("sender_name").setValue(currentuser_name);
-                newPost.child("receiver").setValue(user_id);
-                newPost.child("posted_date").setValue(System.currentTimeMillis());
-                newPost.child("post_id").setValue(newPost.getKey());
+                Map<String, Object> map = new HashMap<>();
+                map.put("photo", downloadUrl.toString());
+                map.put("sender_uid", auth.getCurrentUser().getUid());
+                map.put("receiver_uid", auth.getCurrentUser().getUid());
+                map.put("message_type", "PHOTO");
+                map.put("sender_name", currentuser_name);
+                map.put("sender_image", currentuser_image);
+                map.put("read", true);
+                map.put("posted_date", System.currentTimeMillis());
+                map.put("post_id", newPost.getKey());
+                newPost.setValue(map);
 
                 // THERES
-                newPost2.child("photo").setValue(downloadUrl.toString());
-                newPost2.child("message_type").setValue("PHOTO");
-                newPost2.child("sender_uid").setValue(auth.getCurrentUser().getUid());
-                newPost2.child("receiver_uid").setValue(user_id);
-                newPost2.child("sender_uid").setValue(auth.getCurrentUser().getUid());
-                newPost2.child("sender_image").setValue(currentuser_image);
-                newPost2.child("sender_name").setValue(currentuser_name);
-                newPost2.child("receiver").setValue(auth.getCurrentUser().getUid());
-                newPost2.child("read").setValue(false);
-                newPost2.child("posted_date").setValue(System.currentTimeMillis());
-                newPost2.child("post_id").setValue(newPost2.getKey());
+
+                Map<String, Object> map2 = new HashMap<>();
+                map2.put("photo", downloadUrl.toString());
+                map2.put("sender_uid", auth.getCurrentUser().getUid());
+                map2.put("receiver_uid", user_id);
+                map2.put("message_type", "PHOTO");
+                map2.put("sender_name", currentuser_name);
+                map2.put("sender_image", currentuser_image);
+                map2.put("read", false);
+                map2.put("posted_date", System.currentTimeMillis());
+                map2.put("post_id", newPost2.getKey());
+                newPost2.setValue(map2);
 
                 //THERE'S
-                newPost3.child("message").setValue("Photo");
+               /* newPost3.child("message").setValue("Photo");
                 newPost3.child("message_type").setValue("PHOTO");
                 newPost3.child("sender_image").setValue(currentuser_image);
-                newPost3.child("sender_name").setValue(currentuser_name);
+                newPost3.child("sender_name").setValue(name);
                 newPost3.child("sender_username").setValue(currentuser_name);
                 newPost3.child("sender_uid").setValue(auth.getCurrentUser().getUid());
                 newPost3.child("receiver").setValue(user_id);
                 newPost3.child("read").setValue(false);
                 newPost3.child("posted_date").setValue(System.currentTimeMillis());
-                newPost3.child("post_id").setValue(newPost3.getKey());
+                newPost3.child("post_id").setValue(newPost3.getKey());*/
+
+                Map<String, Object> map3 = new HashMap<>();
+                map3.put("message", "Photo");
+                map3.put("sender_uid", auth.getCurrentUser().getUid());
+                map3.put("receiver", user_id);
+                map3.put("message_type", "PHOTO");
+                map3.put("sender_name", current_name);
+                map3.put("sender_username", currentuser_name);
+                map3.put("sender_image", currentuser_image);
+                map3.put("read", false);
+                map3.put("posted_date", System.currentTimeMillis());
+                map3.put("post_id", newPost3.getKey());
+                newPost3.setValue(map3);
 
                 //YOU SCREEN ON CHATLIST
-                newPost4.child("message").setValue("Photo");
+               /* newPost4.child("message").setValue("Photo");
                 newPost4.child("message_type").setValue("PHOTO");
                 newPost4.child("sender_image").setValue(user_image);
                 newPost4.child("sender_name").setValue(name);
@@ -182,6 +203,19 @@ public class ChatPhotoActivity extends AppCompatActivity {
                 newPost4.child("receiver").setValue(auth.getCurrentUser().getUid());
                 newPost4.child("posted_date").setValue(System.currentTimeMillis());
                 newPost4.child("post_id").setValue(newPost4.getKey());
+*/
+                Map<String, Object> map4 = new HashMap<>();
+                map4.put("message", "Photo");
+                map4.put("sender_uid", user_id);
+                map4.put("receiver", auth.getCurrentUser().getUid());
+                map4.put("message_type", "PHOTO");
+                map4.put("sender_name", name);
+                map4.put("sender_username", user_name);
+                map4.put("sender_image", user_image);
+                map4.put("read", true);
+                map4.put("posted_date", System.currentTimeMillis());
+                map4.put("post_id", newPost4.getKey());
+                newPost4.setValue(map4);
 
                 ChatPhotoActivity.this.finish();
 

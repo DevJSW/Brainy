@@ -214,7 +214,14 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.ViewPhotoActivity" />
         <activity android:name=".activity.FavouriteActivity" />
-        <activity android:name=".activity.ChatPhotoActivity"></activity>
+        <activity android:name=".activity.ChatPhotoActivity" />
+        <activity android:name=".activity.ErevuAssistantActivity" />
+        <activity
+            android:name=".activity.ChannelChatroomActivity"
+            android:label="" />
+        <activity android:name=".activity.AddChannelActivity" />
+        <activity android:name=".activity.ChannelProfileActivity" />
+        <activity android:name=".activity.SearchChannelActivity"></activity>
     </application>
 
 </manifest>

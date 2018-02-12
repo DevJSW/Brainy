@@ -7,7 +7,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_profile"
-            android:icon="@drawable/nav_profile"
+            android:icon="@drawable/profile_icon_"
             android:title="Profile" />
 
       <!--  <item
@@ -18,6 +18,11 @@
             android:id="@+id/nav_settings"
             android:icon="@drawable/if_settings"
             android:title="Settings" />
+
+       <!-- <item
+            android:id="@+id/nav_assistant"
+            android:icon="@drawable/erevu_assistant"
+            android:title="Erevu Assistant" />-->
 
         <item
             android:id="@+id/nav_favourites"

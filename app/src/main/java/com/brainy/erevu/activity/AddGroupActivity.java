@@ -42,6 +42,8 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -176,12 +178,14 @@ public class AddGroupActivity extends AppCompatActivity {
                         newPost.child("group_name").setValue(name);
                         newPost.child("group_id").setValue(newPost.getKey());
                         newPost.child("group_image").setValue(downloadUrl.toString());
+                        newPost.child("group_type").setValue("PRIVATE_GROUP");
                         newPost.child("founder_name").setValue(founder_name);
                         newPost.child("founder_id").setValue(auth.getCurrentUser().getUid());
                         newPost.child("created_date").setValue(stringDate);
 
                         newPost2.child(newPost.getKey()).child("group_name").setValue(name);
                         newPost2.child(newPost.getKey()).child("group_id").setValue(newPost.getKey());
+                        newPost2.child(newPost.getKey()).child("group_type").setValue("PRIVATE_GROUP");
                         newPost2.child(newPost.getKey()).child("founder_name").setValue(founder_name);
                         newPost2.child(newPost.getKey()).child("group_image").setValue(downloadUrl.toString());
                         newPost2.child(newPost.getKey()).child("founder_id").setValue(auth.getCurrentUser().getUid());
@@ -200,25 +204,51 @@ public class AddGroupActivity extends AppCompatActivity {
                         final String stringDate = DateFormat.getDateTimeInstance().format(date);
                         final String stringDate2 = DateFormat.getDateInstance().format(date);
 
-                        newGroupChats.child("message").setValue(user_name+ " created this group on "+stringDate2);
+                        /*newGroupChats.child("message").setValue(user_name+ " created this group on "+stringDate2);
                         newGroupChats.child("sender_uid").setValue(auth.getCurrentUser().getUid());
                         newGroupChats.child("sender_name").setValue(user_name);
                         newGroupChats.child("message_type").setValue("NOTIFICATION");
                         newGroupChats.child("posted_date").setValue(System.currentTimeMillis());
-                        newGroupChats.child("post_id").setValue(newGroupChats.getKey());
+                        newGroupChats.child("post_id").setValue(newGroupChats.getKey());*/
 
-                        newGroupChatlist.child("message").setValue(user_name+ " left on "+stringDate2);
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("message", user_name+ " created this group on "+stringDate2);
+                        map.put("sender_uid", auth.getCurrentUser().getUid());
+                        map.put("message_type", "NOTIFICATION");
+                        map.put("sender_name", user_name);
+                        map.put("posted_date", System.currentTimeMillis());
+                        map.put("post_id", newGroupChats.getKey());
+                        newGroupChats.setValue(map);
+
+                        Map<String, Object> map2 = new HashMap<>();
+                        map2.put("message", user_name+ " left on "+stringDate2);
+                        map2.put("sender_uid", auth.getCurrentUser().getUid());
+                        map2.put("message_type", "NOTIFICATION");
+                        map2.put("sender_name", user_name);
+                        map2.put("posted_date", System.currentTimeMillis());
+                        map2.put("post_id", newGroupChatlist.getKey());
+                        newGroupChatlist.setValue(map2);
+
+                        /*newGroupChatlist.child("message").setValue(user_name+ " left on "+stringDate2);
                         newGroupChatlist.child("sender_uid").setValue(auth.getCurrentUser().getUid());
                         newGroupChatlist.child("sender_name").setValue(user_name);
                         newGroupChatlist.child("message_type").setValue("NOTIFICATION");
                         newGroupChatlist.child("posted_date").setValue(System.currentTimeMillis());
-                        newGroupChatlist.child("post_id").setValue(newGroupChatlist.getKey());
+                        newGroupChatlist.child("post_id").setValue(newGroupChatlist.getKey());*/
 
-                        Intent openRead = new Intent(AddGroupActivity.this, GroupChatroomActivity.class);
+                        mprogress.dismiss();
+
+                        Toast.makeText(AddGroupActivity.this, name + " created successfully!",
+                                Toast.LENGTH_LONG).show();
+                        AddGroupActivity.this.finish();
+
+                       /* Intent openRead = new Intent(AddGroupActivity.this, AddParticipantsActivity.class);
                         openRead.putExtra("group_id", group_id );
                         openRead.putExtra("group_name", name);
                         openRead.putExtra("group_image", downloadUrl.toString() );
-                        startActivity(openRead);
+                        openRead.putExtra("created_date", stringDate );
+                        openRead.putExtra("group_founder", user_name );
+                        startActivity(openRead);*/
 
                     }
                 });
@@ -226,12 +256,21 @@ public class AddGroupActivity extends AppCompatActivity {
                 final DatabaseReference newPost = mDatabaseUserGroups.child(auth.getCurrentUser().getUid()).push();
                 final DatabaseReference newPost2 = mDatabaseGroups;
 
-                newPost.child("group_name").setValue(name);
+             /*   newPost.child("group_name").setValue(name);
                 newPost.child("group_id").setValue(newPost.getKey());
                 newPost.child("founder_name").setValue(founder_name);
                 newPost.child("group_image").setValue("");
                 newPost.child("founder_id").setValue(auth.getCurrentUser().getUid());
                 newPost.child("created_date").setValue(stringDate);
+*/
+                Map<String, Object> map3 = new HashMap<>();
+                map3.put("group_name", name);
+                map3.put("group_id", newPost.getKey());
+                map3.put("founder_name", founder_name);
+                map3.put("group_image", "");
+                map3.put("created_date", stringDate);
+                map3.put("founder_id", auth.getCurrentUser().getUid());
+                newPost.setValue(map3);
 
                 newPost2.child(newPost.getKey()).child("group_name").setValue(name);
                 newPost2.child(newPost.getKey()).child("group_id").setValue(newPost.getKey());
@@ -253,7 +292,7 @@ public class AddGroupActivity extends AppCompatActivity {
                 //final String stringDate = DateFormat.getDateTimeInstance().format(date);
                 final String stringDate2 = DateFormat.getDateInstance().format(date2);
 
-                newGroupChats.child("message").setValue(user_name+ " created this group on "+stringDate2);
+                /*newGroupChats.child("message").setValue(user_name+ " created this group on "+stringDate2);
                 newGroupChats.child("sender_uid").setValue(auth.getCurrentUser().getUid());
                 newGroupChats.child("sender_name").setValue(user_name);
                 newGroupChats.child("message_type").setValue("NOTIFICATION");
@@ -265,25 +304,41 @@ public class AddGroupActivity extends AppCompatActivity {
                 newGroupChatlist.child("sender_name").setValue(user_name);
                 newGroupChatlist.child("message_type").setValue("NOTIFICATION");
                 newGroupChatlist.child("posted_date").setValue(System.currentTimeMillis());
-                newGroupChatlist.child("post_id").setValue(newGroupChatlist.getKey());
+                newGroupChatlist.child("post_id").setValue(newGroupChatlist.getKey());*/
 
-                Intent openRead = new Intent(AddGroupActivity.this, GroupChatroomActivity.class);
+                Map<String, Object> map = new HashMap<>();
+                map.put("message", user_name+ " created this group on "+stringDate2);
+                map.put("sender_uid", auth.getCurrentUser().getUid());
+                map.put("message_type", "NOTIFICATION");
+                map.put("sender_name", user_name);
+                map.put("posted_date", System.currentTimeMillis());
+                map.put("post_id", newGroupChats.getKey());
+                newGroupChats.setValue(map);
+
+                Map<String, Object> map2 = new HashMap<>();
+                map2.put("message", user_name+ " left on "+stringDate2);
+                map2.put("sender_uid", auth.getCurrentUser().getUid());
+                map2.put("message_type", "NOTIFICATION");
+                map2.put("sender_name", user_name);
+                map2.put("posted_date", System.currentTimeMillis());
+                map2.put("post_id", newGroupChatlist.getKey());
+                newGroupChatlist.setValue(map2);
+
+                mprogress.dismiss();
+
+                Toast.makeText(AddGroupActivity.this, name + " created successfully!",
+                        Toast.LENGTH_LONG).show();
+                AddGroupActivity.this.finish();
+
+               /* Intent openRead = new Intent(AddGroupActivity.this, AddParticipantsActivity.class);
                 openRead.putExtra("group_id", group_id );
                 openRead.putExtra("group_name", name);
                 openRead.putExtra("group_image", "" );
+                openRead.putExtra("created_date", stringDate );
+                openRead.putExtra("group_founder", user_name );
                 startActivity(openRead);
-
+*/
             }
-
-            mprogress.dismiss();
-
-            Toast.makeText(AddGroupActivity.this, name + " created successfully!",
-                    Toast.LENGTH_LONG).show();
-            AddGroupActivity.this.finish();
-
-         /*   Intent cardonClick = new Intent(AddGroupActivity.this, KinkyGirlsActivity.class);
-            cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(cardonClick);*/
 
         }
 

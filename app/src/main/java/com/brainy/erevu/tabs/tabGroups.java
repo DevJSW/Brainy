@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.brainy.erevu.Pojos.Group;
 import com.brainy.erevu.Pojos.Question;
 import com.brainy.erevu.R;
+import com.brainy.erevu.activity.ChannelChatroomActivity;
 import com.brainy.erevu.activity.GroupActivity;
 import com.brainy.erevu.activity.GroupChatroomActivity;
 import com.brainy.erevu.activity.ReadQuestionActivity;
@@ -232,11 +233,22 @@ public class tabGroups extends Fragment {
                 viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent openRead = new Intent(getActivity(), GroupChatroomActivity.class);
-                        openRead.putExtra("group_id", model.getGroup_id() );
-                        openRead.putExtra("group_name", model.getGroup_name());
-                        openRead.putExtra("group_image", model.getGroup_image() );
-                        startActivity(openRead);
+
+                        if ("CHANNEL".equals(model.getGroup_type())) {
+                            Intent openRead = new Intent(getActivity(), ChannelChatroomActivity.class);
+                            openRead.putExtra("group_id", model.getGroup_id() );
+                            openRead.putExtra("founder_id", model.getFounder_id() );
+                            openRead.putExtra("group_name", model.getGroup_name());
+                            openRead.putExtra("group_image", model.getGroup_image() );
+                            startActivity(openRead);
+                        } else {
+                            Intent openRead = new Intent(getActivity(), GroupChatroomActivity.class);
+                            openRead.putExtra("group_id", model.getGroup_id() );
+                            openRead.putExtra("group_name", model.getGroup_name());
+                            openRead.putExtra("group_image", model.getGroup_image() );
+                            startActivity(openRead);
+                        }
+
                     }
                 });
             }

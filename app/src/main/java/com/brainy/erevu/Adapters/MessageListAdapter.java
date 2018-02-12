@@ -41,12 +41,12 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     private static final int VIEW_TYPE_PHOTO_RECEIVED = 5;
 
     private Context mContext;
-    private ArrayList<Chat> mMessageList;
+    private List<Chat> chatList;
     public FirebaseAuth auth;
 
-    public MessageListAdapter(Context context, ArrayList<Chat> messageList) {
+    public MessageListAdapter(Context context, List<Chat> messageList) {
         mContext = context;
-        mMessageList = messageList;
+        chatList = messageList;
 
     }
 
@@ -83,32 +83,41 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
 
-        return mMessageList.size();
+        return chatList.size();
     }
 
     // Determines the appropriate ViewType according to the sender of the message.
     @Override
-    public int getItemViewType(int position) {
-        Chat message = mMessageList.get(position);
+    public int getItemViewType(int i) {
+        Chat message = chatList.get(i);
 
         auth = FirebaseAuth.getInstance();
         String current_user_id = auth.getCurrentUser().getUid();
         String sender_user_id = message.getSender_uid();
         String message_type = message.getMessage_type();
 
-
-        if (message_type.equals("NOTIFICATION")){
-            return VIEW_TYPE_MESSAGE_NOTIFICATION;
-        } else if (message_type.equals("PHOTO")){
-            if (sender_user_id.equalsIgnoreCase(current_user_id)) {
-                // If the current user is the sender of the message
-                return VIEW_TYPE_PHOTO_SENT;
+        if (message_type != null) {
+            if (message_type.equals("NOTIFICATION")) {
+                return VIEW_TYPE_MESSAGE_NOTIFICATION;
+            } else if (message_type.equals("PHOTO")) {
+                if (sender_user_id.equals(current_user_id)) {
+                    // If the current user is the sender of the message
+                    return VIEW_TYPE_PHOTO_SENT;
+                } else {
+                    // If some other user sent the message
+                    return VIEW_TYPE_PHOTO_RECEIVED;
+                }
             } else {
-                // If some other user sent the message
-                return VIEW_TYPE_PHOTO_RECEIVED;
+                if (sender_user_id.equals(current_user_id)) {
+                    // If the current user is the sender of the message
+                    return VIEW_TYPE_MESSAGE_SENT;
+                } else {
+                    // If some other user sent the message
+                    return VIEW_TYPE_MESSAGE_RECEIVED;
+                }
             }
         } else {
-            if (sender_user_id.equalsIgnoreCase(current_user_id)) {
+            if (sender_user_id.equals(current_user_id)) {
                 // If the current user is the sender of the message
                 return VIEW_TYPE_MESSAGE_SENT;
             } else {
@@ -116,13 +125,12 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                 return VIEW_TYPE_MESSAGE_RECEIVED;
             }
         }
-
     }
 
     // Passes the message object to a ViewHolder so that the contents can be bound to UI.
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        Chat message = mMessageList.get(position);
+        Chat message = chatList.get(position);
 
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_MESSAGE_SENT:
@@ -187,6 +195,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                 public void onClick(View view) {
                     Intent openRead = new Intent(mContext, ViewUserProfileActivity.class);
                     openRead.putExtra("user_id", user_id );
+                    openRead.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     mContext.startActivity(openRead);
                 }
             });
@@ -206,7 +215,6 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                             profileImage.setImageDrawable(circularBitmapDrawable);
                         }
                     });
-
         }
     }
 
@@ -249,6 +257,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                 public void onClick(View view) {
                     Intent openRead = new Intent(mContext, ViewUserProfileActivity.class);
                     openRead.putExtra("user_id", user_id );
+                    openRead.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     mContext.startActivity(openRead);
                 }
             });
@@ -260,6 +269,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                         Intent openRead = new Intent(mContext, ViewPhotoActivity.class);
                         openRead.putExtra("group_id", message.getGroup_id());
                         openRead.putExtra("photo_key", message.getPost_id());
+                        openRead.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mContext.startActivity(openRead);
                     }
                 }
@@ -276,7 +286,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                     .load(message.getPhoto()).asBitmap()
                     .placeholder(R.drawable.placeholder_image)
                     .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                    .into(profileImage);
+                    .into(post_photo);
 
         }
     }
@@ -306,6 +316,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                         Intent openRead = new Intent(mContext, ViewPhotoActivity.class);
                         openRead.putExtra("group_id", message.getGroup_id());
                         openRead.putExtra("photo_key", message.getPost_id());
+                        openRead.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         mContext.startActivity(openRead);
                     }
                 }

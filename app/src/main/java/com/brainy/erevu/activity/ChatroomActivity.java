@@ -38,7 +38,9 @@ import com.google.firebase.storage.StorageReference;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ChatroomActivity extends AppCompatActivity {
 
@@ -272,22 +274,39 @@ public class ChatroomActivity extends AppCompatActivity {
                                    /* final String image = dataSnapshot.child("image").getValue().toString();*/
                     // getting user uid
 
-                    newPost.child("message").setValue(questionBodyTag);
+                   /* newPost.child("message").setValue(questionBodyTag);
                     newPost.child("sender_uid").setValue(auth.getCurrentUser().getUid());
                     newPost.child("sender_name").setValue(dataSnapshot.child("name").getValue());
                     newPost.child("sender_image").setValue(dataSnapshot.child("user_image").getValue());
                     newPost.child("posted_date").setValue(System.currentTimeMillis());
-                    newPost.child("post_id").setValue(newPost.getKey());
+                    newPost.child("post_id").setValue(newPost.getKey());*/
 
-                    newPost2.child("message").setValue(questionBodyTag);
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("message", questionBodyTag);
+                    map.put("sender_uid", auth.getCurrentUser().getUid());
+                    map.put("sender_name", dataSnapshot.child("name").getValue());
+                    map.put("sender_image", dataSnapshot.child("user_image").getValue());
+                    map.put("posted_date", System.currentTimeMillis());
+                    map.put("post_id", newPost.getKey());
+                    newPost.setValue(map);
+
+                    Map<String, Object> map2 = new HashMap<>();
+                    map2.put("message", questionBodyTag);
+                    map2.put("sender_uid", auth.getCurrentUser().getUid());
+                    map2.put("sender_name", dataSnapshot.child("name").getValue());
+                    map2.put("sender_image", dataSnapshot.child("user_image").getValue());
+                    map2.put("posted_date", System.currentTimeMillis());
+                    map2.put("post_id", newPost.getKey());
+                    newPost2.setValue(map2);
+
+                    /*newPost2.child("message").setValue(questionBodyTag);
                     newPost2.child("sender_uid").setValue(auth.getCurrentUser().getUid());
                     newPost2.child("sender_name").setValue(dataSnapshot.child("name").getValue());
                     newPost2.child("sender_image").setValue(dataSnapshot.child("user_image").getValue());
                     newPost2.child("posted_date").setValue(System.currentTimeMillis());
-                    newPost2.child("post_id").setValue(newPost.getKey());
+                    newPost2.child("post_id").setValue(newPost.getKey());*/
 
                     mMessageInput.getText().clear();
-                    Toast.makeText(ChatroomActivity.this, "Message posted successfully",Toast.LENGTH_LONG).show();
 
                 }
 

@@ -11,17 +11,21 @@ public class Group {
 
     private String created_date;
     private String post_id;
+    private String founder_id;
+    private String group_type;
     private String message;
     private String group_image;
     private String group_id;
     private String group_name;
 
-    public Group(String created_date, String post_id, String message, String group_image, String group_id, String group_name) {
+    public Group(String created_date, String post_id,String founder_id,String group_type, String message, String group_image, String group_id, String group_name) {
         this.created_date = created_date;
         this.post_id = post_id;
         this.message = message;
+        this.group_type = group_type;
         this.group_image = group_image;
         this.group_id = group_id;
+        this.founder_id = founder_id;
         this.group_name = group_name;
     }
 
@@ -72,4 +76,21 @@ public class Group {
     public void setGroup_id(String group_id) {
         this.group_id = group_id;
     }
+
+    public String getGroup_type() {
+        return group_type;
+    }
+
+    public void setGroup_type(String group_type) {
+        this.group_type = group_type;
+    }
+
+    public String getFounder_id() {
+        return founder_id;
+    }
+
+    public void setFounder_id(String founder_id) {
+        this.founder_id = founder_id;
+    }
+
 }

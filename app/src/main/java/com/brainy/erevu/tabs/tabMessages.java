@@ -1,24 +1,54 @@
 package com.brainy.erevu.tabs;
 
 
+import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.brainy.erevu.Adapters.MessagesAdapter;
 import com.brainy.erevu.Pojos.Chat;
+import com.brainy.erevu.Pojos.Question;
 import com.brainy.erevu.R;
+import com.brainy.erevu.activity.MainActivity;
+import com.brainy.erevu.activity.MessageChatActivity;
+import com.brainy.erevu.activity.ReadQuestionActivity;
+import com.brainy.erevu.activity.SearchActivity;
 import com.brainy.erevu.activity.SigninActivity;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -28,9 +58,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.NetworkPolicy;
+import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 
 /**
@@ -38,8 +77,11 @@ import java.util.List;
  */
 public class tabMessages extends Fragment {
 
+    String sender_username = "";
+    String sender_name = "";
+    String sender_image = "";
     private Button signIn;
-    private DatabaseReference mDatabaseMessages, mDatabase;
+    private DatabaseReference mDatabaseMessages, mDatabase, mDatabaseChats;
     private GoogleApiClient mGoogleApiClient;
     private static int RC_SIGN_IN = 1;
     private ProgressBar progressBar;
@@ -47,7 +89,7 @@ public class tabMessages extends Fragment {
     private FirebaseAuth auth;
     private TextView mNoInbox;
     private RecyclerView mMessageList;
-
+    public RelativeLayout counter;
     SwipeRefreshLayout mSwipeRefreshLayout;
 
     MessagesAdapter chatAdapter;
@@ -63,7 +105,8 @@ public class tabMessages extends Fragment {
         // Database channels
         mDatabaseMessages = FirebaseDatabase.getInstance().getReference().child("Users_messages");
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
-
+        mDatabaseChats = FirebaseDatabase.getInstance().getReference().child("User_chats");
+        counter = (RelativeLayout) view.findViewById(R.id.counter);
         // SYNC DATABASE
         mDatabaseMessages.keepSynced(true);
         mDatabaseUsers.keepSynced(true);
@@ -145,7 +188,7 @@ public class tabMessages extends Fragment {
         });
     }
 
-    private void LoadMessage() {
+   /* private void LoadMessage() {
         Query quizQuery = mDatabaseMessages.child(auth.getCurrentUser().getUid());
 
         quizQuery.addChildEventListener(new ChildEventListener() {
@@ -181,24 +224,202 @@ public class tabMessages extends Fragment {
         });
 
     }
+*/
+    private void loadMessage() {
+
+        FirebaseRecyclerAdapter<Chat, tabMessages.UsersViewHolder> firebaseRecyclerAdapter = new FirebaseRecyclerAdapter<Chat,  tabMessages.UsersViewHolder>(
+
+                Chat.class,
+                R.layout.chatlist_item,
+                tabMessages.UsersViewHolder.class,
+                mDatabaseMessages.child(auth.getCurrentUser().getUid())
+
+        ) {
+            @Override
+            protected void populateViewHolder(final tabMessages.UsersViewHolder viewHolder, final Chat model, int position) {
+
+                mDatabaseUsers.child(model.getPost_id() ).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        sender_username = dataSnapshot.child("username").getValue().toString();
+                        sender_name = dataSnapshot.child("name").getValue().toString();
+                        sender_image = dataSnapshot.child("user_image").getValue().toString();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+                viewHolder.setDetails(getActivity(), model.getMessage(), model.getSender_image(), model.getSender_name(), model.getSender_username(), model.getPosted_date());
+
+                mDatabaseMessages.child(auth.getCurrentUser().getUid()).child(model.getSender_uid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.hasChild("read")) {
+                            Boolean read_status = (Boolean) dataSnapshot.child("read").getValue();
+                            if (read_status != null) {
+                                if (read_status.equals(false)) {
+                                    viewHolder.counter.setVisibility(View.VISIBLE);
+
+                                } else {
+
+                                    viewHolder.counter.setVisibility(View.GONE);
+                                }
+                            }
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
+
+                viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //MARK MESSAGE AS READ ON DB
+
+                        mDatabaseMessages.child(auth.getCurrentUser().getUid()).child(model.getSender_uid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                                if (dataSnapshot.hasChild("read")) {
+                                    Boolean read_status = (Boolean) dataSnapshot.child("read").getValue();
+
+                                    if (read_status != null) {
+                                        if (read_status.equals(false)) {
+                                            mDatabaseMessages.child(auth.getCurrentUser().getUid()).child(model.getSender_uid()).child("read").setValue(true);
+                                            viewHolder.counter.setVisibility(View.VISIBLE);
+
+                                        } else {
+
+                                            viewHolder.counter.setVisibility(View.GONE);
+                                        }
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                            }
+                        });
+
+                        Intent openActivity = new Intent(getActivity(), MessageChatActivity.class);
+                        openActivity.putExtra("user_id", model.getSender_uid() );
+                        openActivity.putExtra("name", model.getSender_name() );
+                        openActivity.putExtra("username", model.getSender_username());
+                        openActivity.putExtra("user_image", model.getSender_image() );
+                        startActivity(openActivity);
+
+
+                    }
+                });
+
+                viewHolder.mView.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View view) {
+
+                        AlertDialog diaBox = AskOption();
+                        diaBox.show();
+                        return false;
+                    }
+
+                    private AlertDialog AskOption() {
+                        AlertDialog myQuittingDialogBox =new AlertDialog.Builder(getActivity())
+                                //set message, title, and icon
+                                .setMessage("Remove this chat")
+
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        //your deleting code
+
+                                        mDatabaseMessages.child(auth.getCurrentUser().getUid()).child(model.getSender_uid()).removeValue();
+                                        mDatabaseChats.child(auth.getCurrentUser().getUid()).child(model.getSender_uid()).removeValue();
+                                        dialog.dismiss();
+                                        Toast.makeText(getActivity(), "chat deleted!",Toast.LENGTH_SHORT).show();
+                                    }
+
+                                })
+
+                                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+
+                                        dialog.dismiss();
+
+                                    }
+                                })
+
+                                .create();
+                        return myQuittingDialogBox;
+                    }
+                });
+            }
+        };
+
+        mMessageList.setAdapter(firebaseRecyclerAdapter);
+
+    }
+
+    // View Holder Class
+
+    public static class UsersViewHolder extends RecyclerView.ViewHolder {
+
+        View mView;
+        RelativeLayout counter;
+        public UsersViewHolder(View itemView) {
+            super(itemView);
+
+            mView = itemView;
+            counter = (RelativeLayout) mView.findViewById(R.id.counter);
+        }
+
+        public void setDetails(final Context ctx, String message, final String senderImage, String senderName, String senderUname, Long messageDate){
+
+            TextView messageText = (TextView) mView.findViewById(R.id.post_message);
+            final CircleImageView sender_image = (CircleImageView) mView.findViewById(R.id.post_image);
+            TextView sender_username = (TextView) mView.findViewById(R.id.post_username);
+            TextView sender_name = (TextView) mView.findViewById(R.id.post_name);
+            RelativeTimeTextView date = (RelativeTimeTextView) mView.findViewById(R.id.post_date);
+
+            messageText.setText(message);
+            sender_name.setText(senderName);
+            sender_username.setText(senderUname);
+            messageText.setText(message);
+            date.setReferenceTime(messageDate);
+
+            Glide.with(ctx)
+                    .load(senderImage).asBitmap()
+                    .placeholder(R.drawable.placeholder_image)
+                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                    .centerCrop()
+                    .into(new BitmapImageViewTarget(sender_image) {
+                        @Override
+                        protected void setResource(Bitmap resource) {
+                            RoundedBitmapDrawable circularBitmapDrawable =
+                                    RoundedBitmapDrawableFactory.create(ctx.getResources(), resource);
+                            circularBitmapDrawable.setCircular(true);
+                            sender_image.setImageDrawable(circularBitmapDrawable);
+                        }
+                    });
+
+        }
+
+
+    }
 
     @Override
     public void onStart() {
         super.onStart();
         chatList.clear();
         if (auth.getCurrentUser() != null) {
-            LoadMessage();
+            loadMessage();
         } else {}
     }
-
-   /* @Override
-    public void onResume() {
-        super.onResume();
-        chatList.clear();
-        if (auth.getCurrentUser() != null) {
-            LoadMessage();
-        } else {}
-    }*/
-
-
 }

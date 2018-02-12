@@ -38,7 +38,6 @@
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
                 android:id="@+id/Chat_list"
                 >
 
@@ -67,7 +66,11 @@
             android:orientation="horizontal"
             android:id="@+id/typing_bar"
             android:layout_alignParentBottom="true"
-            android:background="#fff">
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/typing_layout">
 
             <com.brainy.erevu.data.CustomEditText
                 android:id="@+id/input_message"
@@ -75,7 +78,7 @@
                 android:layout_height="43dp"
                 android:layout_marginBottom="3dp"
                 android:background="#00ffffff"
-                android:hint="Type a message"
+                android:hint="Say something..."
                 android:layout_marginRight="8dp"
                 android:layout_toLeftOf="@+id/sendBtn"
                 android:layout_toRightOf="@+id/photo"

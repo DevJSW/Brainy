@@ -2,10 +2,12 @@ package com.brainy.erevu.Adapters;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,6 +75,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         public RelativeLayout min_rely;
         public LinearLayout linearChat, liny;
         public TextView viewCounter, answersCounter, favouritesCounter;
+        RelativeLayout.LayoutParams params;
 
         RelativeLayout answer_rely;
 
@@ -93,6 +96,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             mAuth = FirebaseAuth.getInstance();
             mDatabase = FirebaseDatabase.getInstance().getReference().child("Discuss_forum");
             mDatabaseForumNotifications = FirebaseDatabase.getInstance().getReference().child("Forum_notifications");
+            params = (RelativeLayout.LayoutParams) message.getLayoutParams();
 
         }
 
@@ -110,19 +114,27 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         final String post_key = c.getPost_id();
         String from_user_id = c.getSender_uid();
 
-        if (c.getSender_name() != null)
-        holder.sender_name.setText(c.getSender_name());
-
-        holder.message.setText(c.getMessage());
-
         String current_user_id = mAuth.getCurrentUser().getUid();
-        String sender_user_id = c.getSender_uid();
+
+
+    /*    if (c.getSender_name() != null)
+        holder.sender_name.setText(c.getSender_name());*/
+        holder.message.setText(c.getMessage());
+        if (from_user_id.equals(current_user_id)) {
+            holder.params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            holder.message.setBackgroundResource(R.drawable.chat_bg);
+            holder.message.setLayoutParams(holder.params);
+        } else {
+            holder.params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            holder.message.setBackgroundResource(R.drawable.chat_bg_2);
+            holder.message.setLayoutParams(holder.params);
+        }
 
 
         if (c.getPosted_date() != null)
         holder.post_date.setReferenceTime(Long.parseLong(String.valueOf(c.getPosted_date())));
 
-        Glide.with(ctx)
+       /* Glide.with(ctx)
                 .load(c.getSender_image()).asBitmap()
                 .placeholder(R.drawable.placeholder_image)
                 .diskCacheStrategy(DiskCacheStrategy.RESULT)
@@ -135,7 +147,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
                         circularBitmapDrawable.setCircular(true);
                         holder.civ.setImageDrawable(circularBitmapDrawable);
                     }
-                });
+                });*/
 
     }
 

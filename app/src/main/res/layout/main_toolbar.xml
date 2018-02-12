@@ -48,7 +48,7 @@
                 android:layout_width="30dp"
                 android:layout_height="25dp"
                 android:id="@+id/post_message"
-                android:layout_marginRight="23dp"
+                android:layout_marginRight="22dp"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:orientation="vertical">
@@ -83,7 +83,7 @@
             android:layout_width="30dp"
             android:layout_height="25dp"
             android:id="@+id/noty_icon"
-            android:layout_marginRight="23dp"
+            android:layout_marginRight="22dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:orientation="vertical">

@@ -35,13 +35,63 @@
     <include layout="@layout/content_main" />
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabSearchChannel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="230dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:visibility="invisible"
+        app:backgroundTint="@color/grey_line"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp"
+        android:src="@drawable/if_search" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabCreateBroadcast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="160dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:visibility="invisible"
+        app:backgroundTint="@color/grey_line"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp"
+        android:src="@drawable/broadcast" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabAddGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="90dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:visibility="invisible"
+        app:elevation="6dp"
+        app:backgroundTint="@color/grey_line"
+        app:pressedTranslationZ="12dp"
+        android:src="@drawable/add_group_grey" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabQuiz"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="90dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:visibility="invisible"
+        app:elevation="6dp"
+        app:backgroundTint="@color/grey_line"
+        app:pressedTranslationZ="12dp"
+        android:src="@drawable/ask_quiz" />
+
+    <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:layout_gravity="end|bottom"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_addgroup_" />
+        android:src="@drawable/ic_add_white_" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabMessage"
@@ -56,8 +106,10 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:layout_gravity="end|bottom"
+        android:layout_gravity="bottom|end"
+        app:elevation="6dp"
+        app:backgroundTint="@color/colorAccent"
+        app:pressedTranslationZ="12dp"
         android:layout_margin="@dimen/fab_margin"
         android:src="@drawable/ic_add_white_" />
 

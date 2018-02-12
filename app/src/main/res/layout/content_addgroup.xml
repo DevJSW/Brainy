@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:layout_margin="5dp"
-            android:text="Provide a group subject and optional group icon"/>
+            android:text="Provide a group subject &amp; optional group icon"/>
 
     </LinearLayout>
 
