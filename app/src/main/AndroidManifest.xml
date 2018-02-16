@@ -17,8 +17,10 @@
     <application
         android:name=".Pojos.brainy"
         android:allowBackup="true"
+        android:hardwareAccelerated="false"
         android:icon="@drawable/erevu_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
         <activity
@@ -221,7 +223,16 @@
             android:label="" />
         <activity android:name=".activity.AddChannelActivity" />
         <activity android:name=".activity.ChannelProfileActivity" />
-        <activity android:name=".activity.SearchChannelActivity"></activity>
+        <activity android:name=".activity.SearchChannelActivity" />
+        <activity android:name=".activity.ChannelPhotoActivity" />
+        <activity
+            android:name=".activity.EditChannelActivity"
+            android:label="@string/title_activity_edit_channel"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.EditWallpaperActivity"
+            android:label="@string/title_activity_edit_wallpaper"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

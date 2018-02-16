@@ -32,23 +32,22 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ChatPhotoActivity extends AppCompatActivity {
+public class ChannelPhotoActivity extends AppCompatActivity {
 
     private ImageView addImage, backBtn;
     private ProgressDialog mProgress;
 
     private Boolean isNetworkAvailable = false;
 
-    String user_id = null;
-    String user_name = null;
+    String group_id = null;
+    String group_name = null;
     String name = null;
-    String user_image = null;
+    String group_image = null;
 
     String currentuser_image = null;
     String currentuser_name = null;
-    String current_name = null;
 
-    private DatabaseReference mDatabaseUsers, mDatabaseChats, mDatabaseMessages;
+    private DatabaseReference mDatabaseUsers, mDatabaseGroupChats, mDatabaseGroupChatlist;
     private FirebaseUser mCurrentUser;
     private FirebaseAuth auth;
     private StorageReference mStorage;
@@ -61,26 +60,25 @@ public class ChatPhotoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo);
-
-        Window window = ChatPhotoActivity.this.getWindow();
+        Window window = ChannelPhotoActivity.this.getWindow();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            window.setStatusBarColor(ContextCompat.getColor( ChatPhotoActivity.this, R.color.colorPrimaryDark));
+            window.setStatusBarColor(ContextCompat.getColor( ChannelPhotoActivity.this, R.color.colorPrimaryDark));
 
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         }
 
-        user_id = getIntent().getStringExtra("user_id");
-        user_image = getIntent().getStringExtra("user_image");
-        user_name = getIntent().getStringExtra("user_name");
+        group_id = getIntent().getStringExtra("group_id");
+        group_name = getIntent().getStringExtra("group_name");
+        group_image = getIntent().getStringExtra("group_image");
         name = getIntent().getStringExtra("name");
 
         addImage = (ImageView) findViewById(R.id.addImage);
         mProgress = new ProgressDialog(this);
         auth = FirebaseAuth.getInstance();
         mStorage = FirebaseStorage.getInstance().getReference();
-        mDatabaseChats = FirebaseDatabase.getInstance().getReference().child("User_chats");
-        mDatabaseMessages = FirebaseDatabase.getInstance().getReference().child("Users_messages");
+        mDatabaseGroupChatlist = FirebaseDatabase.getInstance().getReference().child("Group_chatlist");
+        mDatabaseGroupChats = FirebaseDatabase.getInstance().getReference().child("Group_chats");
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users");
 
         mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
@@ -88,7 +86,6 @@ public class ChatPhotoActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 currentuser_name = dataSnapshot.child("username").getValue().toString();
                 currentuser_image = dataSnapshot.child("user_image").getValue().toString();
-                current_name = dataSnapshot.child("name").getValue().toString();
             }
 
             @Override
@@ -136,71 +133,37 @@ public class ChatPhotoActivity extends AppCompatActivity {
 
                 final Uri downloadUrl = taskSnapshot.getDownloadUrl();
 
-                final DatabaseReference newPost = mDatabaseChats.child(auth.getCurrentUser().getUid()).child(user_id).push();
-                final DatabaseReference newPost2 = mDatabaseChats.child(user_id).child(auth.getCurrentUser().getUid()).push();
-                final DatabaseReference newPost3 = mDatabaseMessages.child(user_id).child(auth.getCurrentUser().getUid());
-                final DatabaseReference newPost4 = mDatabaseMessages.child(auth.getCurrentUser().getUid()).child(user_id);
+                final DatabaseReference newPost =  mDatabaseGroupChats.child(group_id).push();
+                final DatabaseReference newPost2 =  mDatabaseGroupChatlist.child(group_id);
 
                 //MINE
                 Map<String, Object> map = new HashMap<>();
                 map.put("photo", downloadUrl.toString());
-                map.put("sender_uid", auth.getCurrentUser().getUid());
-                map.put("receiver_uid", auth.getCurrentUser().getUid());
+                map.put("sender_uid", "#"+auth.getCurrentUser().getUid());
                 map.put("message_type", "PHOTO");
-                map.put("sender_name", currentuser_name);
-                map.put("sender_image", currentuser_image);
+                map.put("sender_name", group_name);
+                map.put("sender_image", group_image);
                 map.put("read", true);
+                map.put("group_id", group_id);
                 map.put("posted_date", System.currentTimeMillis());
                 map.put("post_id", newPost.getKey());
                 newPost.setValue(map);
 
-                // THERES
-
+                /*//THERE'S
                 Map<String, Object> map2 = new HashMap<>();
-                map2.put("photo", downloadUrl.toString());
-                map2.put("sender_uid", auth.getCurrentUser().getUid());
-                map2.put("receiver_uid", user_id);
+                map2.put("message", "Photo");
+                map2.put("group_image", group_image);
                 map2.put("message_type", "PHOTO");
-                map2.put("sender_name", currentuser_name);
-                map2.put("sender_image", currentuser_image);
+                map2.put("group_name", group_name);
+                map2.put("group_id", group_id);
                 map2.put("read", false);
                 map2.put("posted_date", System.currentTimeMillis());
                 map2.put("post_id", newPost2.getKey());
-                newPost2.setValue(map2);
+                newPost2.setValue(map2);*/
 
-                //THERE'S
+                ChannelPhotoActivity.this.finish();
 
-                Map<String, Object> map3 = new HashMap<>();
-                map3.put("message", "Photo");
-                map3.put("sender_uid", auth.getCurrentUser().getUid());
-                map3.put("receiver", user_id);
-                map3.put("message_type", "PHOTO");
-                map3.put("sender_name", current_name);
-                map3.put("sender_username", currentuser_name);
-                map3.put("sender_image", currentuser_image);
-                map3.put("read", false);
-                map3.put("posted_date", System.currentTimeMillis());
-                map3.put("post_id", newPost3.getKey());
-                newPost3.setValue(map3);
-
-                //YOU SCREEN ON CHATLIST
-
-                Map<String, Object> map4 = new HashMap<>();
-                map4.put("message", "Photo");
-                map4.put("sender_uid", user_id);
-                map4.put("receiver", auth.getCurrentUser().getUid());
-                map4.put("message_type", "PHOTO");
-                map4.put("sender_name", name);
-                map4.put("sender_username", user_name);
-                map4.put("sender_image", user_image);
-                map4.put("read", true);
-                map4.put("posted_date", System.currentTimeMillis());
-                map4.put("post_id", newPost4.getKey());
-                newPost4.setValue(map4);
-
-                ChatPhotoActivity.this.finish();
-
-                Toast.makeText(ChatPhotoActivity.this, "Photo sent successfully!", Toast.LENGTH_LONG).show();
+                Toast.makeText(ChannelPhotoActivity.this, "Photo sent successfully!", Toast.LENGTH_LONG).show();
                 finish();
 
             }
@@ -231,8 +194,8 @@ public class ChatPhotoActivity extends AppCompatActivity {
             CropImage.activity(mImageUri)
                     .setGuidelines(CropImageView.Guidelines.ON)
                     .setCropShape(CropImageView.CropShape.RECTANGLE)
-                    .setAspectRatio(10, 10)
-                    .start(ChatPhotoActivity.this);
+                    .setAspectRatio(100, 100)
+                    .start(ChannelPhotoActivity.this);
         }
 
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
@@ -246,4 +209,6 @@ public class ChatPhotoActivity extends AppCompatActivity {
             }
         }
     }
+
 }
+

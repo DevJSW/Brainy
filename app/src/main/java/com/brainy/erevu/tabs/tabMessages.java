@@ -44,6 +44,7 @@ import com.brainy.erevu.activity.MessageChatActivity;
 import com.brainy.erevu.activity.ReadQuestionActivity;
 import com.brainy.erevu.activity.SearchActivity;
 import com.brainy.erevu.activity.SigninActivity;
+import com.brainy.erevu.activity.ViewUserProfileActivity;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
@@ -278,6 +279,14 @@ public class tabMessages extends Fragment {
                     }
                 });
 
+                viewHolder.sender_image.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent openRead = new Intent(getActivity(), ViewUserProfileActivity.class);
+                        openRead.putExtra("user_id", model.getSender_uid() );
+                        startActivity(openRead);
+                    }
+                });
 
                 viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -373,17 +382,19 @@ public class tabMessages extends Fragment {
 
         View mView;
         RelativeLayout counter;
+        CircleImageView sender_image;
         public UsersViewHolder(View itemView) {
             super(itemView);
 
             mView = itemView;
             counter = (RelativeLayout) mView.findViewById(R.id.counter);
+            sender_image = (CircleImageView) mView.findViewById(R.id.post_image);
         }
 
         public void setDetails(final Context ctx, String message, final String senderImage, String senderName, String senderUname, Long messageDate){
 
             TextView messageText = (TextView) mView.findViewById(R.id.post_message);
-            final CircleImageView sender_image = (CircleImageView) mView.findViewById(R.id.post_image);
+
             TextView sender_username = (TextView) mView.findViewById(R.id.post_username);
             TextView sender_name = (TextView) mView.findViewById(R.id.post_name);
             RelativeTimeTextView date = (RelativeTimeTextView) mView.findViewById(R.id.post_date);

@@ -10,10 +10,18 @@
             android:icon="@drawable/profile_icon_"
             android:title="Profile" />
 
-      <!--  <item
-            android:id="@+id/nav_explore"
-            android:icon="@drawable/nav_settings"
-            android:title="Explore" />-->
+        <item
+            android:id="@+id/nav_search"
+            android:icon="@drawable/search_nav"
+            android:title="Search question" />
+        <item
+            android:id="@+id/nav_inbox"
+            android:icon="@drawable/inbox_nav"
+            android:title="Inbox" />
+        <item
+            android:id="@+id/nav_notification"
+            android:icon="@drawable/noty_nav"
+            android:title="Notifications" />
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/if_settings"
@@ -30,12 +38,8 @@
             android:title="Favourites" />
 
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/if_about"
-            android:title="About" />
-        <item
             android:id="@+id/nav_manage"
-            android:icon="@drawable/if_star"
+            android:icon="@drawable/star_nav"
             android:title="Rate app" />
     </group>
 

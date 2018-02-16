@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="3dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2.5dp"
+        android:id="@+id/liny"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:id="@+id/user_image"
+            android:layout_gravity="bottom"
+            android:layout_marginRight="3dp"
+            android:layout_marginBottom="17dp"
+            android:layout_marginTop="10dp">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="5dp"
+                android:id="@+id/post_image"
+                android:layout_marginBottom="7dp"
+                android:src="@drawable/placeholder_image"/>
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:orientation="horizontal">
+
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="75dp"
+                android:layout_alignParentLeft="true"
+                android:id="@+id/messageRely"
+                android:background="@drawable/chat_bg_2"
+                android:layout_marginLeft="10dp">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/toplay"
+                    android:orientation="horizontal"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/reply_bg">
+                    <View
+                        android:layout_width="2dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="5dp"
+                        android:layout_marginLeft="1dp"
+                        android:layout_marginTop="5dp"
+                        android:background="@color/colorAccent"/>
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <com.brainy.erevu.data.MyFont
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="Message"
+                            android:id="@+id/replyedName"
+                            android:textColor="@color/colorAccent"
+                            android:padding="5dp"
+                            android:gravity="left"
+                            android:textSize="15dp"
+                            />
+                        <com.brainy.erevu.data.MyFont
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:text="Message"
+                            android:maxLines="3"
+                            android:id="@+id/replyedMsg"
+                            android:paddingLeft="5dp"
+                            android:paddingBottom="5dp"
+                            android:paddingRight="5dp"
+                            android:gravity="left"
+                            android:textSize="15dp"
+                            />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <com.brainy.erevu.data.MyFont
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/toplay"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Message"
+                    android:padding="10dp"
+                    android:gravity="left"
+                    android:textSize="15dp"
+                    />
+
+            </RelativeLayout>
+
+
+
+                    <com.github.curioustechizen.ago.RelativeTimeTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:paddingTop="3dp"
+                        android:layout_marginRight="8dp"
+                        android:layout_below="@+id/messageRely"
+                        android:textSize="11dp"
+                        android:layout_gravity="right"
+                        android:id="@+id/post_date" />
+
+                </RelativeLayout>
+
+
+
+            </LinearLayout>
+
+
+    </LinearLayout>
+

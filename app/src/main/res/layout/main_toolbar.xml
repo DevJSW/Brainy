@@ -18,10 +18,10 @@
         android:orientation="horizontal">
 
         <ImageView
-            android:layout_width="22dp"
-            android:layout_height="22dp"
+            android:layout_width="23dp"
+            android:layout_height="23dp"
             android:layout_gravity="center_vertical"
-            android:src="@drawable/e_icon"/>
+            android:src="@drawable/e_icon3"/>
 
         <com.brainy.erevu.data.MyBoldFont
             android:layout_width="wrap_content"
@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="2.3dp"
             android:layout_marginLeft="1dp"
-            android:textSize="23dp"
+            android:textSize="25dp"
             android:text="revu"
             />
 
@@ -48,9 +48,9 @@
                 android:layout_width="30dp"
                 android:layout_height="25dp"
                 android:id="@+id/post_message"
-                android:layout_marginRight="22dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
+                android:visibility="gone"
+                android:layout_marginRight="21dp"
+                android:layout_gravity="center_vertical"
                 android:orientation="vertical">
 
                 <ImageView
@@ -59,7 +59,7 @@
                     android:id="@+id/message"
                     android:paddingBottom="0.7dp"
                     android:layout_marginTop="3.7dp"
-                    android:src="@drawable/inbox"
+                    android:src="@drawable/inbox_icon"
                     android:scaleType="fitXY"
                     android:layout_centerHorizontal="true"
                     android:layout_gravity="center_horizontal" />
@@ -83,16 +83,16 @@
             android:layout_width="30dp"
             android:layout_height="25dp"
             android:id="@+id/noty_icon"
+            android:visibility="gone"
             android:layout_marginRight="22dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
+            android:layout_gravity="center_vertical"
             android:orientation="vertical">
 
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="21dp"
                 android:id="@+id/userimg"
-                android:src="@drawable/bell3"
+                android:src="@drawable/bell33"
                 android:layout_marginTop="1dp"
                 android:scaleType="fitXY"
                 android:layout_centerHorizontal="true"
@@ -114,7 +114,7 @@
 
         </RelativeLayout>
 
-            <ImageView
+            <!--<ImageView
                 android:layout_width="24dp"
                 android:layout_height="23dp"
                 android:id="@+id/search_icon"
@@ -126,7 +126,16 @@
                 android:scaleType="fitXY"
                 android:layout_centerVertical="true"
                 android:layout_centerHorizontal="true"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal" />-->
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                app:civ_border_color="#fff"
+                android:id="@+id/toolbar_avator"
+                android:layout_marginRight="10dp"
+                android:layout_gravity="center_vertical"
+                android:src="@drawable/placeholder_image"/>
         </LinearLayout>
     </RelativeLayout>
 

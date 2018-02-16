@@ -224,7 +224,7 @@ public class SignupActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        if (dataSnapshot.hasChild(username)) {
+                        if (dataSnapshot.hasChild(username.toLowerCase())) {
                             // use "username" already exists
                             // Let the user know he needs to pick another username.
                             inputUsername.setError("Username already exists");
@@ -253,24 +253,12 @@ public class SignupActivity extends AppCompatActivity {
                                                 final DatabaseReference newPostUserName = mDatabaseUsernames;
                                                 String deviceToken = FirebaseInstanceId.getInstance().getToken();
 
-                                                /*newPost.child(auth.getCurrentUser().getUid()).child("date").setValue(stringDate);
-                                                newPost.child(auth.getCurrentUser().getUid()).child("uid").setValue(auth.getCurrentUser().getUid());
-                                                newPost.child(auth.getCurrentUser().getUid()).child("name").setValue(name);
-                                                newPost.child(auth.getCurrentUser().getUid()).child("username").setValue("@"+username.toLowerCase());
-                                                newPost.child(auth.getCurrentUser().getUid()).child("user_image").setValue("");
-                                                newPost.child(auth.getCurrentUser().getUid()).child("joined_date").setValue(stringDate);
-                                                newPost.child(auth.getCurrentUser().getUid()).child("user_email").setValue(email);
-                                                newPost.child(auth.getCurrentUser().getUid()).child("user_password").setValue(password);
-                                                newPost.child(auth.getCurrentUser().getUid()).child("sign_in_type").setValue("manual_sign_In");
-                                                newPost.child(auth.getCurrentUser().getUid()).child("reputation").setValue("Beginner");
-                                                newPost.child(auth.getCurrentUser().getUid()).child("points_earned").setValue(10);
-                                                newPost.child(auth.getCurrentUser().getUid()).child("device_token").setValue(deviceToken);*/
 
                                                 Map<String, Object> map = new HashMap<>();
                                                 map.put("uid", auth.getCurrentUser().getUid());
                                                 map.put("name", name);
                                                 map.put("status", "");
-                                                map.put("username", "@"+username.toLowerCase());
+                                                map.put("username", "@"+username);
                                                 map.put("user_image", "");
                                                 map.put("joined_date", stringDate);
                                                 map.put("user_email", email);
@@ -281,7 +269,7 @@ public class SignupActivity extends AppCompatActivity {
                                                 newPost.setValue(map);
 
                                                 //ADD USERNAME TO DB
-                                                newPostUserName.child(username).setValue(auth.getCurrentUser().getUid());
+                                                newPostUserName.child(username.toLowerCase()).setValue(username);
 
                                                 Toast.makeText(SignupActivity.this, "Welcome " + name + " your Account was created successfully!",
                                                         Toast.LENGTH_LONG).show();
@@ -308,15 +296,6 @@ public class SignupActivity extends AppCompatActivity {
                 });
 
             }
-
-
-           /* if (containsPartOf(password,name)) {
-                System.out.println("pass contains substring of username");
-                Toast.makeText(getApplicationContext(), "No special chars found in password! e.g [!@#$%^&*+=?-] ", Toast.LENGTH_SHORT).show();
-            }
-            if (containsPartOf(password,email)) {
-                System.out.println("pass contains substring of email");
-            }*/
 
         }
 

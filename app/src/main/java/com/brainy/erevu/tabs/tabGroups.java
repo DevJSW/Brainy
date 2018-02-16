@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -194,6 +195,12 @@ public class tabGroups extends Fragment {
             @Override
             protected void populateViewHolder(final tabGroups.GroupsViewHolder viewHolder, final Group model, int position) {
 
+                if ("CHANNEL".equals(model.getGroup_type())) {
+                    viewHolder.groupIcon.setImageResource(R.drawable.broadcast);
+                } else {
+                    viewHolder.groupIcon.setImageResource(R.drawable.group_icon);
+                }
+
                 Query lastQuery = mDatabaseGroupChats.child(model.getGroup_id()).orderByKey().limitToLast(1);
                 lastQuery.addChildEventListener(new ChildEventListener() {
                     @Override
@@ -264,6 +271,7 @@ public class tabGroups extends Fragment {
 
         View mView;
         DatabaseReference mDatabaseGroupChatlist, mDatabaseGroups;
+        ImageView groupIcon;
 
         public GroupsViewHolder(View itemView) {
             super(itemView);
@@ -271,6 +279,7 @@ public class tabGroups extends Fragment {
             mView = itemView;
             mDatabaseGroupChatlist = FirebaseDatabase.getInstance().getReference().child("Group_chatlist");
             mDatabaseGroups = FirebaseDatabase.getInstance().getReference().child("Groups");
+            groupIcon = (ImageView) mView.findViewById(R.id.groupIcon);
         }
 
         public void setDetails(Context ctx, String groupName, String groupMessage, String groupImage){

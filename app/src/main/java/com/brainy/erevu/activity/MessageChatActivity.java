@@ -1,6 +1,7 @@
 package com.brainy.erevu.activity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -14,17 +15,21 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.brainy.erevu.Adapters.MessageListAdapter;
 import com.brainy.erevu.R;
 import com.brainy.erevu.Pojos.Chat;
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -33,6 +38,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -63,9 +70,14 @@ public class MessageChatActivity extends AppCompatActivity {
     LinearLayoutManager mLinearlayout;
     private static final int TOTAL_ITEMS_TO_LOAD = 10;
     private int currentPage =1;
+    private LinearLayout background;
 
-    private ImageView sendBtn, backBtn, userImg, photo;
+    private ImageView sendBtn, backBtn, userImg, photo, addImage;
     private EditText inputMessage;
+
+    private Uri resultUri = null;
+    private Uri mImageUri = null;
+    private static int GALLERY_REQUEST =1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +107,24 @@ public class MessageChatActivity extends AppCompatActivity {
         mDatabaseChats.keepSynced(true);
         mDatabaseUsers.keepSynced(true);
         mDatabaseMessages.keepSynced(true);
+
+       /* background = (LinearLayout) findViewById(R.id.root_view);
+        mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild("chat_wallpaper")) {
+                    String wallpaper = dataSnapshot.child("chat_wallpaper").getValue().toString();
+                    //background.setBackgroundResource();
+                    //Glide.with(getApplicationContext()).load(wallpaper).into(background);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });*/
+
 
         mNoNotification = (TextView) findViewById(R.id.noNotyTxt);
         auth = FirebaseAuth.getInstance();
@@ -370,5 +400,29 @@ public class MessageChatActivity extends AppCompatActivity {
 
         }
     }
+
+   /* @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_read, menu);
+        return true;
+    }
+*/
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_wallpaper) {
+            Intent openRead = new Intent(MessageChatActivity.this, EditWallpaperActivity.class);
+            openRead.putExtra("user_id", user_id );
+            startActivity(openRead);
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
 
 }

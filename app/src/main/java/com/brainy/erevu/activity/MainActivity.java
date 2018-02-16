@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity
     private FirebaseAuth auth;
     private RelativeLayout noty_icon, messages;
     private TextView noty_count, message_count;
-    private ImageView search_icon;
+    private ImageView toolbarAvator;
 
     private static final int REQUEST_CODE_PERMISSION = 1;
     String mPermission = Manifest.permission.ACCESS_FINE_LOCATION;
@@ -371,14 +371,14 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        search_icon = (ImageView) findViewById(R.id.search_icon);
+       /* search_icon = (ImageView) findViewById(R.id.search_icon);
         search_icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent openRead = new Intent(MainActivity.this, SearchActivity.class);
                 startActivity(openRead);
             }
-        });
+        });*/
 
         //CHECK FOR NOTIFICATIONS
         if (auth.getCurrentUser() != null) {
@@ -397,9 +397,11 @@ public class MainActivity extends AppCompatActivity
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.getValue() == null) {
                                     noty_count.setVisibility(View.GONE);
+                                    noty_icon.setVisibility(View.GONE);
                                 } else {
                                     noty_count.setText(dataSnapshot.getChildrenCount() + "");
                                     noty_count.setVisibility(View.VISIBLE);
+                                    noty_icon.setVisibility(View.VISIBLE);
                                 }
                             }
 
@@ -436,9 +438,11 @@ public class MainActivity extends AppCompatActivity
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.getValue() == null) {
                                     message_count.setVisibility(View.GONE);
+                                    messages.setVisibility(View.GONE);
                                 } else {
                                     message_count.setText(dataSnapshot.getChildrenCount() + "");
                                     message_count.setVisibility(View.VISIBLE);
+                                    messages.setVisibility(View.VISIBLE);
                                 }
                             }
 
@@ -490,7 +494,15 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         }
-
+        toolbarAvator = (ImageView) findViewById(R.id.toolbar_avator);
+        toolbarAvator.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (auth.getCurrentUser() != null) {
+                    startActivity(new Intent(new Intent(MainActivity.this, EditProfileActivity.class)));
+                }
+            }
+        });
         if (auth.getCurrentUser() != null) {
             mDatabaseUsers.child(auth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
@@ -522,6 +534,22 @@ public class MainActivity extends AppCompatActivity
                                     nav_user.setImageDrawable(circularBitmapDrawable);
                                 }
                             });
+
+                    Glide.with(getApplicationContext())
+                            .load(post_image).asBitmap()
+                            .placeholder(R.drawable.placeholder_image)
+                            .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                            .centerCrop()
+                            .into(new BitmapImageViewTarget(toolbarAvator) {
+                                @Override
+                                protected void setResource(Bitmap resource) {
+                                    RoundedBitmapDrawable circularBitmapDrawable =
+                                            RoundedBitmapDrawableFactory.create(getApplicationContext().getResources(), resource);
+                                    circularBitmapDrawable.setCircular(true);
+                                    toolbarAvator.setImageDrawable(circularBitmapDrawable);
+                                }
+                            });
+
                 }
 
                 @Override
@@ -681,6 +709,24 @@ public class MainActivity extends AppCompatActivity
                 snackbar.show();
             }
 
+        } else if (id == R.id.nav_notification) {
+
+            Intent cardonClick = new Intent(MainActivity.this, NotificationActivity.class);
+            cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(cardonClick);
+
+        } else if (id == R.id.nav_inbox) {
+
+            Intent cardonClick = new Intent(MainActivity.this, InboxActivity.class);
+            cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(cardonClick);
+
+        } else if (id == R.id.nav_search) {
+
+            Intent cardonClick = new Intent(MainActivity.this, SearchActivity.class);
+            cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(cardonClick);
+
         } else if (id == R.id.nav_favourites) {
 
             Intent cardonClick = new Intent(MainActivity.this, FavouriteActivity.class);
@@ -693,12 +739,7 @@ public class MainActivity extends AppCompatActivity
             cardonClick.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(cardonClick);
 
-        }*/ else if (id == R.id.nav_slideshow) {
-
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.erevu.erevu&hl=en"));
-            startActivity(browserIntent);
-
-        } else if (id == R.id.nav_manage) {
+        }*/  else if (id == R.id.nav_manage) {
 
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.erevu.erevu&hl=en"));
             startActivity(browserIntent);
@@ -1329,9 +1370,12 @@ public class MainActivity extends AppCompatActivity
                 questionTitlTag = questionTitleInput.getText().toString().trim();
                 questionBodyTag = questionBodyInput.getText().toString().trim();
                 if (TextUtils.isEmpty(questionTitlTag)) {
+                    questionTitleInput.setError("Question title CANNOT be empty!");
 
-                    Toast.makeText(MainActivity.this, "Question title CANNOT be empty!", Toast.LENGTH_LONG).show();
-
+                } else if (TextUtils.isEmpty(questionBodyTag)) {
+                    questionBodyInput.setError("You need to explain your question here!");
+                } else if (questionBodyInput.length() < 20) {
+                    questionBodyInput.setError("Explanation to short");
                 } else if (selectedTopic == null) {
 
                     Toast.makeText(MainActivity.this, "Please TAG your question!", Toast.LENGTH_LONG).show();
@@ -1900,27 +1944,5 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-
-        switch (item.getItemId()) {
-
-            case android.R.id.home:
-                this.finish();
-                return true;
-            default:
-                if (id == R.id.action_logout) {
-
-                   auth.signOut();
-                   this.recreate();
-                    Toast.makeText(MainActivity.this, "You have successfully Logged out!",Toast.LENGTH_LONG).show();
-                }
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
 }
-//E/UncaughtException: java.lang.OutOfMemoryError: Failed to allocate a 3534412 byte allocation with 3405864 free bytes and 3MB until OOM
-//at dalvik.system.VMRuntime.newNonMovableArray(Native Method)

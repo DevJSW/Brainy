@@ -40,6 +40,7 @@ import java.util.Date;
 public class ChannelProfileActivity extends AppCompatActivity {
 
     String group_id = null;
+    String founder_id = null;
     String group_name = null;
     String group_image = null;
     String created_date = null;
@@ -53,7 +54,7 @@ public class ChannelProfileActivity extends AppCompatActivity {
     private ImageView userAvator, starred,backBtn;
     private LinearLayout exitGroup;
     private RecyclerView participantsList;
-    private TextView subscriberCounter, invite;
+    private TextView subscriberCounter, invite, leave;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +75,7 @@ public class ChannelProfileActivity extends AppCompatActivity {
         }
 
         group_id = getIntent().getStringExtra("group_id");
+        founder_id = getIntent().getStringExtra("founder_id");
         group_name = getIntent().getStringExtra("group_name");
         group_image = getIntent().getStringExtra("group_image");
         //name = getIntent().getStringExtra("name");
@@ -129,35 +131,50 @@ public class ChannelProfileActivity extends AppCompatActivity {
             }
         });
 
+        leave = (TextView) findViewById(R.id.leave);
         exitGroup = (LinearLayout) findViewById(R.id.exitLay);
+        if (auth.getCurrentUser().getUid().equals(founder_id)) {
+            leave.setText("Edit Channel");
+        } else {
+            leave.setText("Exit Channel");
+        }
         exitGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //ADD USER TO PARTICIPANTS LISTS
-                final Context context = ChannelProfileActivity.this;
 
-                // custom dialog
-                final Dialog dialog = new Dialog(context);
-                dialog.setContentView(R.layout.exit_dialog);
-                dialog.setTitle("Options");
-                dialog.show();
+                if (auth.getCurrentUser().getUid().equals(founder_id)) {
+                    Intent openActivity = new Intent(ChannelProfileActivity.this, EditChannelActivity.class);
+                    openActivity.putExtra("group_id", group_id );
+                    openActivity.putExtra("group_name", group_name );
+                    openActivity.putExtra("group_founder", group_founder);
+                    openActivity.putExtra("group_image", group_image );
+                    startActivity(openActivity);
+                } else {
+                    //ADD USER TO PARTICIPANTS LISTS
+                    final Context context = ChannelProfileActivity.this;
 
-                RelativeLayout addUserToGroup = (RelativeLayout) dialog.findViewById(R.id.addUserToGroup);
-                addUserToGroup.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
+                    // custom dialog
+                    final Dialog dialog = new Dialog(context);
+                    dialog.setContentView(R.layout.exit_dialog);
+                    dialog.setTitle("Options");
+                    dialog.show();
 
-                        //exit form group
-                        mDatabaseGroups.child(group_id).child("Participants").child(auth.getCurrentUser().getUid()).removeValue();
-                        //exit from group users
-                        mDatabaseUserGroups.child(auth.getCurrentUser().getUid()).child(group_id).removeValue();
+                    RelativeLayout addUserToGroup = (RelativeLayout) dialog.findViewById(R.id.addUserToGroup);
+                    addUserToGroup.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
 
-                        //SEND ALERT MESSAGE
-                        final DatabaseReference newGroupChats =  mDatabaseGroupChats.child(group_id).push();
-                        final DatabaseReference newGroupChatlist =  mDatabaseGroupChatlist.child(group_id);
-                        Date date = new Date();
-                        final String stringDate = DateFormat.getDateTimeInstance().format(date);
-                        final String stringDate2 = DateFormat.getDateInstance().format(date);
+                            //exit form group
+                            mDatabaseGroups.child(group_id).child("Participants").child(auth.getCurrentUser().getUid()).removeValue();
+                            //exit from group users
+                            mDatabaseUserGroups.child(auth.getCurrentUser().getUid()).child(group_id).removeValue();
+
+                            //SEND ALERT MESSAGE
+                            final DatabaseReference newGroupChats = mDatabaseGroupChats.child(group_id).push();
+                            final DatabaseReference newGroupChatlist = mDatabaseGroupChatlist.child(group_id);
+                            Date date = new Date();
+                            final String stringDate = DateFormat.getDateTimeInstance().format(date);
+                            final String stringDate2 = DateFormat.getDateInstance().format(date);
 
                        /* newGroupChats.child("message").setValue(currentuser_name+ " left on "+stringDate2);
                         newGroupChats.child("sender_uid").setValue(auth.getCurrentUser().getUid());
@@ -166,14 +183,14 @@ public class ChannelProfileActivity extends AppCompatActivity {
                         newGroupChats.child("posted_date").setValue(System.currentTimeMillis());
                         newGroupChats.child("post_id").setValue(newGroupChats.getKey());*/
 
-                        startActivity(new Intent(ChannelProfileActivity.this, MainActivity.class));
-                        Toast.makeText(ChannelProfileActivity.this, "Exit successfully!",Toast.LENGTH_LONG).show();
-                        dialog.dismiss();
-                    }
-                });
+                            ChannelProfileActivity.this.finish();
+                            Toast.makeText(ChannelProfileActivity.this, "Exit successfully!", Toast.LENGTH_LONG).show();
+                            dialog.dismiss();
+                        }
+                    });
+                }
             }
         });
-
         mDatabaseUsers.keepSynced(true);
         mDatabaseGroups.keepSynced(true);
 

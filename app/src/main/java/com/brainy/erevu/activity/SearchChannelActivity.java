@@ -128,6 +128,7 @@ public class SearchChannelActivity extends AppCompatActivity {
                         openRead.putExtra("group_name", model.getGroup_name());
                         openRead.putExtra("group_image", model.getGroup_image() );
                         startActivity(openRead);
+                        SearchChannelActivity.this.finish();
                     }
                 });
 

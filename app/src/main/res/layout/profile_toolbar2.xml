@@ -40,8 +40,8 @@
                 android:id="@+id/sendMsg"
                 android:scaleType="fitXY"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="3dp"
+                android:layout_marginTop="11dp"
+                android:layout_marginRight="5dp"
                 android:src="@drawable/if_envelop_white"/>
         </RelativeLayout>
         <RelativeLayout

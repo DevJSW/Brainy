@@ -20,6 +20,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.brainy.erevu.Adapters.MessageChannelListAdapter;
 import com.brainy.erevu.Adapters.MessageListAdapter;
 import com.brainy.erevu.Pojos.Chat;
 import com.brainy.erevu.R;
@@ -60,7 +61,7 @@ public class ChannelChatroomActivity extends AppCompatActivity {
 
     SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView mChatList;
-    MessageListAdapter chatAdapter;
+    MessageChannelListAdapter chatAdapter;
     private final List<Chat> chatList = new ArrayList<>();
     LinearLayoutManager mLinearlayout;
     private static final int TOTAL_ITEMS_TO_LOAD = 10;
@@ -209,7 +210,7 @@ public class ChannelChatroomActivity extends AppCompatActivity {
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
 
-        chatAdapter = new MessageListAdapter(ChannelChatroomActivity.this, (ArrayList<Chat>) chatList);
+        chatAdapter = new MessageChannelListAdapter(ChannelChatroomActivity.this, (ArrayList<Chat>) chatList);
 
         mChatList = (RecyclerView) findViewById(R.id.Chat_list);
         mLinearlayout = new LinearLayoutManager(ChannelChatroomActivity.this);
@@ -286,6 +287,7 @@ public class ChannelChatroomActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent openRead = new Intent(ChannelChatroomActivity.this, ChannelProfileActivity.class);
                 openRead.putExtra("group_id", group_id );
+                openRead.putExtra("founder_id",founder_id );
                 openRead.putExtra("group_name", group_name);
                 openRead.putExtra("group_image", group_image );
                 startActivity(openRead);
@@ -296,7 +298,7 @@ public class ChannelChatroomActivity extends AppCompatActivity {
         photo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent openRead = new Intent(ChannelChatroomActivity.this, PhotoActivity.class);
+                Intent openRead = new Intent(ChannelChatroomActivity.this, ChannelPhotoActivity.class);
                 openRead.putExtra("group_id", group_id );
                 openRead.putExtra("group_name", group_name);
                 openRead.putExtra("group_image", group_image );

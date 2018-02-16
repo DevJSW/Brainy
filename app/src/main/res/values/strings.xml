@@ -77,4 +77,6 @@
     <string name="Username">\@Username</string>
     <string name="title_activity_group">GroupActivity</string>
     <string name="title_activity_photo">PhotoActivity</string>
+    <string name="title_activity_edit_channel">EditChannelActivity</string>
+    <string name="title_activity_edit_wallpaper">EditWallpaperActivity</string>
 </resources>

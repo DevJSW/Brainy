@@ -176,6 +176,7 @@ public class UsernameSearchActivity extends AppCompatActivity {
                         openRead.putExtra("question_id", quiz_key );
                         startActivity(openRead);
 
+                        UsernameSearchActivity.this.finish();
                     }
                 });
 

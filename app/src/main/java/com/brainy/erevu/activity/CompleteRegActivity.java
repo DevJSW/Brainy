@@ -191,7 +191,7 @@ public class CompleteRegActivity extends AppCompatActivity {
                             newPost.child(auth.getCurrentUser().getUid()).child("uid").setValue(auth.getCurrentUser().getUid());
 
                             newPost.child(auth.getCurrentUser().getUid()).child("name").setValue(name);
-                            newPost.child(auth.getCurrentUser().getUid()).child("username").setValue("@"+username.toLowerCase());
+                            newPost.child(auth.getCurrentUser().getUid()).child("username").setValue("@"+username);
                             newPost.child(auth.getCurrentUser().getUid()).child("user_image").setValue(userImage);
                             newPost.child(auth.getCurrentUser().getUid()).child("joined_date").setValue(stringDate);
                             newPost.child(auth.getCurrentUser().getUid()).child("uid").setValue(auth.getCurrentUser().getUid());
@@ -202,7 +202,7 @@ public class CompleteRegActivity extends AppCompatActivity {
                             newPost.child(auth.getCurrentUser().getUid()).child("device_token").setValue(deviceToken);
 
                             //ADD USERNAME TO DB
-                            newPostUserName.child(username).setValue(auth.getCurrentUser().getUid());
+                            newPostUserName.child(username.toLowerCase()).setValue(username);
 
                             Toast.makeText(CompleteRegActivity.this, "Account setup finished successfully!",
                                     Toast.LENGTH_LONG).show();

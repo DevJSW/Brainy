@@ -1,6 +1,5 @@
 package com.brainy.erevu.Adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -11,21 +10,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.brainy.erevu.Pojos.Chat;
 import com.brainy.erevu.R;
-import com.brainy.erevu.activity.MessageChatActivity;
 import com.brainy.erevu.activity.ViewPhotoActivity;
 import com.brainy.erevu.activity.ViewUserProfileActivity;
-import com.brainy.erevu.Pojos.Chat;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.github.curioustechizen.ago.RelativeTimeTextView;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -34,7 +30,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by Shephard on 1/25/2018.
  */
 
-public class MessageListAdapter extends RecyclerView.Adapter {
+public class MessageChannelListAdapter extends RecyclerView.Adapter {
     private static final int VIEW_TYPE_MESSAGE_SENT = 1;
     private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
     private static final int VIEW_TYPE_MESSAGE_NOTIFICATION = 3;
@@ -44,10 +40,8 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     private Context mContext;
     private List<Chat> chatList;
     public FirebaseAuth auth;
-    public RelativeLayout replyBar;
-    public TextView replyTv;
 
-    public MessageListAdapter(Context context, List<Chat> messageList) {
+    public MessageChannelListAdapter(Context context, List<Chat> messageList) {
         mContext = context;
         chatList = messageList;
 
@@ -57,6 +51,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
+
         if (viewType == VIEW_TYPE_MESSAGE_SENT) {
             view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_message_sent, parent, false);
@@ -175,7 +170,6 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         TextView messageText, timeText, nameText;
         ImageView profileImage;
         public RelativeTimeTextView post_date;
-        public RelativeLayout replyBar;
         FirebaseAuth auth;
 
         ReceivedMessageHolder(View itemView) {
@@ -184,34 +178,14 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             messageText = (TextView) itemView.findViewById(R.id.post_message);
             post_date = (RelativeTimeTextView) itemView.findViewById(R.id.post_date);
             profileImage = (CircleImageView) itemView.findViewById(R.id.post_image);
-            replyTv = (TextView) itemView.findViewById(R.id.replyMsg);
-            replyBar = (RelativeLayout) itemView.findViewById(R.id.replyBar);
             auth = FirebaseAuth.getInstance();
         }
 
-        void bind(final Chat message) {
+        void bind(Chat message) {
             messageText.setText(message.getMessage());
             final String user_id = message.getSender_uid();
             // Format the stored timestamp into a readable String using method.
             post_date.setReferenceTime(Long.parseLong(String.valueOf(message.getPosted_date())));
-
-           /* itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    replyBar.setVisibility(View.VISIBLE);
-                   // replyTv.setText(message.getMessage());
-                }
-            });*/
-
-            profileImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent openRead = new Intent(mContext, ViewUserProfileActivity.class);
-                    openRead.putExtra("user_id", user_id );
-                    openRead.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    mContext.startActivity(openRead);
-                }
-            });
 
             // Insert the profile image from the URL into the ImageView.
             Glide.with(mContext)
@@ -265,15 +239,6 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             // Format the stored timestamp into a readable String using method.
             post_date.setReferenceTime(Long.parseLong(String.valueOf(message.getPosted_date())));
 
-            profileImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent openRead = new Intent(mContext, ViewUserProfileActivity.class);
-                    openRead.putExtra("user_id", user_id );
-                    openRead.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    mContext.startActivity(openRead);
-                }
-            });
 
             post_photo.setOnClickListener(new View.OnClickListener() {
                 @Override

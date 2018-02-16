@@ -128,6 +128,7 @@ public class UserSearchActivity extends AppCompatActivity {
                         openRead.putExtra("username", model.getUsername() );
                         openRead.putExtra("user_image", model.getUser_image() );
                         startActivity(openRead);
+                        UserSearchActivity.this.finish();
                     }
                 });
 

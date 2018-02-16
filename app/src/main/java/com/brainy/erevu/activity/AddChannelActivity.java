@@ -135,22 +135,25 @@ public class AddChannelActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 checkIfChannelNameExists();
-
             }
         });
     }
 
     private void checkIfChannelNameExists() {
+
         mDatabaseChannelsNames.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String name = inputName.getText().toString().trim();
-                if (dataSnapshot.hasChild(name)) {
+                if (dataSnapshot.hasChild(name.toUpperCase())) {
                     // use "username" already exists
                     // Let the user know he needs to pick another username.
                     inputName.setError("Channel name already exists");
                 } else if (name.contains(" ")){
                     inputName.setError("Name should be one word!");
+                } else if (name.matches(".*[!@#$%^&*+=?-].*")) {
+                    inputName.setError("Name shouldn't contain special characters");
+
                 } else {
                     initSave();
                 }
@@ -207,7 +210,7 @@ public class AddChannelActivity extends AppCompatActivity {
                         newPost.child("created_date").setValue(stringDate);*/
 
                         Map<String, Object> map5 = new HashMap<>();
-                        map5.put("group_name", "#"+name);
+                        map5.put("group_name", name);
                         map5.put("group_id", newPost.getKey());
                         map5.put("group_image", downloadUrl.toString());
                         map5.put("group_type", "CHANNEL");
@@ -216,7 +219,7 @@ public class AddChannelActivity extends AppCompatActivity {
                         map5.put("created_date", stringDate);
                         newPost.setValue(map5);
 
-                        newPost2.child(newPost.getKey()).child("group_name").setValue("#"+name);
+                        newPost2.child(newPost.getKey()).child("group_name").setValue(name);
                         newPost2.child(newPost.getKey()).child("group_id").setValue(newPost.getKey());
                         newPost2.child(newPost.getKey()).child("founder_name").setValue(founder_name);
                         newPost2.child(newPost.getKey()).child("group_type").setValue("CHANNEL");
@@ -238,14 +241,6 @@ public class AddChannelActivity extends AppCompatActivity {
                         final String stringDate2 = DateFormat.getDateInstance().format(date);
 
 
-                        /*Map<String, Object> map = new HashMap<>();
-                        map.put("message", user_name+ " created this channel on "+stringDate2);
-                        map.put("sender_uid", auth.getCurrentUser().getUid());
-                        map.put("message_type", "NOTIFICATION");
-                        map.put("sender_name", user_name);
-                        map.put("posted_date", System.currentTimeMillis());
-                        map.put("post_id", newChannelMsgs.getKey());
-                        newChannelMsgs.setValue(map);*/
 
 //                        Map<String, Object> map2 = new HashMap<>();
 //                        map2.put("message", user_name+ " left on "+stringDate2);
@@ -287,7 +282,7 @@ public class AddChannelActivity extends AppCompatActivity {
                 map3.put("founder_id", auth.getCurrentUser().getUid());
                 newPost.setValue(map3);
 
-                newPost2.child(newPost.getKey()).child("group_name").setValue("#"+name);
+                newPost2.child(newPost.getKey()).child("group_name").setValue(name);
                 newPost2.child(newPost.getKey()).child("group_id").setValue(newPost.getKey());
                 newPost2.child(newPost.getKey()).child("group_image").setValue("");
                 newPost2.child(newPost.getKey()).child("founder_name").setValue(founder_name);
@@ -343,7 +338,7 @@ public class AddChannelActivity extends AppCompatActivity {
             }
              //ADD CHANNEL NAME TO DB
             final DatabaseReference newPostChannelName = mDatabaseChannelsNames;
-            newPostChannelName.child(name).setValue(auth.getCurrentUser().getUid());
+            newPostChannelName.child(name.toUpperCase()).setValue(name);
         }
 
     }

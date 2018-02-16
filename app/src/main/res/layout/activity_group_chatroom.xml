@@ -59,6 +59,23 @@
             android:id="@+id/noNotyTxt"
             android:textColor="@color/colorAccent"/>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/replyBar"
+            android:visibility="gone"
+            android:background="@drawable/reply_bg"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="25dp"
+            android:layout_above="@+id/typing_bar">
+            <com.brainy.erevu.data.MyFont
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/replyMsg"
+                android:text="reply"
+                android:padding="10dp"/>
+
+        </RelativeLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
